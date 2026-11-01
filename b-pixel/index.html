@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>АИТЕХ · Концепция B «Пиксель»</title>
+<meta name="description" content="Виртуальные сотрудники превращают сложное в простое. Демо-макет главной страницы.">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8' shape-rendering='crispEdges'%3E%3Crect width='8' height='8' fill='%23FF5E1A'/%3E%3Cpath fill='%23fff' d='M1 1h2v2H1zM5 1h2v2H5zM3 3h2v2H3zM1 5h2v2H1zM5 5h2v2H5z'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../shared/fonts/b.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#employee">К основному контенту</a>
+
+<!-- Шапка -->
+<header class="nav">
+  <a class="logo" href="#top" aria-label="АИТЕХ, наверх"><b>АИ</b>ТЕХ</a>
+  <nav class="nav__links" aria-label="Основная навигация">
+    <a href="#" data-stub="Решения">Решения</a>
+    <a href="#" data-stub="Отдел продаж">Отдел продаж</a>
+    <a href="#" data-stub="Отрасли">Отрасли</a>
+    <a href="#" data-stub="Технологии">Технологии</a>
+    <a href="#" data-stub="О нас">О нас</a>
+    <a href="#" data-stub="Контакты">Контакты</a>
+  </nav>
+  <a class="nav__tel" href="tel:+79154267807">+7 (915) 426-78-07</a>
+  <a class="btn" href="#contact">Обсудить задачу</a>
+  <button class="nav__burger" type="button" data-menu-open aria-label="Открыть меню" aria-expanded="false"><i></i><i></i><i></i></button>
+</header>
+
+<nav class="switch" aria-label="Концепции">
+  <a href="../a-signal/index.html">A</a>
+  <a class="is-on" href="../b-pixel/index.html" aria-current="page">B</a>
+  <a href="../c-light/index.html">C</a>
+</nav>
+
+<main>
+
+<!-- 1. Первый экран -->
+<section class="hero" id="top">
+  <div class="wrap">
+    <h1 class="h1">Виртуальные сотрудники делают сложное <em>простым</em></h1>
+    <div class="hero__row">
+      <p class="lead">Для активных продаж, клиентской поддержки и&nbsp;внутренних процессов. Шум остаётся у&nbsp;нас, вам достаётся результат.</p>
+      <div class="btns">
+        <a class="btn" href="#contact">Обсудить задачу</a>
+        <a class="btn btn--line" href="#staff">Штатное расписание</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. Сотрудник: портрет проявляется из шума -->
+<section class="emp" id="employee">
+  <div class="wrap emp__grid">
+    <div class="emp__pic" data-emp>
+      <canvas data-emp-canvas role="img" aria-label="Портрет виртуального сотрудника из пикселей"></canvas>
+      <p class="emp__tag" aria-hidden="true"><span>Образец</span><span data-emp-noise>Шум 100%</span></p>
+    </div>
+    <div class="emp__info">
+      <p class="lbl">01 / Кто это</p>
+      <h2 class="h2">Это не&nbsp;чат-бот. Это&nbsp;<em>сотрудник</em> с&nbsp;должностной инструкцией</h2>
+      <p class="lead">Агенты АИТЕХ работают как полноценные участники бизнес-процессов: с&nbsp;чётким кругом задач и&nbsp;в&nbsp;автономном режиме.</p>
+      <div class="idc">
+        <div class="idc__tabs" role="tablist" aria-label="Примеры должностей">
+          <button type="button" role="tab" aria-selected="true" data-idc="0">Продажи</button>
+          <button type="button" role="tab" aria-selected="false" data-idc="1">Поддержка</button>
+          <button type="button" role="tab" aria-selected="false" data-idc="2">Ассистент</button>
+        </div>
+        <dl class="idc__body">
+          <div><dt>Должность</dt><dd data-idc-role>ИИ-менеджер по&nbsp;продажам</dd></div>
+          <div><dt>График</dt><dd>24/7, без смен</dd></div>
+          <div><dt>Реакция</dt><dd>Мгновенно</dd></div>
+          <div><dt>Каналы</dt><dd>Мессенджеры, e-mail, web, голос</dd></div>
+          <div><dt>Инструкция</dt><dd data-idc-duty>Инициирует коммуникацию, работает по&nbsp;холодной базе, реанимирует «спящих» клиентов, работает с&nbsp;CRM</dd></div>
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. Каталог -->
+<section class="sec" id="staff">
+  <div class="wrap">
+    <div class="sec__head">
+      <p class="lbl">02 / Каталог решений</p>
+      <h2 class="h2">Штатное <em>расписание</em></h2>
+      <p class="lead">От&nbsp;одного ИИ-сотрудника до&nbsp;кластера виртуальных отделов.</p>
+    </div>
+    <div class="rows">
+      <a class="row" href="#" data-stub="ИИ-менеджер по продажам"><i>01</i><b>ИИ-менеджер по&nbsp;продажам</b><p>Сам выходит на&nbsp;контакт, работает по&nbsp;холодной базе, реанимирует «спящих» клиентов.</p><small>Сотрудник</small><u>→</u></a>
+      <a class="row" href="#" data-stub="Виртуальный отдел продаж"><i>02</i><b>Виртуальный отдел продаж</b><p>Лиды в&nbsp;мессенджерах и&nbsp;почте, персональные предложения. В&nbsp;реестре российского ПО.</p><small>Отдел</small><u>→</u></a>
+      <a class="row" href="#" data-stub="ИИ-менеджер клиентской поддержки"><i>03</i><b>ИИ-менеджер клиентской поддержки</b><p>Отвечает мгновенно и&nbsp;круглосуточно, соблюдает корпоративный стиль.</p><small>Сотрудник</small><u>→</u></a>
+      <a class="row" href="#" data-stub="Виртуальный колл-центр"><i>04</i><b>Виртуальный колл-центр</b><p>Голосовые решения, омниканальность и&nbsp;мультиязычность.</p><small>Отдел</small><u>→</u></a>
+      <a class="row" href="#" data-stub="ИИ-ассистент"><i>05</i><b>ИИ-ассистент</b><p>Голос и&nbsp;текст, резюме информации, календарь, 100+ языков.</p><small>Сотрудник</small><u>→</u></a>
+      <a class="row" href="#" data-stub="ИИ-система внутрикорпоративного менеджмента"><i>06</i><b>ИИ-система внутрикорпоративного менеджмента</b><p>Self-service для&nbsp;персонала, мониторинг, инсайты и&nbsp;прогнозы.</p><small>Система</small><u>→</u></a>
+      <a class="row" href="#" data-stub="Каталог решений"><i>+4</i><b>Маркетинг, HR, коуч, аналитика данных</b><p>Ещё четыре должности в&nbsp;полном каталоге.</p><small>Каталог</small><u>→</u></a>
+      <a class="row row--on" href="#contact"><i>+</i><b>Ваш кастомизированный агент</b><p>Создадим персонального агента под&nbsp;ваши требования и&nbsp;задачи.</p><small>Под заказ</small><u>→</u></a>
+    </div>
+    <p class="staff__note">Информация о&nbsp;стоимости составляет коммерческую тайну и&nbsp;не&nbsp;может быть опубликована.</p>
+  </div>
+</section>
+
+<!-- 4. Три слоя -->
+<section class="sec" id="inside">
+  <div class="wrap">
+    <div class="sec__head">
+      <p class="lbl">03 / Внутри агента</p>
+      <h2 class="h2">Три слоя работают <em>как&nbsp;один</em></h2>
+    </div>
+    <div class="cols">
+      <article class="col" data-rise><h3>Коммуникация</h3><p>Мессенджеры и&nbsp;e-mail, web и&nbsp;платформы, голосовые решения.</p></article>
+      <article class="col" data-rise><h3>База знаний</h3><p>Контекстный инжиниринг, RAG, базы данных и&nbsp;API.</p></article>
+      <article class="col" data-rise><h3>Инструменты</h3><p>Аналитика и&nbsp;данные, бизнес-решения, интеграции через API и&nbsp;MCP.</p></article>
+    </div>
+  </div>
+</section>
+
+<!-- 5. Отрасли: только текст -->
+<section class="sec" id="sectors">
+  <div class="wrap">
+    <div class="sec__head">
+      <p class="lbl">04 / Отрасли</p>
+      <h2 class="h2">Выигрывает каждая <em>отрасль</em></h2>
+    </div>
+    <div class="cols">
+      <article class="col" data-rise><h3>Торговля</h3><p>Точно выявляет потребности клиентов, персонализирует предложения и&nbsp;оптимизирует весь путь клиента.</p></article>
+      <article class="col" data-rise><h3>Маркетинг</h3><p>Прогнозирует поведение аудитории, выявляет скрытые паттерны, адаптирует коммуникации на&nbsp;лету.</p></article>
+      <article class="col" data-rise><h3>Финансы</h3><p>Автоматизирует процессы, снижает издержки, ускоряет привлечение и&nbsp;управление рисками.</p></article>
+      <article class="col" data-rise><h3>Телеком</h3><p>Предиктивное управление и&nbsp;профилактика инцидентов: ниже отток, длиннее жизненный цикл клиента.</p></article>
+      <article class="col" data-rise><h3>eCommerce &amp;&nbsp;Retail</h3><p>Персональные предложения, динамическое ценообразование, управление заказами, оплатой и&nbsp;логистикой.</p></article>
+      <article class="col" data-rise><h3>Прочие отрасли</h3><p>От&nbsp;логистики до&nbsp;энергетики: оптимизация, рост прибыли и&nbsp;поиск новых точек роста.</p></article>
+    </div>
+  </div>
+</section>
+
+<!-- 6. Цифры -->
+<section class="nums" id="numbers">
+  <div class="wrap">
+    <p class="lbl">05 / В цифрах</p>
+    <ul class="nums__row">
+      <li><b>3,7×</b><span>в&nbsp;среднем приносят инвестиции в&nbsp;ИИ на&nbsp;каждый вложенный рубль</span></li>
+      <li><b>73%</b><span>лидеров уже используют ИИ для&nbsp;оптимизации и&nbsp;роста прибыли</span></li>
+      <li><b>24/7</b><span>на&nbsp;связи, без отпусков и&nbsp;смен</span></li>
+      <li><b>100+</b><span>языков знает ИИ-ассистент</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- 7. Как работаем -->
+<section class="sec" id="flow">
+  <div class="wrap">
+    <div class="sec__head">
+      <p class="lbl">06 / Как работаем</p>
+      <h2 class="h2">От&nbsp;задачи до&nbsp;<em>результата</em></h2>
+    </div>
+    <ol class="steps">
+      <li data-rise><i>01</i><b>Разрабатываем</b><p>Агента под&nbsp;конкретные задачи, с&nbsp;учётом специфики отрасли и&nbsp;ваших процессов.</p></li>
+      <li data-rise><i>02</i><b>Интегрируем</b><p>В&nbsp;существующие системы и&nbsp;рабочие процессы, чтобы решения принимались быстрее.</p></li>
+      <li data-rise><i>03</i><b>Сопровождаем</b><p>Постоянный мониторинг агентов, консультации и&nbsp;оперативное устранение сбоев.</p></li>
+      <li data-rise><i>04</i><b>Оптимизируем</b><p>Глубокая автоматизация: прогнозирование сценариев и&nbsp;персонализация.</p></li>
+    </ol>
+    <p class="reg"><b>Включено в&nbsp;Реестр российского&nbsp;ПО</b><span>Виртуальный отдел продаж, запись №&nbsp;32900 от&nbsp;31.03.2026</span><a href="#" data-stub="Отдел продаж">О&nbsp;продукте →</a></p>
+  </div>
+</section>
+
+<!-- 8. FAQ -->
+<section class="sec" id="faq">
+  <div class="wrap faq__grid">
+    <div>
+      <p class="lbl">07 / Вопросы</p>
+      <h2 class="h2">Без <em>шума</em></h2>
+    </div>
+    <div class="faq__list">
+      <div class="faq__i" data-faq-item>
+        <button type="button" aria-expanded="false"><span>Что означает «виртуальные сотрудники»?</span><i>+</i></button>
+        <div class="faq__a"><div><p>Это рабочий персонал на&nbsp;базе искусственного интеллекта, оснащённый интеллектуальными инструментами. ИИ-агенты работают совместно в&nbsp;мультиагентной системе для&nbsp;автономного решения сложных задач.</p></div></div>
+      </div>
+      <div class="faq__i" data-faq-item>
+        <button type="button" aria-expanded="false"><span>Кто такие ИИ-агенты?</span><i>+</i></button>
+        <div class="faq__a"><div><p>Интеллектуальные системы, которые самостоятельно принимают решения и&nbsp;выполняют бизнес-задачи без постоянного участия человека. В&nbsp;отличие от&nbsp;роботизированной автоматизации (RPA), агент адаптируется, работает в&nbsp;условиях неопределённости и&nbsp;реагирует на&nbsp;изменения в&nbsp;реальном времени. Например, ИИ-продавец сам ведёт переговоры, адаптирует предложения и&nbsp;управляет воронкой продаж.</p></div></div>
+      </div>
+      <div class="faq__i" data-faq-item>
+        <button type="button" aria-expanded="false"><span>В чём отличие от обычной автоматизации?</span><i>+</i></button>
+        <div class="faq__a"><div><p>В&nbsp;проактивности и&nbsp;способности к&nbsp;обучению. RPA и&nbsp;чат-боты реагируют на&nbsp;запросы по&nbsp;жёстким сценариям, а&nbsp;ИИ-агент сам инициирует взаимодействие и&nbsp;непрерывно учится на&nbsp;реальных диалогах. Он способен вести сложные нелинейные переговоры и&nbsp;выступает автономным бизнес-юнитом.</p></div></div>
+      </div>
+      <div class="faq__i" data-faq-item>
+        <button type="button" aria-expanded="false"><span>Чем ИИ-агенты полезны моему бизнесу?</span><i>+</i></button>
+        <div class="faq__a"><div><ul><li>Берут на&nbsp;себя повторяющиеся и&nbsp;трудоёмкие задачи</li><li>Быстро обрабатывают большие объёмы данных</li><li>Доступны клиентам 24/7</li><li>Снижают число ошибок в&nbsp;рутине</li><li>Освобождают сотрудников для&nbsp;стратегических задач</li><li>Масштабируют бизнес без пропорционального роста штата</li></ul></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 9. Финал -->
+<section class="end" id="contact">
+  <div class="wrap end__grid">
+    <div class="end__txt">
+      <h2 class="h2">Опишите процесс. Мы уберём <em>шум</em></h2>
+      <p class="lead">Расскажите, что у&nbsp;вас запутано. Покажем, какие шаги можно отдать виртуальному сотруднику и&nbsp;что останется команде.</p>
+      <ul>
+        <li><a href="tel:+79154267807">+7 (915) 426-78-07</a></li>
+        <li><a href="mailto:contact@aixtex.ru">contact@aixtex.ru</a></li>
+      </ul>
+    </div>
+    <form class="form" data-form novalidate>
+      <div class="form__body">
+        <label class="field" data-field><span>Имя</span><input type="text" name="name" autocomplete="name" required placeholder="Как к вам обращаться"><em>Заполните поле</em></label>
+        <label class="field" data-field><span>Телефон или e-mail</span><input type="text" name="contact" autocomplete="email" required data-contact placeholder="Куда ответить"><em>Проверьте контакт</em></label>
+        <label class="field field--full" data-field><span>Какой процесс упростить</span><textarea name="task" rows="3" placeholder="Например: менеджеры не успевают обзванивать холодную базу"></textarea></label>
+        <div class="form__foot">
+          <button class="btn" type="submit">Отправить задачу</button>
+          <p>Нажимая кнопку, вы соглашаетесь с&nbsp;<a href="#" data-stub="Политика обработки персональных данных">политикой обработки персональных данных</a>.</p>
+        </div>
+      </div>
+      <div class="form__ok" aria-live="polite">
+        <h3>Шум <em>0%</em></h3>
+        <p>Это демо-макет, поэтому заявка никуда не ушла. В&nbsp;рабочей версии здесь будет подтверждение и&nbsp;срок ответа.</p>
+        <button class="btn btn--line" type="button" data-form-reset>Заполнить ещё раз</button>
+      </div>
+    </form>
+  </div>
+  <footer class="foot wrap">
+    <div><p class="lbl">Компания</p><p>ООО «Агентство интеллектуальных технологий»<br>ИНН 9707049984 · ОГРН 1257700352667<br>127051, Москва, 2-й Колобовский пер., 12, кв. 12а<br>ОКВЭД 62.01</p></div>
+    <div><p class="lbl">Разделы</p><ul><li><a href="#" data-stub="Решения">Решения</a></li><li><a href="#" data-stub="Отдел продаж">Отдел продаж</a></li><li><a href="#" data-stub="Отрасли">Отрасли</a></li><li><a href="#" data-stub="Технологии">Технологии</a></li><li><a href="#" data-stub="О нас">О нас</a></li><li><a href="#" data-stub="Контакты">Контакты</a></li></ul></div>
+    <div><p class="lbl">Важно</p><p>ООО «АИТЕХ» не проводит набор сотрудников и&nbsp;не рассылает предложения о&nbsp;работе через мессенджеры. Официальные контакты указаны только на&nbsp;этом сайте.</p><p><a href="#" data-stub="Политика обработки персональных данных">Политика обработки персональных данных</a></p></div>
+  </footer>
+</section>
+</main>
+
+<!-- Меню -->
+<div class="menu" data-menu aria-hidden="true">
+  <button class="menu__x" type="button" data-menu-close aria-label="Закрыть меню"><i></i></button>
+  <ul>
+    <li><a href="#" data-stub="Решения">Решения</a></li>
+    <li><a href="#" data-stub="Отдел продаж">Отдел продаж</a></li>
+    <li><a href="#" data-stub="Отрасли">Отрасли</a></li>
+    <li><a href="#" data-stub="Технологии">Технологии</a></li>
+    <li><a href="#" data-stub="О нас">О нас</a></li>
+    <li><a href="#" data-stub="Контакты">Контакты</a></li>
+  </ul>
+  <div class="menu__foot"><a href="tel:+79154267807">+7 (915) 426-78-07</a><a href="mailto:contact@aixtex.ru">contact@aixtex.ru</a></div>
+</div>
+
+<!-- Заглушка -->
+<div class="stub" data-stub-modal hidden>
+  <div class="stub__box" role="dialog" aria-modal="true" aria-labelledby="stub-t">
+    <p class="lbl">Демо-макет</p>
+    <h2 id="stub-t">Здесь пока <em>шум</em></h2>
+    <p class="stub__txt">Раздел «<span data-stub-name></span>» ещё не собран: это демонстрационный макет, и&nbsp;пока готова только главная страница. Остальное появится после утверждения концепции.</p>
+    <div class="btns">
+      <button class="btn" type="button" data-stub-close>Вернуться на главную</button>
+      <a class="btn btn--line" href="#contact" data-stub-close>Обсудить задачу</a>
+    </div>
+  </div>
+</div>
+
+<script src="../shared/base.js"></script>
+<script src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="ru" data-ui-top="dark" data-ui-bot="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>АИТЕХ · Концепция A «Сигнал»</title>
+<meta name="description" content="Виртуальные сотрудники для продаж, клиентской поддержки и бизнес-процессов. Демо-макет главной страницы.">
+<meta name="theme-color" content="#0B0B0C">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230B0B0C'/%3E%3Cpath d='M4 11h24M4 16h24M4 21h24' stroke='%23FF5E1A' stroke-width='2.5'/%3E%3C/svg%3E">
+<link rel="preload" as="image" href="img/hero.webp">
+<link rel="stylesheet" href="../shared/fonts/a.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#manifest">К основному контенту</a>
+
+<!-- Шапка -->
+<header class="nav">
+  <a class="logo" href="#top" aria-label="АИТЕХ, наверх"><b>АИ</b>ТЕХ</a>
+  <span class="nav__desc">Агентство<br>интеллектуальных технологий</span>
+  <nav class="nav__links" aria-label="Основная навигация">
+    <a href="#" data-stub="Решения">Решения</a>
+    <a href="#" data-stub="Отдел продаж">Отдел продаж</a>
+    <a href="#" data-stub="Отрасли">Отрасли</a>
+    <a href="#" data-stub="Технологии">Технологии</a>
+    <a href="#" data-stub="О нас">О нас</a>
+    <a href="#" data-stub="Контакты">Контакты</a>
+  </nav>
+  <div class="nav__right">
+    <a class="sq" href="mailto:contact@aixtex.ru" aria-label="Написать на contact@aixtex.ru">
+      <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1.5 3.5h13v9h-13zM1.5 4l6.500 5 6.500-5"/></svg>
+    </a>
+    <a class="sq sq--wide" href="tel:+79154267807">+7 (915) 426-78-07</a>
+    <button class="sq" type="button" data-menu-open aria-label="Открыть меню" aria-expanded="false">
+      <svg viewBox="0 0 16 4" width="14" height="4" fill="currentColor"><rect width="3" height="3" y=".5"/><rect x="6.500" width="3" height="3" y=".5"/><rect x="13" width="3" height="3" y=".5"/></svg>
+    </button>
+  </div>
+</header>
+
+<!-- Показания прибора: сложность падает по мере прокрутки -->
+<div class="readout" aria-hidden="true"><span>Сложность процесса</span><b data-cx>100</b><i>%</i></div>
+<div class="ruler" aria-hidden="true"><div class="ruler__on" data-ruler></div></div>
+
+<!-- Док, как на пульте -->
+<div class="dock">
+  <a class="dock__cta" href="#contact">Обсудить задачу</a>
+  <button class="dock__btn" type="button" data-menu-open aria-expanded="false">Меню</button>
+</div>
+<nav class="switch" aria-label="Концепции">
+  <span>Концепция</span>
+  <a class="is-on" href="../a-signal/index.html" aria-current="page">A</a>
+  <a href="../b-pixel/index.html">B</a>
+  <a href="../c-light/index.html">C</a>
+</nav>
+
+<main>
+
+<!-- 1. Герой: камера едет от клубка к ровным линиям -->
+<section class="hero" id="top" data-ui="dark">
+  <div class="hero__stage">
+    <div class="hero__media" data-hero-media>
+      <img src="img/hero.webp" alt="Спутанные волокна проходят через оранжевую вспышку и выходят ровным пучком параллельных линий" fetchpriority="high">
+      <canvas class="hero__pulse" data-hero-pulse></canvas>
+      <div class="hero__glow"></div>
+    </div>
+    <div class="hero__shade"></div>
+
+    <div class="hero__tags" aria-hidden="true">
+      <p class="tag tag--in" data-hero-in>[ вход ]<br>заявки · звонки · таблицы<br>письма · согласования</p>
+      <p class="tag tag--out" data-hero-out>[ выход ]<br>один понятный результат</p>
+    </div>
+
+    <div class="hero__lead" data-hero-lead>
+      <p>Виртуальные сотрудники для&nbsp;активных продаж, клиентской поддержки и&nbsp;внутренних процессов. Запутанное остаётся у&nbsp;нас. Вам достаётся результат.</p>
+      <div class="hero__btns">
+        <a class="btn" href="#contact"><span>Обсудить задачу</span></a>
+        <a class="btn btn--ghost" href="#staff"><span>Смотреть штат</span></a>
+      </div>
+    </div>
+
+    <p class="hero__after" data-hero-after aria-hidden="true">Один понятный результат вместо десятка шагов. Так выглядит процесс, когда запутанное берёт на&nbsp;себя виртуальный сотрудник.</p>
+
+    <h1 class="hero__title">
+      <span class="sr">Делаем сложное простым: виртуальные сотрудники для бизнеса</span>
+      <span class="hero__word hero__word--a" data-word-a aria-hidden="true">Сложное</span>
+      <span class="hero__word hero__word--b" data-word-b aria-hidden="true">Простое</span>
+    </h1>
+  </div>
+</section>
+
+<!-- 2. Манифест -->
+<section class="mani" id="manifest" data-ui="dark">
+  <div class="wrap mani__grid">
+    <p class="lbl">[01] Задача</p>
+    <p class="mani__text" data-highlight>Холодные базы, однотипные вопросы, отчёты, согласования. За каждым процессом стоят десятки шагов, которые съедают рабочий день. Мы передаём эти шаги виртуальным сотрудникам: они работают автономно, по&nbsp;должностной инструкции, как полноправные участники процесса.</p>
+    <ul class="mani__list">
+      <li><span>Отвечают</span><b>мгновенно</b></li>
+      <li><span>Доступны</span><b>24/7</b></li>
+      <li><span>Отпуск</span><b>не требуется</b></li>
+      <li><span>Эмоции</span><b>не влияют</b></li>
+    </ul>
+  </div>
+</section>
+
+<!-- 3. Кто это: получеловек, полуробот. Линии входят сложными, выходят результатом -->
+<section class="asst" id="assistant" data-ui="dark" data-asst>
+  <div class="asst__stage">
+    <svg class="ln" data-ln="asst" aria-hidden="true"></svg>
+    <img class="asst__bust" src="img/assistant.webp" alt="Виртуальный сотрудник: половина лица человеческая, вторая половина головы и шеи открывает механизм" loading="lazy" data-asst-bust>
+    <div class="asst__l">
+      <p class="lbl">[02] Кто это</p>
+      <h2 class="h2 h2--t" data-split>Не&nbsp;чат-бот. Сотрудник с&nbsp;должностной инструкцией</h2>
+    </div>
+    <div class="asst__r" data-reveal>
+      <p>Для клиента это вежливый собеседник, для вас система с&nbsp;чётким кругом задач. Работает в&nbsp;автономном режиме, как полноправный участник процесса.</p>
+      <div class="asst__tabs" role="tablist" aria-label="Примеры должностей">
+        <button type="button" role="tab" aria-selected="true" data-asst-tab="0">Продажи</button>
+        <button type="button" role="tab" aria-selected="false" data-asst-tab="1">Поддержка</button>
+        <button type="button" role="tab" aria-selected="false" data-asst-tab="2">Ассистент</button>
+      </div>
+      <p class="asst__duty" data-asst-duty>Инициирует коммуникацию, работает по&nbsp;холодной базе, реанимирует «спящих» клиентов, работает с&nbsp;CRM.</p>
+    </div>
+    <ul class="asst__tags asst__tags--in" aria-hidden="true">
+      <li style="--y:56%">Звонки</li><li style="--y:63%">Письма</li><li style="--y:70%">Заявки</li><li style="--y:77%">Таблицы</li><li style="--y:84%">Согласования</li>
+    </ul>
+    <ul class="asst__tags asst__tags--out" aria-hidden="true">
+      <li style="--y:63%">Заявка в&nbsp;CRM</li><li style="--y:72%">Ответ клиенту</li><li style="--y:81%">Отчёт руководителю</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 4. Каталог: штат от одного сотрудника до отдела -->
+<section class="staff" id="staff" data-ui="light">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="lbl">[03] Каталог решений</p>
+      <h2 class="h2" data-split>От&nbsp;одного сотрудника до&nbsp;целого отдела</h2>
+      <p class="sec-head__sub" data-reveal>Масштабируемые ИИ-решения АИТЕХ: начните с&nbsp;одной роли и&nbsp;нарастите до&nbsp;кластера виртуальных отделов.</p>
+    </div>
+    <div class="cards" data-cards>
+
+      <article class="card" data-card>
+        <span class="card__tag">Сотрудник</span>
+        <div class="card__img"><img src="img/clay-sales.webp" alt="Миниатюра: рабочее место с гарнитурой" loading="lazy"></div>
+        <h3>ИИ-менеджер по&nbsp;продажам</h3>
+        <p>Сам выходит на&nbsp;контакт и&nbsp;ведёт клиента к&nbsp;заявке.</p>
+        <ul class="card__tasks">
+          <li>Инициирует коммуникацию</li><li>Работает по&nbsp;холодной базе</li><li>Реанимирует «спящих» клиентов</li><li>Обладает полнотой знаний</li><li>Работает с&nbsp;CRM и&nbsp;другими системами</li>
+        </ul>
+        <div class="card__foot"><a class="btn btn--card" href="#" data-stub="ИИ-менеджер по продажам"><span>Подробнее</span></a><button class="plus" type="button" data-card-toggle aria-label="Показать задачи"><i></i></button></div>
+      </article>
+
+      <article class="card" data-card>
+        <span class="card__tag">Отдел</span>
+        <div class="card__img"><img src="img/clay-office.webp" alt="Миниатюра: этаж отдела продаж с рядами столов" loading="lazy"></div>
+        <h3>Виртуальный отдел продаж</h3>
+        <p>Команда агентов закрывает воронку от&nbsp;лида до&nbsp;передачи менеджеру.</p>
+        <ul class="card__tasks">
+          <li>Генерация лидов в&nbsp;мессенджерах и&nbsp;почте</li><li>Персонализированные предложения на&nbsp;основе данных</li><li>Круглосуточная многоязычная помощь</li><li>В&nbsp;реестре российского ПО</li>
+        </ul>
+        <div class="card__foot"><a class="btn btn--card" href="#" data-stub="Виртуальный отдел продаж"><span>Подробнее</span></a><button class="plus" type="button" data-card-toggle aria-label="Показать задачи"><i></i></button></div>
+      </article>
+
+      <article class="card" data-card>
+        <span class="card__tag">Сотрудник</span>
+        <div class="card__img"><img src="img/clay-support.webp" alt="Миниатюра: стойка поддержки с облаками реплик" loading="lazy"></div>
+        <h3>ИИ-менеджер клиентской поддержки</h3>
+        <p>Мгновенно отвечает и&nbsp;всегда говорит в&nbsp;корпоративном стиле.</p>
+        <ul class="card__tasks">
+          <li>Мгновенно отвечает клиентам</li><li>Доступен 24/7</li><li>Всегда вежлив и&nbsp;эмоционально устойчив</li><li>Соблюдает корпоративный стиль</li><li>Быстро и&nbsp;точно решает запросы</li>
+        </ul>
+        <div class="card__foot"><a class="btn btn--card" href="#" data-stub="ИИ-менеджер клиентской поддержки"><span>Подробнее</span></a><button class="plus" type="button" data-card-toggle aria-label="Показать задачи"><i></i></button></div>
+      </article>
+
+      <article class="card" data-card>
+        <span class="card__tag">Отдел</span>
+        <div class="card__img"><img src="img/clay-callcenter.webp" alt="Миниатюра: круглый зал колл-центра" loading="lazy"></div>
+        <h3>Виртуальный колл-центр</h3>
+        <p>Голос, мессенджеры и&nbsp;почта в&nbsp;одном контуре, без смен и&nbsp;очередей.</p>
+        <ul class="card__tasks">
+          <li>Голосовые решения</li><li>Омниканальность</li><li>Мультиязычность</li><li>Быстрое персонализированное обслуживание</li>
+        </ul>
+        <div class="card__foot"><a class="btn btn--card" href="#" data-stub="Виртуальный колл-центр"><span>Подробнее</span></a><button class="plus" type="button" data-card-toggle aria-label="Показать задачи"><i></i></button></div>
+      </article>
+
+      <article class="card" data-card>
+        <span class="card__tag">Сотрудник</span>
+        <div class="card__img"><img src="img/clay-assistant.webp" alt="Миниатюра: кабинет с календарём и креслом" loading="lazy"></div>
+        <h3>ИИ-ассистент</h3>
+        <p>Правая рука руководителя и&nbsp;команды: голосом и&nbsp;текстом.</p>
+        <ul class="card__tasks">
+          <li>Работает с&nbsp;голосом и&nbsp;текстом</li><li>Поиск и&nbsp;резюмирование информации</li><li>Управляет календарём</li><li>Управляет коммуникацией</li><li>Знает 100+ языков</li>
+        </ul>
+        <div class="card__foot"><a class="btn btn--card" href="#" data-stub="ИИ-ассистент"><span>Подробнее</span></a><button class="plus" type="button" data-card-toggle aria-label="Показать задачи"><i></i></button></div>
+      </article>
+
+      <article class="card" data-card>
+        <span class="card__tag">Система</span>
+        <div class="card__img"><img src="img/clay-corp.webp" alt="Миниатюра: здание в разрезе, этажи соединены общей шахтой" loading="lazy"></div>
+        <h3>ИИ-система внутрикорпоративного менеджмента</h3>
+        <p>Соединяет отделы и&nbsp;даёт сотрудникам быстрые ответы.</p>
+        <ul class="card__tasks">
+          <li>Self-service для персонала</li><li>Мгновенная поддержка сотрудников</li><li>Мониторинг эффективности</li><li>Интеллектуальные инсайты и&nbsp;прогнозы</li>
+        </ul>
+        <div class="card__foot"><a class="btn btn--card" href="#" data-stub="ИИ-система внутрикорпоративного менеджмента"><span>Подробнее</span></a><button class="plus" type="button" data-card-toggle aria-label="Показать задачи"><i></i></button></div>
+      </article>
+
+      <article class="card card--signal">
+        <span class="card__tag">Под заказ</span>
+        <div class="card__img"><img src="img/clay-custom.webp" alt="Миниатюра: конструктор из модульных блоков" loading="lazy"></div>
+        <h3>Ваш кастомизированный агент</h3>
+        <p>Создадим персонального агента под&nbsp;ваши требования и&nbsp;задачи.</p>
+        <div class="card__foot"><a class="btn btn--dark" href="#contact"><span>Описать задачу</span></a></div>
+      </article>
+
+      <article class="card card--more">
+        <p class="lbl">Ещё в&nbsp;штате</p>
+        <ul class="card__more">
+          <li>ИИ-специалист по&nbsp;маркетингу</li>
+          <li>ИИ-менеджер департамента HR</li>
+          <li>ИИ-коуч по&nbsp;тренировке персонала</li>
+          <li>ИИ-специалист по&nbsp;аналитике данных</li>
+        </ul>
+        <a class="more-link" href="#" data-stub="Каталог решений"><span>Весь каталог</span><i></i></a>
+        <p class="card__note">Информация о&nbsp;стоимости составляет коммерческую тайну и&nbsp;не&nbsp;может быть опубликована.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- 5. Как это звучит: диалоги в реальном времени -->
+<section class="how" id="how" data-ui="dark" data-how>
+  <div class="how__stage">
+    <div class="wrap how__grid">
+      <div class="how__side">
+        <p class="lbl">[04] В работе</p>
+        <h2 class="h2 h2--t" data-split>Вот как это звучит</h2>
+        <ol class="how__steps" data-how-steps>
+          <li class="is-on"><button type="button" data-how-step="0"><i>01</i><b>Инициирует диалоги по&nbsp;холодной базе</b><span>Сам выходит на&nbsp;контакт, сам предлагает и&nbsp;сам передаёт детали дальше.</span></button></li>
+          <li><button type="button" data-how-step="1"><i>02</i><b>Отвечает клиентам на&nbsp;сложные вопросы</b><span>Спокойно разбирает возражения и&nbsp;опирается на&nbsp;базу знаний компании.</span></button></li>
+          <li><button type="button" data-how-step="2"><i>03</i><b>Пробуждает интерес к&nbsp;вашим услугам</b><span>Возвращает «спящих» клиентов и&nbsp;ведёт к&nbsp;следующему шагу.</span></button></li>
+        </ol>
+      </div>
+      <div class="panel" data-panel>
+        <div class="panel__top"><span data-panel-title>Диалог 01 · мессенджер</span><span class="panel__live"><i></i>Агент в&nbsp;работе</span></div>
+        <div class="panel__wave" data-wave aria-hidden="true"></div>
+        <div class="panel__chat" data-chat aria-live="off"></div>
+        <div class="panel__meta">
+          <div><span>Реакция</span><b>мгновенно</b></div>
+          <div><span>Тон</span><b data-panel-tone>корпоративный</b></div>
+          <div><span>Итог</span><b class="is-signal" data-panel-result>…</b></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. Анатомия: снаружи просто, внутри три слоя -->
+<section class="ex" id="inside" data-ui="light" data-ex>
+  <div class="ex__stage" data-ex-stage>
+    <i class="cross cross--tl"></i><i class="cross cross--tr"></i><i class="cross cross--bl"></i><i class="cross cross--br"></i>
+    <div class="ex__head">
+      <p class="lbl">[05] Внутри агента</p>
+      <h2 class="h2" data-split>Снаружи один понятный сотрудник. Внутри три слоя инженерии</h2>
+    </div>
+    <div class="ex__scene">
+      <div class="ex__stack" data-ex-stack>
+        <div class="plane plane--c" data-plane="0"><i class="plane__a" data-anchor="0"></i>
+          <svg viewBox="0 0 400 300" aria-hidden="true"><g fill="none" stroke="#9b9b98" stroke-width="1"><rect x="26" y="28" width="150" height="46" rx="3"/><rect x="60" y="88" width="190" height="46" rx="3"/><rect x="26" y="148" width="120" height="46" rx="3"/><rect x="224" y="28" width="150" height="46" rx="3"/><rect x="274" y="88" width="100" height="46" rx="3"/><rect x="170" y="148" width="204" height="46" rx="3"/></g><g fill="#7c7c79"><rect x="40" y="46" width="90" height="4"/><rect x="40" y="56" width="60" height="4"/><rect x="76" y="106" width="130" height="4"/><rect x="76" y="116" width="84" height="4"/><rect x="40" y="166" width="70" height="4"/><rect x="238" y="46" width="96" height="4"/><rect x="288" y="106" width="60" height="4"/><rect x="186" y="166" width="150" height="4"/></g><g fill="#FF5E1A" data-ex-wave><rect x="26" y="232" width="4" height="22"/><rect x="36" y="224" width="4" height="38"/><rect x="46" y="236" width="4" height="14"/><rect x="56" y="218" width="4" height="50"/><rect x="66" y="228" width="4" height="30"/><rect x="76" y="238" width="4" height="10"/><rect x="86" y="222" width="4" height="42"/><rect x="96" y="232" width="4" height="22"/></g><g fill="#b4b4b1"><rect x="110" y="241" width="264" height="4"/></g></svg>
+        </div>
+        <div class="plane plane--k" data-plane="1"><i class="plane__a" data-anchor="1"></i>
+          <svg viewBox="0 0 400 300" aria-hidden="true"><defs><pattern id="dots" width="16" height="16" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.1" fill="#9c9c99"/></pattern></defs><rect width="400" height="300" fill="url(#dots)"/><g fill="none" stroke="#6f6f6c" stroke-width="1"><path d="M50 66L130 34 226 82 330 50"/><path d="M130 34L114 146 226 82 306 162"/><path d="M50 66L114 146 66 226 194 242 306 162 354 242"/><path d="M226 82L194 242"/><path d="M330 50L306 162"/></g><rect x="222" y="78" width="8" height="8" fill="#19D3FF"/><g fill="#0F0F10"><rect x="46" y="62" width="8" height="8"/><rect x="126" y="30" width="8" height="8"/><rect x="326" y="46" width="8" height="8"/><rect x="110" y="142" width="8" height="8"/><rect x="62" y="222" width="8" height="8"/><rect x="190" y="238" width="8" height="8"/><rect x="350" y="238" width="8" height="8"/></g><rect x="300" y="156" width="12" height="12" fill="#FF5E1A"/></svg>
+        </div>
+        <div class="plane plane--t" data-plane="2"><i class="plane__a" data-anchor="2"></i>
+          <svg viewBox="0 0 400 300" aria-hidden="true"><path d="M30 40H370V72H30V104H370V136H30V168H370V200H30V232H370V262" fill="none" stroke="#b9b9b6" stroke-width="9" stroke-linejoin="round"/><path class="plane__flow" d="M30 40H370V72H30V104H370V136H30V168H370V200H30V232H370V262" fill="none" stroke="#FF5E1A" stroke-width="3" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+    </div>
+    <svg class="ex__lines" data-ex-lines aria-hidden="true"><path/><path/><path/></svg>
+    <ol class="ex__labels">
+      <li data-ex-label="0"><i>01</i><b>Коммуникация</b><span>Мессенджеры и&nbsp;e-mail, web и&nbsp;платформы, голосовые решения</span></li>
+      <li data-ex-label="1"><i>02</i><b>База знаний</b><span>Контекстный инжиниринг, RAG, базы данных и&nbsp;API</span></li>
+      <li data-ex-label="2"><i>03</i><b>Инструменты</b><span>Аналитика и&nbsp;управление данными, бизнес-решения, интеграции через API и&nbsp;MCP</span></li>
+    </ol>
+    <ul class="ex__foot">
+      <li>Проактивное поведение</li><li>Интеллектуальное поведение</li><li>Контекст и&nbsp;безопасность</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 7. Отрасли: лента-линия, карточки в том же стиле, что и каталог -->
+<section class="ind" id="sectors" data-ui="dark" data-ind>
+  <div class="ind__stage">
+    <div class="ind__head">
+      <p class="lbl">[06] Отрасли</p>
+      <p class="ind__count"><b data-ind-i>01</b> / 06</p>
+    </div>
+    <div class="ind__track" data-ind-track>
+      <svg class="ln ind__rail" data-ln="rail" aria-hidden="true"></svg>
+      <article class="ind__intro">
+        <h2 class="h2 h2--t">Выигрывает каждая отрасль</h2>
+        <p>Линия одна на&nbsp;всех, задачи разные. Смотрим на&nbsp;процесс: где узел, где обрыв, где лишний шаг. Дальше агент берёт эти шаги на&nbsp;себя.</p>
+        <span class="ind__hint">Листайте<i></i></span>
+      </article>
+      <article class="ind__p" data-ind-p><div class="ind__txt"><h3>Торговля</h3><p>ИИ точно выявляет потребности клиентов, персонализирует предложения в&nbsp;реальном времени и&nbsp;оптимизирует весь путь клиента: от&nbsp;привлечения до&nbsp;повторных продаж.</p></div><div class="ind__img"><img src="img/ind-trade.webp" alt="Миниатюра: магазин в разрезе с кассой" loading="lazy"></div></article>
+      <article class="ind__p" data-ind-p><div class="ind__txt"><h3>Маркетинг</h3><p>ИИ прогнозирует поведение аудитории, выявляет скрытые паттерны и&nbsp;адаптирует коммуникации в&nbsp;реальном времени. Выше релевантность, ниже затраты.</p></div><div class="ind__img"><img src="img/ind-marketing.webp" alt="Миниатюра: билборд и рупор" loading="lazy"></div></article>
+      <article class="ind__p" data-ind-p><div class="ind__txt"><h3>Финансы</h3><p>Автоматизирует процессы, снижает издержки, ускоряет привлечение и&nbsp;управление рисками. Даёт поддержку 24/7 и&nbsp;рост выручки за&nbsp;счёт клиентского опыта.</p></div><div class="ind__img"><img src="img/ind-finance.webp" alt="Миниатюра: банковское хранилище" loading="lazy"></div></article>
+      <article class="ind__p" data-ind-p><div class="ind__txt"><h3>Телеком</h3><p>Снижает издержки через предиктивное управление и&nbsp;профилактику инцидентов. Клиентский опыт лучше, отток ниже, жизненный цикл клиента длиннее.</p></div><div class="ind__img"><img src="img/ind-telecom.webp" alt="Миниатюра: вышка связи" loading="lazy"></div></article>
+      <article class="ind__p" data-ind-p><div class="ind__txt"><h3>eCommerce &amp;&nbsp;Retail</h3><p>Полная автоматизация взаимодействия с&nbsp;клиентом: персональные предложения, динамическое ценообразование, управление заказами, оплатой и&nbsp;логистикой.</p></div><div class="ind__img"><img src="img/ind-ecom.webp" alt="Миниатюра: сортировочный конвейер" loading="lazy"></div></article>
+      <article class="ind__p" data-ind-p><div class="ind__txt"><h3>Прочие отрасли</h3><p>ИИ трансформирует бизнес-модели от&nbsp;логистики до&nbsp;энергетики: оптимизация, рост прибыли и&nbsp;поиск новых точек роста.</p></div><div class="ind__img"><img src="img/ind-other.webp" alt="Миниатюра: ветрогенератор, контейнеры и подстанция" loading="lazy"></div></article>
+    </div>
+    <div class="ind__bar"><i data-ind-bar></i></div>
+  </div>
+</section>
+
+<!-- 8. Цифры: белый лист, спокойно -->
+<section class="num" id="numbers" data-ui="light">
+  <svg class="ln ln--top" data-ln="band" aria-hidden="true"></svg>
+  <div class="wrap">
+    <p class="lbl">[07] В цифрах</p>
+    <div class="num__grid">
+      <div class="num__big">
+        <p class="num__val"><span data-count="3.7" data-dec="1">3,7</span><em>×</em></p>
+        <p class="num__cap">Столько в&nbsp;среднем приносят инвестиции в&nbsp;ИИ на&nbsp;каждый вложенный рубль</p>
+      </div>
+      <ul class="num__side">
+        <li><b><span data-count="73">73</span>%</b><span>лидеров уже используют ИИ для&nbsp;оптимизации, роста прибыли и&nbsp;поиска новых точек роста</span></li>
+        <li><b>24/7</b><span>на&nbsp;связи: без отпусков, смен и&nbsp;больничных</span></li>
+        <li><b><span data-count="100">100</span>+</b><span>языков знает ИИ-ассистент</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 9. Результат: линии превращаются в график -->
+<section class="res" id="results" data-ui="dark" data-res>
+  <div class="wrap res__head">
+    <p class="lbl">[08] Результат</p>
+    <h2 class="h2 h2--t" data-split>Какой бы ни&nbsp;был бизнес, важен один ответ: что изменится в&nbsp;цифрах</h2>
+    <div class="res__tabs" role="tablist" aria-label="Тип заказчика">
+      <button type="button" role="tab" aria-selected="true" data-res-tab="0">Самозанятые</button>
+      <button type="button" role="tab" aria-selected="false" data-res-tab="1">ИП и&nbsp;микробизнес</button>
+      <button type="button" role="tab" aria-selected="false" data-res-tab="2">Малый и&nbsp;средний бизнес</button>
+      <button type="button" role="tab" aria-selected="false" data-res-tab="3">B2B и&nbsp;корпорации</button>
+    </div>
+  </div>
+  <div class="res__chart"><svg data-res-chart role="img" aria-label="График: показатель с агентом растёт быстрее, чем без агента"></svg></div>
+  <div class="wrap res__grid">
+    <div class="res__task"><p class="lbl">Задача</p><p data-res-task></p></div>
+    <div class="res__m">
+      <p class="lbl" data-res-m1-t></p>
+      <div class="res__bar"><span>Было</span><i data-res-m1-a></i><b data-res-m1-av></b></div>
+      <div class="res__bar res__bar--on"><span>Стало</span><i data-res-m1-b></i><b data-res-m1-bv></b></div>
+    </div>
+    <div class="res__m">
+      <p class="lbl" data-res-m2-t></p>
+      <p class="res__swap"><s data-res-m2-a></s><i></i><b data-res-m2-b></b></p>
+    </div>
+  </div>
+  <p class="wrap res__note">Показатели условные, для макета. На&nbsp;рабочем сайте здесь будут цифры из&nbsp;реальных внедрений.</p>
+</section>
+
+<!-- 10. Как внедряем и паспорт -->
+<section class="flow" id="flow" data-ui="light">
+  <div class="wrap flow__grid">
+    <div class="flow__head">
+      <p class="lbl">[09] Как работаем</p>
+      <h2 class="h2" data-split>Берём запутанный процесс и&nbsp;возвращаем ровным</h2>
+    </div>
+    <ol class="flow__list">
+      <li data-reveal><i>01</i><h3>Разрабатываем</h3><p>Агента под&nbsp;конкретные задачи, с&nbsp;учётом специфики отрасли и&nbsp;ваших бизнес-процессов.</p></li>
+      <li data-reveal><i>02</i><h3>Интегрируем</h3><p>В&nbsp;существующие системы и&nbsp;рабочие процессы, чтобы решения принимались быстрее.</p></li>
+      <li data-reveal><i>03</i><h3>Сопровождаем</h3><p>Постоянный мониторинг работы агентов, консультации и&nbsp;оперативное устранение сбоев.</p></li>
+      <li data-reveal><i>04</i><h3>Оптимизируем</h3><p>Глубокая автоматизация: прогнозирование сценариев и&nbsp;персонализация взаимодействия.</p></li>
+    </ol>
+    <aside class="pass" data-reveal>
+      <p class="lbl lbl--t">Паспорт продукта</p>
+      <h3>Виртуальный отдел продаж включён в&nbsp;Реестр российского&nbsp;ПО</h3>
+      <dl>
+        <div><dt>Запись</dt><dd>№&nbsp;32900 от&nbsp;31.03.2026</dd></div>
+        <div><dt>Поставка</dt><dd>Интернет-сервис или размещение в&nbsp;вашей инфраструктуре</dd></div>
+        <div><dt>Стек</dt><dd>Python, JavaScript, TypeScript, PostgreSQL&nbsp;15</dd></div>
+        <div><dt>Права</dt><dd>Исключительные права у&nbsp;ООО «АИТЕХ»</dd></div>
+      </dl>
+      <a class="more-link more-link--t" href="#" data-stub="Отдел продаж"><span>Подробнее о&nbsp;продукте</span><i></i></a>
+    </aside>
+  </div>
+</section>
+
+<!-- 11. FAQ -->
+<section class="faq" id="faq" data-ui="dark">
+  <div class="wrap faq__grid">
+    <div>
+      <p class="lbl">[10] Вопросы</p>
+      <h2 class="h2 h2--t" data-split>Коротко о&nbsp;главном</h2>
+    </div>
+    <div class="faq__list">
+      <div class="faq__i" data-faq-item>
+        <button type="button" aria-expanded="false"><span>Что означает «виртуальные сотрудники»?</span><i class="plus plus--t"><i></i></i></button>
+        <div class="faq__a"><div><p>Это рабочий персонал на&nbsp;базе искусственного интеллекта, оснащённый интеллектуальными инструментами. ИИ-агенты работают совместно в&nbsp;мультиагентной системе для&nbsp;автономного решения сложных задач.</p></div></div>
+      </div>
+      <div class="faq__i" data-faq-item>
+        <button type="button" aria-expanded="false"><span>Кто такие ИИ-агенты?</span><i class="plus plus--t"><i></i></i></button>
+        <div class="faq__a"><div><p>Интеллектуальные системы, которые самостоятельно принимают решения и&nbsp;выполняют бизнес-задачи без постоянного участия человека. В&nbsp;отличие от&nbsp;роботизированной автоматизации (RPA), агент адаптируется, работает в&nbsp;условиях неопределённости и&nbsp;реагирует на&nbsp;изменения в&nbsp;реальном времени. Например, ИИ-продавец сам ведёт переговоры, адаптирует предложения и&nbsp;управляет воронкой продаж.</p></div></div>
+      </div>
+      <div class="faq__i" data-faq-item>
+        <button type="button" aria-expanded="false"><span>В чём отличие от обычной автоматизации?</span><i class="plus plus--t"><i></i></i></button>
+        <div class="faq__a"><div><p>В&nbsp;проактивности и&nbsp;способности к&nbsp;обучению. RPA и&nbsp;чат-боты реагируют на&nbsp;запросы по&nbsp;жёстким сценариям, а&nbsp;ИИ-агент сам инициирует взаимодействие и&nbsp;непрерывно учится на&nbsp;реальных диалогах. Он способен вести сложные нелинейные переговоры и&nbsp;выступает автономным бизнес-юнитом.</p></div></div>
+      </div>
+      <div class="faq__i" data-faq-item>
+        <button type="button" aria-expanded="false"><span>Чем ИИ-агенты полезны моему бизнесу?</span><i class="plus plus--t"><i></i></i></button>
+        <div class="faq__a"><div><ul><li>Берут на&nbsp;себя повторяющиеся и&nbsp;трудоёмкие задачи</li><li>Быстро обрабатывают большие объёмы данных</li><li>Доступны клиентам 24/7</li><li>Снижают число ошибок в&nbsp;рутине</li><li>Освобождают сотрудников для&nbsp;стратегических задач</li><li>Масштабируют бизнес без пропорционального роста штата</li></ul></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 12. Финал: сложность 0% -->
+<section class="end" id="contact" data-ui="dark">
+  <svg class="ln end__ln" data-ln="merge" aria-hidden="true"></svg>
+  <div class="wrap">
+    <p class="end__zero"><span>Сложность</span><b>0%</b></p>
+    <div class="end__grid">
+      <div class="end__text">
+        <h2 class="h2 h2--t">Расскажите, где у&nbsp;вас запуталось</h2>
+        <p>Опишите процесс как есть. Покажем, какие шаги можно отдать виртуальному сотруднику и&nbsp;что останется вашей команде.</p>
+        <ul>
+          <li><a href="tel:+79154267807">+7 (915) 426-78-07</a></li>
+          <li><a href="mailto:contact@aixtex.ru">contact@aixtex.ru</a></li>
+        </ul>
+      </div>
+      <form class="form" data-form novalidate>
+        <div class="form__body">
+          <label class="field" data-field><span>Имя</span><input type="text" name="name" autocomplete="name" required placeholder="Как к вам обращаться"><em>Укажите имя</em></label>
+          <label class="field" data-field><span>Телефон или e-mail</span><input type="text" name="contact" autocomplete="email" required data-contact placeholder="Куда ответить"><em>Проверьте контакт</em></label>
+          <label class="field field--full" data-field><span>Какой процесс упростить</span><textarea name="task" rows="3" placeholder="Например: менеджеры не успевают обзванивать холодную базу"></textarea></label>
+          <div class="form__foot">
+            <button class="btn" type="submit"><span>Отправить задачу</span></button>
+            <p>Нажимая кнопку, вы соглашаетесь с&nbsp;<a href="#" data-stub="Политика обработки персональных данных">политикой обработки персональных данных</a>.</p>
+          </div>
+        </div>
+        <div class="form__ok" aria-live="polite">
+          <p class="lbl">Статус: принято</p>
+          <h3>Сложность уже падает</h3>
+          <p>Это демо-макет, поэтому заявка никуда не ушла. В&nbsp;рабочей версии здесь будет подтверждение и&nbsp;срок ответа.</p>
+          <button class="btn btn--ghost" type="button" data-form-reset><span>Заполнить ещё раз</span></button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="foot">
+    <div class="wrap">
+      <p class="foot__logo" aria-hidden="true"><b>АИ</b>ТЕХ</p>
+      <div class="foot__grid">
+        <div><p class="lbl">Компания</p><p>ООО «Агентство интеллектуальных технологий»<br>ИНН 9707049984 · ОГРН 1257700352667<br>127051, Москва, 2-й Колобовский пер., 12, кв. 12а<br>ОКВЭД 62.01</p></div>
+        <div><p class="lbl">Разделы</p><ul><li><a href="#" data-stub="Решения">Решения</a></li><li><a href="#" data-stub="Отдел продаж">Отдел продаж</a></li><li><a href="#" data-stub="Отрасли">Отрасли</a></li><li><a href="#" data-stub="Технологии">Технологии</a></li><li><a href="#" data-stub="О нас">О нас</a></li><li><a href="#" data-stub="Контакты">Контакты</a></li></ul></div>
+        <div><p class="lbl">Важно</p><p>ООО «АИТЕХ» не проводит набор сотрудников и&nbsp;не рассылает предложения о&nbsp;работе через мессенджеры. Официальные контакты указаны только на&nbsp;этом сайте.</p><p><a href="#" data-stub="Политика обработки персональных данных">Политика обработки персональных данных</a></p></div>
+      </div>
+    </div>
+  </footer>
+</section>
+</main>
+
+<!-- Полноэкранное меню -->
+<div class="menu" data-menu aria-hidden="true">
+  <button class="menu__x" type="button" data-menu-close aria-label="Закрыть меню"><i></i></button>
+  <p class="lbl">Навигация</p>
+  <ul>
+    <li><a href="#" data-stub="Решения"><i>01</i>Решения</a></li>
+    <li><a href="#" data-stub="Отдел продаж"><i>02</i>Отдел продаж</a></li>
+    <li><a href="#" data-stub="Отрасли"><i>03</i>Отрасли</a></li>
+    <li><a href="#" data-stub="Технологии"><i>04</i>Технологии</a></li>
+    <li><a href="#" data-stub="О нас"><i>05</i>О нас</a></li>
+    <li><a href="#" data-stub="Контакты"><i>06</i>Контакты</a></li>
+  </ul>
+  <div class="menu__foot"><a href="tel:+79154267807">+7 (915) 426-78-07</a><a href="mailto:contact@aixtex.ru">contact@aixtex.ru</a><span class="menu__var" aria-label="Концепции"><a class="is-on" href="../a-signal/index.html" aria-current="page">A</a><a href="../b-pixel/index.html">B</a><a href="../c-light/index.html">C</a></span></div>
+</div>
+
+<!-- Заглушка: демо-макет -->
+<div class="stub" data-stub-modal hidden>
+  <div class="stub__box" role="dialog" aria-modal="true" aria-labelledby="stub-t">
+    <div class="stub__top"><span>Демо-макет</span><span class="stub__live"><i></i>Сигнал потерян</span></div>
+    <p class="stub__name" data-stub-name>Раздел</p>
+    <h2 id="stub-t">Этот раздел ещё в&nbsp;разработке</h2>
+    <p class="stub__txt">Это демонстрационный макет: пока собрана только главная страница. Остальные разделы появятся после утверждения концепции.</p>
+    <div class="stub__btns">
+      <button class="btn" type="button" data-stub-close><span>Вернуться на главную</span></button>
+      <a class="btn btn--ghost" href="#contact" data-stub-close><span>Обсудить задачу</span></a>
+    </div>
+    <div class="stub__ticks" aria-hidden="true"></div>
+  </div>
+</div>
+
+<script src="../shared/vendor/gsap.min.js"></script>
+<script src="../shared/vendor/ScrollTrigger.min.js"></script>
+<script src="../shared/base.js"></script>
+<script src="main.js"></script>
+</body>
+</html>

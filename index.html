@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>АИТЕХ · Три концепции главной</title>
+<meta name="description" content="Демо-макеты главной страницы АИТЕХ: три разные концепции.">
+<meta name="theme-color" content="#0c0c0e">
+<link rel="stylesheet" href="shared/fonts/b.css">
+<style>
+:root { --or: #ff5e1a; --bg: #0c0c0e; --t1: #f4f3f0; --t2: rgba(244, 243, 240, 0.62); --line: rgba(244, 243, 240, 0.14); --gut: clamp(16px, 2.6vw, 40px); }
+* { box-sizing: border-box; }
+html { background: var(--bg); }
+body { margin: 0; color: var(--t1); font: 400 15px/1.4 'Onest', 'Helvetica Neue', Arial, sans-serif; -webkit-font-smoothing: antialiased; padding: var(--gut); min-height: 100vh; display: flex; flex-direction: column; gap: clamp(28px, 4vw, 56px); }
+a { color: inherit; text-decoration: none; }
+header { display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: end; }
+h1 { margin: 0; font-weight: 500; font-size: clamp(34px, 5vw, 84px); line-height: 1; letter-spacing: -0.05em; text-wrap: balance; }
+header p { margin: 0; max-width: 26em; color: var(--t2); font-size: clamp(14px, 1.1vw, 17px); line-height: 1.34; letter-spacing: -0.01em; }
+main { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; flex: 1; }
+.v { position: relative; display: flex; flex-direction: column; gap: 14px; }
+.v__pic { position: relative; overflow: hidden; aspect-ratio: 16 / 10; background: #18181c; }
+.v__pic img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
+.v:hover .v__pic img { transform: scale(1.035); }
+.v__t { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.v__t h2 { margin: 0; font-weight: 500; font-size: clamp(22px, 2.2vw, 36px); line-height: 1.04; letter-spacing: -0.04em; }
+.v__t span { font: 500 17px/1 'Handjet', monospace; color: var(--t2); white-space: nowrap; }
+.v p { margin: 0; color: var(--t2); font-size: clamp(14px, 1.06vw, 16px); line-height: 1.36; letter-spacing: -0.008em; text-wrap: pretty; }
+.v__go { margin-top: auto; display: flex; align-items: center; justify-content: space-between; min-height: 48px; padding: 0 16px; box-shadow: inset 0 0 0 1px var(--line); font-weight: 500; letter-spacing: -0.012em; transition: background 0.2s, color 0.2s, box-shadow 0.2s; }
+.v:hover .v__go, .v__go:focus-visible { background: var(--c); color: var(--ct); box-shadow: none; }
+:focus-visible { outline: 2px solid var(--t1); outline-offset: 2px; }
+footer { display: flex; flex-wrap: wrap; gap: 6px 24px; justify-content: space-between; padding-top: 14px; border-top: 1px solid var(--line); font-size: 13px; color: var(--t2); }
+kbd { font: 500 15px/1 'Handjet', monospace; padding: 3px 6px; box-shadow: inset 0 0 0 1px var(--line); }
+.v__rec { position: absolute; left: 10px; top: 10px; padding: 7px 10px; background: var(--or); color: #0d0704; font-size: 13px; font-weight: 500; font-style: normal; line-height: 1; }
+.s { display: grid; gap: clamp(20px, 2.6vw, 40px); padding-top: clamp(32px, 4vw, 64px); border-top: 1px solid var(--line); }
+.s .s__l { margin: 0; font: 500 21px/1 'Handjet', monospace; letter-spacing: 0.01em; color: var(--or); }
+.s h2 { margin: 0; font-weight: 500; font-size: clamp(30px, 4vw, 68px); line-height: 1.02; letter-spacing: -0.045em; text-wrap: balance; max-width: 19em; }
+.s h3 { margin: 0; font-weight: 500; font-size: clamp(18px, 1.5vw, 24px); line-height: 1.14; letter-spacing: -0.028em; text-wrap: balance; }
+.s p, .s li { margin: 0; color: var(--t2); font-size: clamp(14px, 1.06vw, 16px); line-height: 1.42; letter-spacing: -0.006em; text-wrap: pretty; }
+.s ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 7px; }
+.s li { position: relative; padding-left: 14px; }
+.s li::before { content: ''; position: absolute; left: 0; top: 0.58em; width: 5px; height: 5px; background: var(--or); }
+.s b { font-weight: 500; color: var(--t1); }
+.s a:not(.v__go) { color: var(--t1); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--t2); }
+.s a:not(.v__go):hover { color: var(--or); }
+.g { display: grid; gap: 12px; }
+.g--4 { grid-template-columns: repeat(4, 1fr); }
+.g--3 { grid-template-columns: repeat(3, 1fr); }
+.g--2 { grid-template-columns: repeat(2, 1fr); gap: clamp(24px, 2.6vw, 40px) clamp(16px, 2vw, 32px); }
+.g--2 > div { display: grid; gap: 10px; align-content: start; }
+.b { display: grid; gap: 10px; align-content: start; padding: clamp(14px, 1.4vw, 20px); background: #17171a; }
+.b--on { background: #1f1510; box-shadow: inset 0 0 0 1px rgba(255, 94, 26, 0.5); }
+.b i { font: 500 19px/1 'Handjet', monospace; font-style: normal; color: var(--or); }
+.lead { max-width: 46em; font-size: clamp(16px, 1.3vw, 21px) !important; line-height: 1.34 !important; letter-spacing: -0.014em !important; }
+.tw { overflow-x: auto; }
+table { width: 100%; min-width: 760px; border-collapse: collapse; font-size: clamp(14px, 1.02vw, 15px); line-height: 1.36; }
+th, td { padding: 13px 16px 13px 0; border-top: 1px solid var(--line); text-align: left; vertical-align: top; font-weight: 400; width: 27%; }
+th:first-child { width: 19%; color: var(--t2); }
+thead th { border-top: 0; color: var(--t1); font-weight: 500; font-size: clamp(16px, 1.3vw, 20px); letter-spacing: -0.024em; }
+thead th span { display: block; margin-top: 3px; font-size: 13px; font-weight: 400; letter-spacing: 0; color: var(--or); }
+td { color: var(--t2); }
+td:nth-child(2) { color: var(--t1); }
+.c { display: grid; grid-template-columns: minmax(240px, 3fr) 9fr; gap: clamp(20px, 3vw, 48px); align-items: start; padding-block: clamp(24px, 3vw, 44px); border-top: 1px solid var(--line); }
+.c:first-of-type { border-top: 0; padding-top: 0; }
+.c__side { display: grid; gap: 12px; position: sticky; top: 16px; }
+.c__side img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
+.c__side h3 { font-size: clamp(24px, 2.2vw, 36px); line-height: 1.04; letter-spacing: -0.04em; }
+.c__pitch { color: var(--t1) !important; }
+.v__go--s { min-height: 44px; }
+.v__go--s:hover { background: var(--or); color: #0d0704; box-shadow: none; }
+.src { display: grid; gap: 4px; }
+.src p { font-size: 13px; }
+.rv { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.rv a { display: grid; gap: 6px; align-content: start; padding: 14px 16px; background: #17171a; color: var(--t2) !important; text-decoration: none !important; font-size: 14px; line-height: 1.34; transition: background 0.18s; }
+.rv a:hover { background: #222226; }
+.rv b { display: flex; justify-content: space-between; gap: 8px; font-size: clamp(16px, 1.3vw, 19px); letter-spacing: -0.024em; }
+.rv b span { color: var(--or); font-weight: 400; }
+.mx { min-width: 940px; }
+.mx th, .mx td { width: auto; padding: 11px 8px; text-align: center; vertical-align: middle; color: var(--t2); }
+.mx th:first-child { position: sticky; left: 0; z-index: 1; width: 170px; padding-left: 0; text-align: left; background: var(--bg); color: var(--t1); font-weight: 500; }
+.mx thead th { font-size: 13px; line-height: 1.2; font-weight: 400; letter-spacing: 0; color: var(--t2); vertical-align: bottom; }
+.mx td:nth-child(2) { color: var(--t2); }
+.mx i { display: inline-block; width: 11px; height: 11px; background: var(--t1); }
+.mx i.n { width: 5px; height: 1px; background: var(--t2); vertical-align: middle; }
+.mx i.p { background: none; box-shadow: inset 0 0 0 2px var(--or); }
+.mx .me th, .mx .me td { background: #1f1510; }
+.mx .me th:first-child { padding-left: 10px; color: var(--or); background: #1f1510; }
+.mx .me i:not(.n):not(.p) { background: var(--or); }
+.lg { display: flex; flex-wrap: wrap; gap: 6px 20px; font-size: 13px; color: var(--t2); }
+.lg span { display: inline-flex; align-items: center; gap: 8px; }
+.lg i { display: inline-block; width: 11px; height: 11px; background: var(--t1); }
+.lg i.n { width: 5px; height: 1px; background: var(--t2); }
+.lg i.p { background: none; box-shadow: inset 0 0 0 2px var(--or); }
+.mp { position: relative; height: clamp(360px, 38vw, 560px); margin: 26px 0 26px; background: linear-gradient(var(--line), var(--line)) 50% 0 / 1px 100% no-repeat, linear-gradient(var(--line), var(--line)) 0 50% / 100% 1px no-repeat, #121215; }
+.mp__a { position: absolute; font: 500 17px/1 'Handjet', monospace; color: var(--t2); white-space: nowrap; }
+.mp__a--t { left: 50%; top: -22px; transform: translateX(-50%); }
+.mp__a--b { left: 50%; bottom: -22px; transform: translateX(-50%); }
+.mp__a--l { left: 10px; top: calc(50% - 22px); }
+.mp__a--r { right: 10px; top: calc(50% - 22px); }
+.mp__d { position: absolute; left: var(--x); top: var(--y); display: flex; align-items: center; gap: 7px; font-size: clamp(12px, 1vw, 14px); line-height: 1; color: var(--t1); white-space: nowrap; }
+.mp__d::before { content: ''; flex: none; width: 9px; height: 9px; margin-left: -4px; background: var(--t1); }
+.mp__d--l { flex-direction: row-reverse; transform: translateX(-100%); margin-left: 4px; }
+.mp__d--l::before { margin: 0 -4px 0 0; }
+.mp__d--me { font-weight: 500; font-size: clamp(14px, 1.2vw, 17px); color: var(--or); }
+.mp__d--me::before { width: 13px; height: 13px; background: var(--or); }
+.g--2m { display: grid; grid-template-columns: 2fr 1fr; gap: 12px; align-items: start; }
+@media (max-width: 1100px) { .rv { grid-template-columns: repeat(2, 1fr); } .g--2m { grid-template-columns: 1fr; } }
+@media (max-width: 560px) { .rv { grid-template-columns: 1fr; } }
+@media (max-width: 1100px) { .g--4 { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 899px) { header { grid-template-columns: 1fr; } main { grid-template-columns: 1fr; gap: 32px; } .g--3, .g--2 { grid-template-columns: 1fr; } .c { grid-template-columns: 1fr; } .c__side { position: static; } }
+@media (max-width: 560px) { .g--4 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>АИТЕХ: три концепции главной страницы</h1>
+  <p>Метафора одна: сложное становится простым. Фирменный оранжевый один, подача разная. Все три версии облегчены под&nbsp;размещение на&nbsp;Тильде.</p>
+</header>
+<main>
+  <a class="v" href="a-signal/index.html" style="--c:#ff5e1a;--ct:#0d0704">
+    <div class="v__pic"><img src="shared/thumbs/a.webp" alt="Первый экран концепции «Сигнал»: клубок волокон превращается в ровные линии"><i class="v__rec">Рекомендуем</i></div>
+    <div class="v__t"><h2>A. Сигнал</h2><span>Прибор</span></div>
+    <p>Тёмная комната, оранжевый и&nbsp;холодный голубой. Прямые линии из&nbsp;первого экрана идут через всю страницу и&nbsp;становятся графиком результата.</p>
+    <span class="v__go">Открыть <span>→</span></span>
+  </a>
+  <a class="v" href="b-pixel/index.html" style="--c:#ff5e1a;--ct:#0d0704">
+    <div class="v__pic"><img src="shared/thumbs/b.webp" alt="Первый экран концепции «Пиксель»: крупный заголовок и пиксельная полоса"></div>
+    <div class="v__t"><h2>B. Пиксель</h2><span>Минимум</span></div>
+    <p>Белый лист, живой оранжевый и&nbsp;персиковый. Самая простая и&nbsp;лёгкая версия: без библиотек, пиксельный портрет сотрудника идёт вторым блоком.</p>
+    <span class="v__go">Открыть <span>→</span></span>
+  </a>
+  <a class="v" href="c-light/index.html" style="--c:#ff5e1a;--ct:#0d0704">
+    <div class="v__pic"><img src="shared/thumbs/c.webp" alt="Первый экран концепции «Лёгкость»: оранжевый стеклянный узел"></div>
+    <div class="v__t"><h2>C. Лёгкость</h2><span>Стекло</span></div>
+    <p>Оранжевое стекло, строгий гротеск и&nbsp;моноширинный акцент. Живой узел тает в&nbsp;шар, а&nbsp;задачи растворяются в&nbsp;нём.</p>
+    <span class="v__go">Открыть <span>→</span></span>
+  </a>
+</main>
+
+<section class="s" id="choice">
+  <p class="s__l">Рекомендация</p>
+  <h2>Лучшее решение для&nbsp;АИТЕХ: концепция A «Сигнал»</h2>
+  <p class="lead">Её образ объясняет продукт без слов: запутанный процесс входит, ровный результат выходит. Кроме того, только в&nbsp;ней заказчик сразу видит, что изменится именно в&nbsp;его&nbsp;бизнесе.</p>
+  <div class="g g--4">
+    <article class="b"><i>01</i><h3>Отвечает на&nbsp;главный вопрос</h3><p>Вкладки для&nbsp;самозанятых, ИП и&nbsp;микробизнеса, малого и&nbsp;среднего бизнеса, B2B показывают задачу и&nbsp;изменения в&nbsp;цифрах. Заказчик находит себя за&nbsp;один клик.</p></article>
+    <article class="b"><i>02</i><h3>Одна идея на&nbsp;всю страницу</h3><p>Линии первого экрана не&nbsp;исчезают: они ведут к&nbsp;сотруднику, проходят сквозь отрасли, становятся графиком и&nbsp;в&nbsp;финале сходятся в&nbsp;одну.</p></article>
+    <article class="b"><i>03</i><h3>Готова стать большим сайтом</h3><p>Каждой должности и&nbsp;отрасли соответствует своя 3D-миниатюра в&nbsp;едином стиле. Каталог растёт как штат компании и&nbsp;не&nbsp;выглядит магазином.</p></article>
+    <article class="b"><i>04</i><h3>Легко переходит в&nbsp;рекламу</h3><p>Клубок и&nbsp;ровные линии, оранжевый и&nbsp;холодный голубой, крупное слово «Простое» легко узнать в&nbsp;баннере, презентации и&nbsp;соцсетях.</p></article>
+  </div>
+  <div class="g g--3">
+    <article class="b b--on"><h3>Что учесть, выбирая A</h3><p>Перед запуском нужны реальные цифры внедрений: сейчас в&nbsp;блоке результатов условные примеры. Первый экран, ленту и&nbsp;линии на&nbsp;Тильде придётся делать кодом.</p></article>
+    <article class="b"><h3>Когда лучше B «Пиксель»</h3><p>Если важнее всего срок, бюджет и&nbsp;возможность менять страницу без разработчика. Это самая лёгкая и&nbsp;самая простая в&nbsp;переносе версия.</p></article>
+    <article class="b"><h3>Когда лучше C «Лёгкость»</h3><p>Если главная задача сайта в&nbsp;имидже и&nbsp;сильном первом впечатлении. Блок результатов в&nbsp;этом случае стоит перенести из&nbsp;A.</p></article>
+  </div>
+</section>
+
+<section class="s" id="compare">
+  <p class="s__l">Сравнение</p>
+  <h2>Три концепции по&nbsp;тем критериям, которые влияют на&nbsp;выбор</h2>
+  <div class="tw"><table>
+    <thead><tr><th>Критерий</th><th>A. Сигнал<span>Рекомендуем</span></th><th>B. Пиксель</th><th>C. Лёгкость</th></tr></thead>
+    <tbody>
+      <tr><th>Первое впечатление</th><td>Сильное, инженерное</td><td>Спокойное, чистое</td><td>Самое яркое: живой стеклянный узел</td></tr>
+      <tr><th>Что я получу</th><td>Графики по&nbsp;типам заказчиков</td><td>Карточка должности и&nbsp;общие цифры</td><td>Карта «было и&nbsp;стало», общие цифры</td></tr>
+      <tr><th>Полуробот</th><td>3D-бюст, к&nbsp;которому сходятся линии задач</td><td>Пиксельный портрет, проявляется из&nbsp;шума</td><td>Стеклянный бюст, он же в&nbsp;чате</td></tr>
+      <tr><th>Рост до&nbsp;большого сайта</th><td>Миниатюра на&nbsp;каждую должность и&nbsp;отрасль</td><td>Самый быстрый: таблицы и&nbsp;текст</td><td>Стеклянный объект на&nbsp;каждую должность</td></tr>
+      <tr><th>Вес страницы</th><td>686 КБ</td><td>104 КБ</td><td>687 КБ</td></tr>
+      <tr><th>Перенос на&nbsp;Тильду</th><td>Средняя сложность</td><td>Низкая сложность</td><td>Средняя, 3D-узел сложнее</td></tr>
+      <tr><th>Правки без разработчика</th><td>Тексты и&nbsp;обычные блоки</td><td>Почти всё</td><td>Тексты и&nbsp;обычные блоки</td></tr>
+      <tr><th>Главный риск</th><td>Без реальных цифр блок результатов теряет силу</td><td>Может показаться слишком простой для&nbsp;имиджа</td><td>На слабых устройствах 3D придётся заменить картинкой</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="s" id="market">
+  <p class="s__l">Рынок</p>
+  <h2>Почему это&nbsp;выделит АИТЕХ среди конкурентов</h2>
+  <p class="lead">Мы посмотрели главные страницы SalesAgent, Swift Agents и&nbsp;«Реплики». У этих компаний много общего в&nbsp;подаче, и&nbsp;именно здесь у&nbsp;АИТЕХ есть свободное место.</p>
+  <div class="g g--4">
+    <article class="b"><i>Образ</i><h3>Не чат и&nbsp;не&nbsp;оператор</h3><p>На просмотренных сайтах главный образ это&nbsp;окно чата или фото девушки в&nbsp;гарнитуре. Полуробот сразу говорит о&nbsp;продукте честно: общается как человек, работает как система.</p></article>
+    <article class="b"><i>Цвет</i><h3>Свой оранжевый</h3><p>В интерфейсах у&nbsp;них ведут тёмно-фиолетовый, синий и&nbsp;лаймовый. Фирменный оранжевый АИТЕХ не&nbsp;совпадает ни&nbsp;с&nbsp;одним из&nbsp;них и&nbsp;работает на&nbsp;узнаваемость.</p></article>
+    <article class="b"><i>Аудитория</i><h3>Разговор с&nbsp;каждым заказчиком</h3><p>На этих главных страницах мы не&nbsp;нашли отдельного обращения к&nbsp;самозанятым, ИП и&nbsp;микробизнесу. По данным Yandex AI Studio, 86% пользователей ИИ-агентов на&nbsp;её&nbsp;платформе это&nbsp;малый и&nbsp;средний бизнес.</p></article>
+    <article class="b"><i>Доверие</i><h3>Реестр вместо обещаний</h3><p>В&nbsp;обзоре Business FM цифры роста исходят от&nbsp;самих компаний, независимых данных там нет. У АИТЕХ есть проверяемый факт: запись №&nbsp;32900 в&nbsp;Реестре российского ПО. На трёх просмотренных главных страницах упоминания реестра мы не&nbsp;нашли.</p></article>
+  </div>
+  <p>Это наблюдения по трём сайтам, близким к АИТЕХ по подаче, на&nbsp;31 октября 2026 года. Более широкая картина в&nbsp;матрице ниже: например, Just AI тоже упоминает реестр и&nbsp;малый бизнес. Гарантировать результат они не&nbsp;могут: рост заявок покажут запуск и&nbsp;аналитика. Подача даёт заявке шанс, а&nbsp;окончательно убеждают реальные кейсы.</p>
+</section>
+
+<section class="s" id="rivals">
+  <p class="s__l">Конкуренты</p>
+  <h2>С&nbsp;кем АИТЕХ будут сравнивать</h2>
+  <div class="rv">
+    <a href="https://sales-agent.ru" target="_blank" rel="noopener"><b>SalesAgent <span>↗</span></b>AI-продавец для&nbsp;сайта, запуск за&nbsp;несколько минут</a>
+    <a href="https://swiftagents.ru" target="_blank" rel="noopener"><b>Swift Agents <span>↗</span></b>Внедрение ИИ-агентов под ключ</a>
+    <a href="https://thereplica.ru/" target="_blank" rel="noopener"><b>«Реплика» <span>↗</span></b>Голосовые AI-агенты для&nbsp;продаж и&nbsp;сервиса</a>
+    <a href="https://aistudio.yandex.ru/" target="_blank" rel="noopener"><b>Yandex AI Studio <span>↗</span></b>Платформа для&nbsp;создания собственных агентов</a>
+    <a href="https://just-ai.com/" target="_blank" rel="noopener"><b>Just AI <span>↗</span></b>Агентная платформа для&nbsp;корпораций и&nbsp;продукты для&nbsp;малого бизнеса</a>
+    <a href="https://neuro.net/ru/" target="_blank" rel="noopener"><b>Neuro.net <span>↗</span></b>Голосовые роботы и&nbsp;контакт-центр</a>
+    <a href="https://zvonobot.ru/" target="_blank" rel="noopener"><b>Zvonobot <span>↗</span></b>Сервис автоматизации звонков с&nbsp;ИИ</a>
+    <a href="https://dodigital.ru/" target="_blank" rel="noopener"><b>Do Digital <span>↗</span></b>Внедрение ИИ в&nbsp;бизнес под ключ</a>
+  </div>
+  <h3>Матрица возможностей</h3>
+  <div class="tw"><table class="mx">
+    <thead><tr><th scope="col">Компания</th><th scope="col">Голосовые агенты</th><th scope="col">Мессенджеры</th><th scope="col">Подача как сотрудника</th><th scope="col">Разработка под задачу</th><th scope="col">Запуск своими силами</th><th scope="col">Малый бизнес</th><th scope="col">Корпорации</th><th scope="col">Реестр ПО</th><th scope="col">Своя инфраструктура</th></tr></thead>
+    <tbody>
+      <tr class="me"><th scope="row">АИТЕХ</th><td><i aria-label="указано"></i></td><td><i aria-label="указано"></i></td><td><i aria-label="указано"></i></td><td><i aria-label="указано"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i class="p" aria-label="заложено в&nbsp;концепции A"></i></td><td><i aria-label="указано"></i></td><td><i aria-label="указано"></i></td><td><i aria-label="указано"></i></td></tr>
+      <tr><th scope="row">SalesAgent</th><td><i class="n" aria-label="не нашли"></i></td><td><i aria-label="указано"></i></td><td><i aria-label="указано"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i aria-label="указано"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i class="n" aria-label="не нашли"></i></td></tr>
+      <tr><th scope="row">Swift Agents</th><td><i aria-label="указано"></i></td><td><i aria-label="указано"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i aria-label="указано"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i class="n" aria-label="не нашли"></i></td></tr>
+      <tr><th scope="row">«Реплика»</th><td><i aria-label="указано"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i aria-label="указано"></i></td><td><i aria-label="указано"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i aria-label="указано"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i class="n" aria-label="не нашли"></i></td></tr>
+      <tr><th scope="row">Yandex AI Studio</th><td><i aria-label="указано"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i aria-label="указано"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i aria-label="указано"></i></td></tr>
+      <tr><th scope="row">Just AI</th><td><i aria-label="указано"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i aria-label="указано"></i></td><td><i aria-label="указано"></i></td><td><i aria-label="указано"></i></td><td><i aria-label="указано"></i></td><td><i aria-label="указано"></i></td></tr>
+      <tr><th scope="row">Neuro.net</th><td><i aria-label="указано"></i></td><td><i aria-label="указано"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i aria-label="указано"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i aria-label="указано"></i></td></tr>
+      <tr><th scope="row">Zvonobot</th><td><i aria-label="указано"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i aria-label="указано"></i></td><td><i aria-label="указано"></i></td><td><i aria-label="указано"></i></td><td><i aria-label="указано"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i class="n" aria-label="не нашли"></i></td></tr>
+      <tr><th scope="row">Do Digital</th><td><i aria-label="указано"></i></td><td><i aria-label="указано"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i aria-label="указано"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i class="n" aria-label="не нашли"></i></td><td><i aria-label="указано"></i></td></tr>
+    </tbody>
+  </table></div>
+  <p class="lg"><span><i></i>Указано на&nbsp;главной странице</span><span><i class="n"></i>Не нашли на&nbsp;главной: это не&nbsp;значит, что возможности нет</span><span><i class="p"></i>Заложено в&nbsp;концепции A, нужно подтвердить</span></p>
+  <p class="lead">Вывод: сами возможности на&nbsp;рынке есть у&nbsp;многих. Среди просмотренных компаний только АИТЕХ сочетает подачу как сотрудника, разработку под задачу, запись в&nbsp;реестре и&nbsp;размещение в&nbsp;своей инфраструктуре. Отдельно к&nbsp;самозанятым и&nbsp;ИП не&nbsp;обращается никто из&nbsp;восьми.</p>
+  <h3>Карта позиционирования</h3>
+  <div class="mp" role="img" aria-label="Карта: по&nbsp;вертикали подача от&nbsp;технологии к&nbsp;сотруднику, по&nbsp;горизонтали от&nbsp;готового сервиса к&nbsp;разработке под задачу. АИТЕХ находится в&nbsp;правом верхнем углу: сотрудник, разработка под задачу.">
+    <span class="mp__a mp__a--t">Подача как сотрудника</span>
+    <span class="mp__a mp__a--b">Подача как технологии</span>
+    <span class="mp__a mp__a--l">Готовый сервис</span>
+    <span class="mp__a mp__a--r">Под задачу</span>
+    <span class="mp__d" style="--x:14%;--y:14%">SalesAgent</span><span class="mp__d" style="--x:50%;--y:17%">«Реплика»</span><span class="mp__d mp__d--l" style="--x:82%;--y:52%">Swift Agents</span><span class="mp__d mp__d--l" style="--x:86%;--y:78%">Do Digital</span><span class="mp__d" style="--x:66%;--y:70%">Neuro.net</span><span class="mp__d" style="--x:33%;--y:72%">Zvonobot</span><span class="mp__d" style="--x:38%;--y:57%">Just AI</span><span class="mp__d" style="--x:7%;--y:88%">Yandex AI Studio</span>
+    <span class="mp__d mp__d--me mp__d--l" style="--x:86%;--y:14%">АИТЕХ</span>
+  </div>
+  <p>Карта это наша экспертная оценка по&nbsp;текстам главных страниц, а&nbsp;матрица отражает то, что на&nbsp;них указано на&nbsp;31 октября 2026 года. Перед показом клиенту данные об АИТЕХ стоит сверить с&nbsp;компанией.</p>
+</section>
+
+<section class="s" id="concepts">
+  <p class="s__l">Описание концепций</p>
+  <h2>Что сделано в&nbsp;каждой концепции и&nbsp;почему</h2>
+  <div>
+    <article class="c">
+      <div class="c__side">
+        <img src="shared/thumbs/a.webp" alt="" loading="lazy">
+        <h3>A. Сигнал</h3>
+        <p class="c__pitch">«Запутанное остаётся у&nbsp;нас. Вам достаётся ровная линия результата».</p>
+        <a class="v__go v__go--s" href="a-signal/index.html">Открыть <span>→</span></a>
+      </div>
+      <div class="g g--2">
+        <div><h3>Что сделано</h3><ul>
+          <li>Клубок проводов на&nbsp;первом экране распрямляется при прокрутке, а&nbsp;счётчик сложности падает со&nbsp;100% до&nbsp;нуля к&nbsp;концу страницы.</li>
+          <li>Полуробот: линии задач входят в&nbsp;голову, линии результатов выходят из&nbsp;плеча.</li>
+          <li>Каталог и&nbsp;отрасли в&nbsp;одном стиле 3D-миниатюр с&nbsp;оранжевой и&nbsp;голубой деталью.</li>
+          <li>Блок результатов с&nbsp;вкладками по&nbsp;типам заказчиков и&nbsp;белый спокойный блок цифр.</li>
+        </ul></div>
+        <div><h3>Почему так</h3><ul>
+          <li>Линии наглядно показывают обещание «сложное делаем простым» и&nbsp;не&nbsp;требуют пояснений.</li>
+          <li>Тёмный фон и&nbsp;один яркий цвет создают ощущение точного прибора: это&nbsp;вызывает доверие к&nbsp;технологии.</li>
+          <li>Белые миниатюры делают сложный продукт понятным и&nbsp;дружелюбным.</li>
+          <li>Голубой даёт второй акцент и&nbsp;отделяет результат от&nbsp;основного оранжевого.</li>
+        </ul></div>
+        <div><h3>Чем сильна на&nbsp;рынке</h3><p>Заказчик приходит не&nbsp;за&nbsp;технологией, а&nbsp;за&nbsp;изменением в&nbsp;цифрах, и&nbsp;здесь это&nbsp;главный сюжет. Страница говорит на&nbsp;языке результата с&nbsp;разными типами бизнеса.</p></div>
+        <div><h3>Как показывать и&nbsp;рекламировать</h3><p>На презентации покажите переход клубка в&nbsp;линии, затем вкладки результатов. Для рекламы подойдёт пара «клубок и&nbsp;ровные линии»: её&nbsp;легко повторить в&nbsp;баннере, ролике и&nbsp;коммерческом предложении.</p></div>
+      </div>
+    </article>
+    <article class="c">
+      <div class="c__side">
+        <img src="shared/thumbs/b.webp" alt="" loading="lazy">
+        <h3>B. Пиксель</h3>
+        <p class="c__pitch">«Это не&nbsp;чат-бот. Это сотрудник с&nbsp;должностной инструкцией».</p>
+        <a class="v__go v__go--s" href="b-pixel/index.html">Открыть <span>→</span></a>
+      </div>
+      <div class="g g--2">
+        <div><h3>Что сделано</h3><ul>
+          <li>Страница пересобрана заново и&nbsp;работает без внешних библиотек.</li>
+          <li>Вторым блоком идёт пиксельный портрет, который проявляется из&nbsp;шума при прокрутке.</li>
+          <li>Каталог оформлен как штатное расписание: должность, задачи, формат.</li>
+          <li>Живой оранжевый, персиковые фоны и&nbsp;контрастный бирюзовый.</li>
+        </ul></div>
+        <div><h3>Почему так</h3><ul>
+          <li>Минимум приёмов: всё внимание достаётся смыслу и&nbsp;портрету.</li>
+          <li>Живой оранжевый выбран основным, потому что персиковый слишком бледный для&nbsp;кнопок и&nbsp;логотипа.</li>
+          <li>Пиксель напрямую связан с&nbsp;темой: шум превращается в&nbsp;ясный образ.</li>
+          <li>Простая структура почти целиком собирается средствами Тильды.</li>
+        </ul></div>
+        <div><h3>Чем сильна на&nbsp;рынке</h3><p>Скорость и&nbsp;ясность. Страница весит около 100&nbsp;КБ и&nbsp;открывается быстро, а&nbsp;портрет легко запомнить. На фоне насыщенных сайтов такая сдержанность читается как уверенность.</p></div>
+        <div><h3>Как показывать и&nbsp;рекламировать</h3><p>На презентации покажите, как портрет проявляется при прокрутке, и&nbsp;таблицу должностей. В рекламе пиксельный сотрудник легко становится персонажем бренда: портрет, стикеры, короткая анимация.</p></div>
+      </div>
+    </article>
+    <article class="c">
+      <div class="c__side">
+        <img src="shared/thumbs/c.webp" alt="" loading="lazy">
+        <h3>C. Лёгкость</h3>
+        <p class="c__pitch">«Сложное тает. Остаётся одна ясная форма».</p>
+        <a class="v__go v__go--s" href="c-light/index.html">Открыть <span>→</span></a>
+      </div>
+      <div class="g g--2">
+        <div><h3>Что сделано</h3><ul>
+          <li>Живой оранжевый стеклянный узел при прокрутке тает в&nbsp;гладкий шар, а&nbsp;задачи растворяются в&nbsp;нём.</li>
+          <li>Карта процесса: 14 запутанных шагов сводятся к&nbsp;трём.</li>
+          <li>Стеклянный полуробот, его&nbsp;же лицо стоит на&nbsp;аватаре в&nbsp;чате телефона.</li>
+          <li>Строгий гротеск Geologica и&nbsp;моноширинный акцент JetBrains Mono вместо курсива.</li>
+        </ul></div>
+        <div><h3>Почему так</h3><ul>
+          <li>Узел и&nbsp;шар показывают упрощение как живое физическое превращение.</li>
+          <li>Стекло передаёт лёгкость и&nbsp;прозрачность работы агента.</li>
+          <li>Меньше скруглений и&nbsp;ровные цвета добавляют строгости и&nbsp;деловой тон.</li>
+          <li>Моноширинный шрифт сразу задаёт технологичный характер.</li>
+        </ul></div>
+        <div><h3>Чем сильна на&nbsp;рынке</h3><p>Самый сильный первый экран из&nbsp;трёх. Живая 3D-форма запоминается и&nbsp;выделяет компанию как технологического лидера, особенно перед крупным заказчиком.</p></div>
+        <div><h3>Как показывать и&nbsp;рекламировать</h3><p>На презентации начните с&nbsp;превращения узла в&nbsp;шар на&nbsp;большом экране, затем покажите карту процесса. В рекламе стеклянные объекты и&nbsp;бюст создают дорогой, узнаваемый визуальный ряд для&nbsp;презентаций и&nbsp;видео.</p></div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="s src" id="sources">
+  <p class="s__l">Источники</p>
+  <p>Сайты: <a href="https://sales-agent.ru" target="_blank" rel="noopener">SalesAgent</a>, <a href="https://swiftagents.ru" target="_blank" rel="noopener">Swift Agents</a>, <a href="https://thereplica.ru/" target="_blank" rel="noopener">«Реплика»</a>, просмотрены 31 октября 2026 года.</p>
+  <p>Доля малого и&nbsp;среднего бизнеса: <a href="https://yandex.cloud/ru/blog/yandex-ai-studio-for-business" target="_blank" rel="noopener">блог Yandex Cloud, 2 марта 2026</a>. Заявления о&nbsp;росте без независимых данных: <a href="https://www.bfm.ru/news/591232" target="_blank" rel="noopener">Business FM, 30 ноября 2025</a>.</p>
+  <p>Описания и&nbsp;матрица конкурентов составлены по их главным страницам, ссылки выше.</p>
+  <p>Цифры веса страниц указаны без учёта собственных скриптов Тильды.</p>
+</section>
+<footer>
+  <span>Демо-макеты: собрана только главная, остальные разделы открывают заглушку.</span>
+  <span>Внутри макета переключайте концепции клавишами <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd></span>
+</footer>
+</body>
+</html>
