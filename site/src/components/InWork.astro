@@ -1,5 +1,6 @@
 ---
-/* 5. В работе: диалоги в реальном времени, как в A. Сценарии демонстрационные */
+/* 5. В работе: плашка с диалогами A. Сценарии демонстрационные и проигрываются сами,
+   пока блок на экране; клик по сценарию переключает диалог */
 import { HOW, DIALOGS } from '../data/content';
 ---
 <section class="how" id="how" data-ui="dark" data-how>
@@ -19,12 +20,14 @@ import { HOW, DIALOGS } from '../data/content';
       </div>
       <div class="panel" data-panel>
         <div class="panel__top"><span data-panel-title>{DIALOGS[0].title}</span><span class="panel__live"><i></i>Агент в&nbsp;работе</span></div>
-        <div class="panel__wave" data-wave aria-hidden="true"></div>
         <div class="panel__chat" data-chat aria-live="off"></div>
+        <div class="panel__aside">
+        <div class="panel__wave" data-wave aria-hidden="true"></div>
         <div class="panel__meta">
           <div><span>{HOW.meta.reaction}</span><b>{HOW.meta.reactionValue}</b></div>
           <div><span>{HOW.meta.tone}</span><b data-panel-tone>{DIALOGS[0].tone}</b></div>
           <div><span>{HOW.meta.result}</span><b class="is-signal" data-panel-result>…</b></div>
+        </div>
         </div>
       </div>
     </div>

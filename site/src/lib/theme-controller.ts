@@ -2,6 +2,12 @@
    который ставит встроенный скрипт в <head>; здесь — смена, сохранение и события. */
 import { DEFAULT_PALETTE, STORAGE_KEY, getPalette, isPaletteId, type Palette, type PaletteId } from '../data/palettes';
 
+declare global {
+  interface Window {
+    __art?: (img: HTMLImageElement) => void;
+  }
+}
+
 const root = document.documentElement;
 type Listener = (p: Palette) => void;
 const listeners = new Set<Listener>();
@@ -28,6 +34,9 @@ export function setPalette(id: PaletteId) {
   themingTimer = window.setTimeout(() => root.classList.remove('is-theming'), 320);
   root.setAttribute('data-palette', id);
   document.querySelector('meta[name="theme-color"]')?.setAttribute('content', p.bg);
+  /* Перекрашенные иллюстрации: адрес собирает функция из встроенного скрипта в <head> */
+  root.setAttribute('data-art', p.art);
+  document.querySelectorAll<HTMLImageElement>('img[data-art-tpl]').forEach((img) => window.__art?.(img));
   try {
     localStorage.setItem(STORAGE_KEY, id);
   } catch {

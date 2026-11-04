@@ -25,11 +25,14 @@ export interface Palette {
   metalBase: string;
   metalLight: string;
   metalHighlight: string;
+  /* Набор перекрашенных иллюстраций (public/img/art): у палитр с одинаковым металлом он общий */
+  art: 'signal' | 'olive' | 'bronze' | 'gold';
 }
 
 export const PALETTES = [
   {
     id: 'signal',
+    art: 'signal',
     name: 'Чёрный / оранжевый',
     bg: '#0B0B0C',
     surface: '#141416',
@@ -49,6 +52,7 @@ export const PALETTES = [
   },
   {
     id: 'olive-signal',
+    art: 'signal',
     name: 'Тёмная олива / оранжевый',
     bg: '#10130D',
     surface: '#181D14',
@@ -68,6 +72,7 @@ export const PALETTES = [
   },
   {
     id: 'olive',
+    art: 'olive',
     name: 'Графит / яркая олива',
     bg: '#0D0E0B',
     surface: '#171914',
@@ -87,6 +92,7 @@ export const PALETTES = [
   },
   {
     id: 'bronze',
+    art: 'bronze',
     name: 'Графит / бронза',
     bg: '#0B0E0F',
     surface: '#151B1E',
@@ -106,6 +112,7 @@ export const PALETTES = [
   },
   {
     id: 'gold',
+    art: 'gold',
     name: 'Уголь / золото',
     bg: '#101110',
     surface: '#1B1D19',

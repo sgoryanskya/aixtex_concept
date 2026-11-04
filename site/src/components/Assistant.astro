@@ -1,7 +1,11 @@
 ---
-/* 3. Кто это: бюст A, сложное входит слева, результат выходит справа */
+/* 3. Кто это: стеклянная девушка из концепции C (по просьбе заказчика вместо мраморного бюста A),
+   сложное входит слева в механизм головы, результат выходит справа */
 import { ASSISTANT } from '../data/content';
-import { asset } from '../config';
+import { START_PALETTE, asset } from '../config';
+import { getPalette } from '../data/palettes';
+
+const art = getPalette(START_PALETTE).art;
 
 const inY = [56, 63, 70, 77, 84];
 const outY = [63, 72, 81];
@@ -9,7 +13,8 @@ const outY = [63, 72, 81];
 <section class="asst" id="assistant" data-ui="dark" data-asst>
   <div class="asst__stage">
     <svg class="ln" data-ln="asst" aria-hidden="true"></svg>
-    <img class="asst__bust" src={asset('img/assistant.webp')} alt={ASSISTANT.alt} loading="lazy" decoding="async" data-asst-bust>
+    <img class="asst__bust" src={asset(`img/art/glass-${art}.webp`)} data-art-tpl={asset('img/art/glass-{p}.webp')} data-orig={asset('img/assistant.webp')} alt={ASSISTANT.alt} width="1024" height="1024" loading="lazy" decoding="async" data-asst-bust>
+    <script is:inline>window.__art && window.__art(document.currentScript.previousElementSibling);</script>
     <div class="asst__l">
       <p class="lbl">{ASSISTANT.label}</p>
       <h2 class="h2 h2--t" data-split>{ASSISTANT.title}</h2>

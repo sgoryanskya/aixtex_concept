@@ -30,10 +30,9 @@ const ogImage = SITE_URL ? SITE_URL + asset('og.jpg') : asset('og.jpg');
   {canonical && <meta property="og:url" content={canonical}>}
   <meta name="theme-color" content={start.bg}>
   <link rel="icon" href={asset('favicon.svg')} type="image/svg+xml">
-  <link rel="preload" as="image" href={asset('img/hero.webp')} fetchpriority="high">
   <link rel="preload" as="font" type="font/woff2" href={sofiaCyr} crossorigin>
   <style is:inline set:html={paletteCss}></style>
-  <script is:inline define:vars={{ ids: PALETTE_IDS, review: REVIEW_MODE, start: START_PALETTE, approved: APPROVED_PALETTE, key: STORAGE_KEY, bgs: Object.fromEntries(PALETTES.map((p) => [p.id, p.bg])) }}>
+  <script is:inline define:vars={{ ids: PALETTE_IDS, review: REVIEW_MODE, start: START_PALETTE, approved: APPROVED_PALETTE, key: STORAGE_KEY, bgs: Object.fromEntries(PALETTES.map((p) => [p.id, p.bg])), arts: Object.fromEntries(PALETTES.map((p) => [p.id, p.art])), heroTpl: asset('img/art/hero-{v}-{p}.webp'), heroOrig: asset('img/hero.webp') }}>
     /* Палитра применяется до первой отрисовки: адрес → сохранённый выбор → стартовая */
     var d = document.documentElement;
     var id = approved;
@@ -54,6 +53,27 @@ const ogImage = SITE_URL ? SITE_URL + asset('og.jpg') : asset('og.jpg');
     var tc = document.querySelector('meta[name="theme-color"]');
     if (tc && bgs[id]) tc.setAttribute('content', bgs[id]);
     d.classList.add('js');
+
+    /* Иллюстрации перекрашены под металл палитры. В режиме согласования
+       ?art=orig показывает исходные кадры A, ?hero-art=b — пучок со скруткой */
+    var qa = new URLSearchParams(location.search);
+    d.setAttribute('data-art', arts[id] || 'signal');
+    d.setAttribute('data-hero-art', review && qa.get('hero-art') === 'b' ? 'b' : 'a');
+    if (review && qa.get('art') === 'orig') d.setAttribute('data-art-orig', '');
+    var artSrc = function (tpl, orig) {
+      if (orig && d.hasAttribute('data-art-orig')) return orig;
+      return tpl.replace('{p}', d.getAttribute('data-art')).replace('{v}', d.getAttribute('data-hero-art'));
+    };
+    window.__art = function (img) {
+      var src = artSrc(img.getAttribute('data-art-tpl'), img.getAttribute('data-orig'));
+      if (img.getAttribute('src') !== src) img.setAttribute('src', src);
+    };
+    var pl = document.createElement('link');
+    pl.rel = 'preload';
+    pl.as = 'image';
+    pl.setAttribute('fetchpriority', 'high');
+    pl.href = artSrc(heroTpl, heroOrig);
+    document.head.appendChild(pl);
   </script>
   <noscript><style>.drawer{display:block!important;position:static!important;inset:auto!important;width:auto!important;max-width:none!important;height:auto!important;margin:24px 0!important;transform:none!important}.drawer::backdrop{display:none}.drawer__x{display:none!important}</style></noscript>
 </head>

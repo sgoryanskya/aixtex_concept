@@ -1,8 +1,11 @@
 ---
-/* 7. Отрасли A: вертикальная прокрутка ведёт ленту вбок, по ленте идёт рельс линий */
+/* 7. Отрасли A: вертикальная прокрутка ведёт ленту вбок, по ленте идёт рельс линий.
+   Сцены те же, что у A, в фарфоре и металле палитры (бриф v3, раздел 8.2) */
 import { SECTORS } from '../data/content';
-import { asset } from '../config';
+import { getPalette } from '../data/palettes';
+import { START_PALETTE, asset } from '../config';
 
+const art = getPalette(START_PALETTE).art;
 const total = String(SECTORS.items.length).padStart(2, '0');
 ---
 <section class="ind" id="sectors" data-ui="dark" data-ind>
@@ -21,7 +24,10 @@ const total = String(SECTORS.items.length).padStart(2, '0');
       {SECTORS.items.map((it) => (
         <article class="ind__p" data-ind-p>
           <div class="ind__txt"><h3>{it.title}</h3><p>{it.text}</p></div>
-          <div class="ind__img"><img src={asset(`img/${it.img}.webp`)} alt={it.alt} loading="lazy" decoding="async"></div>
+          <div class="ind__img">
+            <img src={asset(`img/art/${it.img}-${art}.webp`)} data-art-tpl={asset(`img/art/${it.img}-{p}.webp`)} data-orig={asset(`img/${it.img}.webp`)} alt={it.alt} width="1040" height="1040" loading="lazy" decoding="async">
+            <script is:inline>window.__art && window.__art(document.currentScript.previousElementSibling);</script>
+          </div>
         </article>
       ))}
     </div>

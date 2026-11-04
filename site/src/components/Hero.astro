@@ -1,16 +1,20 @@
 ---
 /* 1. Первый экран A: камера едет от клубка к ровным линиям, второе слово называет ценность */
 import { HERO, HERO_VARIANTS, HERO_VARIANT } from '../data/content';
-import { REVIEW_MODE, asset } from '../config';
+import { REVIEW_MODE, START_PALETTE, asset } from '../config';
+import { getPalette } from '../data/palettes';
 
 const v = HERO_VARIANTS[HERO_VARIANT];
 /* В режиме согласования второй вариант включается параметром ?hero=managed */
 const variants = REVIEW_MODE ? JSON.stringify(HERO_VARIANTS) : undefined;
+/* Кадр стартовой палитры стоит в разметке; другую палитру подставляет скрипт сразу после картинки */
+const art = getPalette(START_PALETTE).art;
 ---
 <section class="hero" id="top" data-ui="dark">
   <div class="hero__stage">
     <div class="hero__media" data-hero-media>
-      <img src={asset('img/hero.webp')} alt={HERO.alt} width="2000" height="1125" fetchpriority="high">
+      <img src={asset(`img/art/hero-a-${art}.webp`)} data-art-tpl={asset('img/art/hero-{v}-{p}.webp')} data-orig={asset('img/hero.webp')} alt={HERO.alt} width="2000" height="1125" fetchpriority="high">
+      <script is:inline>window.__art && window.__art(document.currentScript.previousElementSibling);</script>
       <canvas class="hero__pulse" data-hero-pulse></canvas>
       <div class="hero__glow"></div>
     </div>

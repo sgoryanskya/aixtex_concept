@@ -161,6 +161,25 @@ function pulseColors() {
   return { c0: sig.join(','), c1: mixRgb(sig, light, 0.38).join(','), c2: mixRgb(light, hi, 0.5).join(',') };
 }
 
+/* Вариант Б первого экрана: к правому краю пучок делится на две пряди, которые обвивают друг друга.
+   Формула та же, что у скрипта, который перекрашивал кадр: центр и полувысота пучка сняты с hero.webp */
+const TW = { yc: 537 / 1125, hh: 140 / 1125, x0: 0.62, turns: 1.1 };
+const smooth01 = (a: number, b: number, x: number) => {
+  const t = clamp((x - a) / (b - a), 0, 1);
+  return t * t * (3 - 2 * t);
+};
+function twistAt(l: number, x: number) {
+  if (x <= TW.x0) return { y: l, depth: 1 };
+  const q = (x - TW.x0) / (1 - TW.x0);
+  const th = 2 * Math.PI * TW.turns * q ** 1.5;
+  const sgn = l < TW.yc ? -1 : 1;
+  const r = (TW.hh / 2) * (1 + 0.38 * smooth01(0, 0.35, q));
+  const z = -sgn * Math.sin(th);
+  const half = (TW.hh / 2) * (0.72 + 0.28 * Math.abs(Math.cos(th))) * (1 + 0.1 * z);
+  const u = (l - (TW.yc + (sgn * TW.hh) / 2)) / (TW.hh / 2);
+  return { y: TW.yc + sgn * r * Math.cos(th) + u * half, depth: 0.38 + 0.62 * ((z + 1) / 2) };
+}
+
 /* Импульсы бегут по волокнам: координаты линий сняты с исходного кадра */
 function heroPulses() {
   const c = $<HTMLCanvasElement>('[data-hero-pulse]');
@@ -198,18 +217,29 @@ function heroPulses() {
         p.l = pick();
         p.v = 0.0009 + Math.random() * 0.0016;
       }
-      const y = p.l * H;
       const x2 = p.x * W;
       const x1 = (p.x - p.len) * W;
+      /* в варианте Б импульс идёт по своей пряди и тускнеет, когда прядь уходит назад */
+      const twisted = root.getAttribute('data-hero-art') === 'b' && !root.hasAttribute('data-art-orig');
+      const a = twisted ? p.a * twistAt(p.l, p.x).depth : p.a;
       const g = ctx.createLinearGradient(x1, 0, x2, 0);
       g.addColorStop(0, `rgba(${col.c0},0)`);
-      g.addColorStop(0.75, `rgba(${col.c1},${0.55 * p.a})`);
-      g.addColorStop(1, `rgba(${col.c2},${p.a})`);
+      g.addColorStop(0.75, `rgba(${col.c1},${0.55 * a})`);
+      g.addColorStop(1, `rgba(${col.c2},${a})`);
       ctx.strokeStyle = g;
       ctx.lineWidth = 1.5;
       ctx.beginPath();
-      ctx.moveTo(x1, y);
-      ctx.lineTo(x2, y);
+      if (twisted) {
+        for (let k = 0; k <= 12; k++) {
+          const xf = p.x - p.len + (p.len * k) / 12;
+          const y = twistAt(p.l, xf).y * H;
+          if (k) ctx.lineTo(xf * W, y);
+          else ctx.moveTo(xf * W, y);
+        }
+      } else {
+        ctx.moveTo(x1, p.l * H);
+        ctx.lineTo(x2, p.l * H);
+      }
       ctx.stroke();
     });
     requestAnimationFrame(tick);
@@ -275,6 +305,10 @@ function initReveals() {
     once: true,
     onEnter: (b) => gsap.to(b, { opacity: 1, y: 0, duration: 1, ease: 'expo.out', stagger: 0.07 }),
   });
+  /* линия масштаба «роль → отдел»: сигнал проходит по ней один раз */
+  $$('[data-scale]').forEach((el) =>
+    ScrollTrigger.create({ trigger: el, start: 'top 82%', once: true, onEnter: () => el.classList.add('is-in') }),
+  );
 }
 
 /* ---------- Карточки: задачи по плюсу ---------- */
@@ -356,6 +390,15 @@ function initDialogs() {
   }, 130);
   let current = -1;
   let tl: gsap.core.Timeline | null = null;
+  /* автопроигрывание: после итога пауза HOLD секунд и следующий сценарий; черта над сценарием показывает время */
+  const HOLD = 3.4;
+  let next: gsap.core.Tween | null = null;
+  const list = $('[data-how-steps]')!;
+  const queue = () => {
+    next?.kill();
+    next = gsap.delayedCall(HOLD, () => play((current + 1) % DIALOGS.length));
+    if (!visible) next.pause();
+  };
   const addMsg = (who: 'ai' | 'me', text: string) => {
     const m = document.createElement('div');
     m.className = 'msg msg--' + who;
@@ -376,7 +419,12 @@ function initDialogs() {
   const play = (i: number) => {
     if (i === current || !DIALOGS[i]) return;
     current = i;
-    steps.forEach((s, k) => s.classList.toggle('is-on', k === i));
+    next?.kill();
+    next = null;
+    steps.forEach((s, k) => {
+      s.classList.toggle('is-on', k === i);
+      s.classList.remove('is-run');
+    });
     const d = DIALOGS[i];
     tTitle.textContent = d.title;
     tTone.textContent = d.tone;
@@ -411,26 +459,36 @@ function initDialogs() {
       }
     });
     line.call(() => (tRes.textContent = d.result), undefined, '+=0.35');
+    line.call(queue, undefined, '+=0.01');
+    const li = steps[i];
+    li.style.setProperty('--dur', (line.duration() + HOLD).toFixed(2) + 's');
+    void li.offsetWidth;
+    li.classList.add('is-run');
+    if (!visible) line.pause();
   };
-  ScrollTrigger.create({ trigger: '[data-how]', start: 'top 60%', end: 'bottom top', onToggle: (t) => (visible = t.isActive), onEnter: () => play(0), onEnterBack: () => current < 0 && play(0) });
-  if (!isMobile() && !reduced) {
-    ScrollTrigger.create({
-      trigger: '[data-how]',
-      start: 'top top',
-      end: 'bottom bottom',
-      onUpdate: (t) => play(clamp(Math.floor(t.progress * 3), 0, 2)),
-    });
-  }
-  $$('[data-how-step]').forEach((b) => {
-    b.addEventListener('click', () => {
-      const i = Number(b.dataset.howStep);
-      if (isMobile() || reduced) return play(i);
-      const s = $('[data-how]')!;
-      const top = s.getBoundingClientRect().top + scrollY;
-      const span = s.offsetHeight - innerHeight;
-      scrollTo({ top: top + span * ((i + 0.3) / 3), behavior: 'smooth' });
-    });
+  ScrollTrigger.create({
+    trigger: '[data-how]',
+    start: 'top 70%',
+    end: 'bottom 30%',
+    onToggle: (t) => {
+      visible = t.isActive;
+      list.classList.toggle('is-paused', !visible);
+      if (!visible) {
+        tl?.pause();
+        next?.pause();
+        return;
+      }
+      if (current < 0) return play(0);
+      tl?.resume();
+      next?.resume();
+    },
   });
+  $$('[data-how-step]').forEach((b) =>
+    b.addEventListener('click', () => {
+      current = -1;
+      play(Number(b.dataset.howStep));
+    }),
+  );
 }
 
 /* ---------- Анатомия: слои расходятся по скроллу ---------- */
@@ -556,10 +614,12 @@ const LN: Record<string, (svg: SVGSVGElement, W: number, H: number) => void> = {
     const stage = svg.parentElement!;
     const box = stage.getBoundingClientRect();
     const b = $('[data-asst-bust]')!.getBoundingClientRect();
-    const hx = b.left - box.left + b.width * 0.56;
-    const hy = b.top - box.top + b.height * 0.32;
-    const sx = b.left - box.left + b.width * 0.6;
-    const sy = b.top - box.top + b.height * 0.76;
+    /* точки входа и выхода: у мраморного бюста A — голова и плечо, у стеклянной девушки — механизм за ухом и грудь */
+    const [ix, iy, ox, oy] = root.hasAttribute('data-art-orig') ? [0.56, 0.32, 0.6, 0.76] : [0.4, 0.29, 0.66, 0.8];
+    const hx = b.left - box.left + b.width * ix;
+    const hy = b.top - box.top + b.height * iy;
+    const sx = b.left - box.left + b.width * ox;
+    const sy = b.top - box.top + b.height * oy;
     const ys = (sel: string) => $$(sel, stage).map((l) => (parseFloat(l.style.getPropertyValue('--y')) / 100) * H);
     const inn = ys('.asst__tags--in li');
     const out = ys('.asst__tags--out li');
