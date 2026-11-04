@@ -40,7 +40,8 @@ export const PALETTES = [
     text: '#F4F3F0',
     accent: '#FF5E1A',
     onAccent: '#0D0704',
-    secondary: '#19D3FF',
+    // шампань вместо ледяного голубого: второй цвет тёплый и спокойный, как металл (бриф v3, открытый вопрос 4; голубой #19D3FF)
+    secondary: '#E9D5B7',
     paper: '#EFEFED',
     paperCard: '#F8F8F6',
     paperDeep: '#E5E5E2',
@@ -145,6 +146,24 @@ export const isPaletteId = (v: unknown): v is PaletteId =>
 
 export const getPalette = (id: PaletteId): Palette => PALETTES.find((p) => p.id === id) ?? PALETTES[0];
 
+const rgb = (h: string) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+const lum = (c: number[]) => {
+  const [r, g, b] = c.map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+};
+const ratio = (a: number[], b: number[]) => { const x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); };
+
+/* Акцент для мелкого текста на бумаге: тот же тон, утемнённый к цвету текста бумаги,
+   пока не наберёт 4,5:1 на самой тёмной бумаге палитры (бриф v3, раздел 15) */
+function accentOnPaper(p: Palette): string {
+  const a = rgb(p.accent), d = rgb(p.paperText), bg = rgb(p.paperDeep);
+  for (let k = 1; k >= 0; k -= 0.05) {
+    const c = a.map((v, i) => Math.round(v * k + d[i] * (1 - k)));
+    if (ratio(c, bg) >= 4.6) return '#' + c.map((v) => v.toString(16).padStart(2, '0')).join('');
+  }
+  return p.paperText;
+}
+
 /* Базовые переменные одной палитры; прозрачные оттенки и линии считаются в CSS через color-mix */
 export function paletteVars(p: Palette): string {
   return [
@@ -154,6 +173,7 @@ export function paletteVars(p: Palette): string {
     `--t1:${p.text}`,
     `--signal:${p.accent}`,
     `--on-signal:${p.onAccent}`,
+    `--signal-ink:${accentOnPaper(p)}`,
     `--ice:${p.secondary}`,
     `--fog:${p.paper}`,
     `--paper:${p.paperCard}`,
