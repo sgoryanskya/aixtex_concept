@@ -1,0 +1,30 @@
+---
+/* 7. Отрасли A: вертикальная прокрутка ведёт ленту вбок, по ленте идёт рельс линий */
+import { SECTORS } from '../data/content';
+import { asset } from '../config';
+
+const total = String(SECTORS.items.length).padStart(2, '0');
+---
+<section class="ind" id="sectors" data-ui="dark" data-ind>
+  <div class="ind__stage">
+    <div class="ind__head">
+      <p class="lbl">{SECTORS.label}</p>
+      <p class="ind__count" aria-hidden="true"><b data-ind-i>01</b> / {total}</p>
+    </div>
+    <div class="ind__track" data-ind-track>
+      <svg class="ln ind__rail" data-ln="rail" aria-hidden="true"></svg>
+      <article class="ind__intro">
+        <h2 class="h2 h2--t">{SECTORS.title}</h2>
+        <p>{SECTORS.text}</p>
+        <span class="ind__hint" aria-hidden="true">{SECTORS.hint}<i></i></span>
+      </article>
+      {SECTORS.items.map((it) => (
+        <article class="ind__p" data-ind-p>
+          <div class="ind__txt"><h3>{it.title}</h3><p>{it.text}</p></div>
+          <div class="ind__img"><img src={asset(`img/${it.img}.webp`)} alt={it.alt} loading="lazy" decoding="async"></div>
+        </article>
+      ))}
+    </div>
+    <div class="ind__bar" aria-hidden="true"><i data-ind-bar></i></div>
+  </div>
+</section>

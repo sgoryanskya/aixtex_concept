@@ -1,0 +1,25 @@
+---
+/* 11. Вопросы A */
+import { FAQ } from '../data/content';
+---
+<section class="faq" id="faq" data-ui="dark">
+  <div class="wrap faq__grid">
+    <div>
+      <p class="lbl">{FAQ.label}</p>
+      <h2 class="h2 h2--t" data-split>{FAQ.title}</h2>
+    </div>
+    <div class="faq__list">
+      {FAQ.items.map((it, i) => (
+        <div class="faq__i" data-faq-item>
+          <button type="button" aria-expanded="false" aria-controls={`faq-a-${i}`}><span>{it.q}</span><i class="plus plus--t" aria-hidden="true"><i></i></i></button>
+          <div class="faq__a" id={`faq-a-${i}`}>
+            <div>
+              {it.a && it.a.map((p) => <p>{p}</p>)}
+              {it.list && <ul>{it.list.map((l) => <li>{l}</li>)}</ul>}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

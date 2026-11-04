@@ -1,0 +1,682 @@
+/* Движение концепции A «Сигнал» (a-signal/main.js), перенесённое без изменения таймингов.
+   Изменения: цвет импульсов берётся из палитры, блоки 8 и 9 без счётчиков и графика,
+   у блока 9 своя линия «распутывание», карточки каталога открывают панель решения. */
+import { gsap, ScrollTrigger, $, $$, reduced, isMobile, clamp, lock, initAnchors, initStub, initMenu, initFaq, initForm, afterFonts, splitWords } from './ax';
+import { onPalette } from './theme-controller';
+
+const root = document.documentElement;
+const wordA = $('[data-word-a]')!;
+const wordB = $('[data-word-b]')!;
+
+initAnchors();
+initStub();
+initMenu();
+initFaq();
+initForm();
+
+/* ---------- Вариант второго слова: в режиме согласования ?hero=managed ---------- */
+(function heroVariant() {
+  const h1 = $('[data-hero-variants]');
+  const want = new URLSearchParams(location.search).get('hero');
+  if (!h1?.dataset.heroVariants || !want) return;
+  try {
+    const map = JSON.parse(h1.dataset.heroVariants) as Record<string, { word: string; h1: string }>;
+    const v = map[want];
+    if (!v) return;
+    wordB.textContent = v.word;
+    const sr = $('[data-hero-h1]', h1);
+    if (sr) sr.textContent = v.h1;
+  } catch {
+    /* неизвестный вариант: остаётся заданный в content.ts */
+  }
+})();
+
+/* ---------- Подгонка кегля: слова занимают ширину экрана точно ---------- */
+function fitAll() {
+  const title = $('.hero__title')!;
+  const avail = title.clientWidth;
+  const F = parseFloat(getComputedStyle(title).fontSize);
+  if (isMobile()) {
+    const inner = (el: HTMLElement) => [...el.children].reduce((s, c) => s + c.getBoundingClientRect().width, 0);
+    title.style.fontSize = (F * avail * 0.995) / Math.max(inner(wordA), inner(wordB)) + 'px';
+  } else {
+    title.style.fontSize = (F * (avail - avail * 0.012)) / (wordA.offsetWidth + wordB.offsetWidth) + 'px';
+  }
+  const zero = $('.end__zero')!;
+  const zs = zero.children as HTMLCollectionOf<HTMLElement>;
+  const zw = zero.clientWidth;
+  const zF = parseFloat(getComputedStyle(zero).fontSize);
+  zero.style.fontSize = (zF * (zw - zw * 0.03)) / (zs[0].offsetWidth + zs[1].offsetWidth) + 'px';
+  const logo = $('.foot__logo')!;
+  const host = logo.parentElement!;
+  const lW = host.clientWidth - parseFloat(getComputedStyle(host).paddingLeft) * 2;
+  const lF = parseFloat(getComputedStyle(logo).fontSize);
+  logo.style.fontSize = (lF * lW) / logo.offsetWidth + 'px';
+}
+let fitT = 0;
+addEventListener('resize', () => {
+  clearTimeout(fitT);
+  fitT = window.setTimeout(() => {
+    ['.hero__title', '.end__zero', '.foot__logo'].forEach((s) => ($(s)!.style.fontSize = ''));
+    fitAll();
+    ScrollTrigger.refresh();
+  }, 160);
+});
+
+/* ---------- Шапка: после героя плашки, при прокрутке вниз ссылки прячутся ---------- */
+const nav = $('.nav')!;
+ScrollTrigger.create({
+  start: 0,
+  end: 'max',
+  onUpdate: (t) => {
+    const y = t.scroll();
+    nav.classList.toggle('is-past', y > innerHeight * 0.9);
+    nav.classList.toggle('is-min', y > innerHeight * 0.9 && t.direction === 1);
+  },
+});
+
+/* ---------- Цвет интерфейса по секциям ---------- */
+$$('[data-ui]').forEach((s) => {
+  const ui = s.dataset.ui!;
+  ScrollTrigger.create({ trigger: s, start: 'top 40px', end: 'bottom 40px', onToggle: (t) => t.isActive && (root.dataset.uiTop = ui) });
+  ScrollTrigger.create({ trigger: s, start: 'top bottom-=30', end: 'bottom bottom-=30', onToggle: (t) => t.isActive && (root.dataset.uiBot = ui) });
+});
+
+/* ---------- Показания: сложность падает до нуля к финалу ---------- */
+const cx = $('[data-cx]')!;
+const rulerOn = $('[data-ruler]')!;
+ScrollTrigger.create({
+  start: 0,
+  endTrigger: '#contact',
+  end: 'top 45%',
+  onUpdate: (t) => {
+    cx.textContent = String(Math.max(0, 100 - Math.round(t.progress * 100)));
+    rulerOn.style.clipPath = `inset(0 ${(100 - t.progress * 100).toFixed(2)}% 0 0)`;
+  },
+});
+
+/* ---------- Герой ---------- */
+function splitLetters(el: HTMLElement) {
+  const txt = el.textContent ?? '';
+  el.innerHTML = [...txt].map((c) => `<i>${c}</i>`).join('');
+  return $$('i', el);
+}
+const lettersA = splitLetters(wordA);
+const lettersB = splitLetters(wordB);
+/* У «Ц», «Щ», «Д» хвост ниже строки: слово растёт от низа хвоста, чтобы не наезжать на док */
+if (/[ЦЩД]/i.test(wordB.textContent ?? '')) wordB.style.transformOrigin = '100% 116%';
+
+if (!reduced) {
+  gsap.set([...lettersA, ...lettersB], { yPercent: 104 });
+  gsap.set(['[data-hero-lead]', '[data-hero-in]', '[data-hero-out]'], { opacity: 0, y: 16 });
+  gsap.set([wordA, wordB], { clipPath: 'inset(-6% -2% -10% -2%)' });
+}
+function heroIntro() {
+  if (reduced) return;
+  const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
+  tl.fromTo('[data-hero-media]', { scale: 1.16 }, { scale: 1, duration: 2.2, ease: 'expo.out' }, 0);
+  tl.to(lettersA, { yPercent: 0, duration: 1.3, stagger: 0.035 }, 0.42);
+  tl.to(lettersB, { yPercent: 0, duration: 1.3, stagger: 0.035 }, 0.6);
+  tl.to('[data-hero-lead]', { opacity: 1, y: 0, duration: 1 }, 1);
+  tl.to(['[data-hero-in]', '[data-hero-out]'], { opacity: 1, y: 0, duration: 1 }, 1.15);
+  tl.add(() => {
+    gsap.set([wordA, wordB], { clearProps: 'clipPath' });
+    initHeroScrub();
+    ScrollTrigger.refresh();
+  }, 1.9);
+}
+function initHeroScrub() {
+  const m = isMobile();
+  const tl = gsap.timeline({
+    scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom bottom', scrub: 0.6, invalidateOnRefresh: true },
+    defaults: { ease: 'none' },
+  });
+  const scaleB = () => $('.hero__title')!.clientWidth / wordB.offsetWidth;
+  tl.to('[data-hero-lead]', { opacity: 0, y: -24, duration: 0.16 }, 0);
+  tl.to(['[data-hero-in]', '[data-hero-out]'], { opacity: 0, duration: 0.12 }, 0);
+  /* камера: от клубка к ровным линиям */
+  tl.to('[data-hero-media]', { scale: m ? 1.9 : 1.85, xPercent: m ? -20 : -30, duration: 1, ease: 'power1.inOut' }, 0);
+  /* «сложное» гаснет, второе слово занимает весь экран */
+  tl.to(lettersA, { yPercent: -36, opacity: 0, duration: 0.18, stagger: { each: 0.012 }, ease: 'power2.in' }, 0.02);
+  if (m) tl.to(wordB, { y: () => -(innerHeight * 0.26), duration: 0.7, ease: 'power2.inOut' }, 0.16);
+  else tl.to(wordB, { scale: scaleB, force3D: false, duration: 0.7, ease: 'power2.inOut' }, 0.16);
+  tl.to('[data-hero-after]', { opacity: 1, duration: 0.12 }, 0.72);
+  tl.to({}, { duration: 0.1 }, 0.9);
+}
+
+/* Цвета импульсов из палитры. Для «Сигнала» совпадают с A: 255,94,26 → 255,126,60 → 255,214,170 */
+type RGB = [number, number, number];
+const hexRgb = (h: string): RGB => {
+  let m = h.trim().replace('#', '');
+  if (m.length === 3) m = [...m].map((c) => c + c).join('');
+  const n = parseInt(m, 16) || 0;
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+};
+const mixRgb = (a: RGB, b: RGB, t: number): RGB => [0, 1, 2].map((i) => Math.round(a[i] + (b[i] - a[i]) * t)) as RGB;
+function pulseColors() {
+  const cs = getComputedStyle(root);
+  const sig = hexRgb(cs.getPropertyValue('--signal'));
+  const light = hexRgb(cs.getPropertyValue('--metal-light'));
+  const hi = hexRgb(cs.getPropertyValue('--metal-hi'));
+  return { c0: sig.join(','), c1: mixRgb(sig, light, 0.38).join(','), c2: mixRgb(light, hi, 0.5).join(',') };
+}
+
+/* Импульсы бегут по волокнам: координаты линий сняты с исходного кадра */
+function heroPulses() {
+  const c = $<HTMLCanvasElement>('[data-hero-pulse]');
+  const ctx = c?.getContext('2d');
+  if (reduced || !c || !ctx) return;
+  const LINES = [0.3565, 0.3704, 0.3831, 0.3958, 0.4086, 0.4213, 0.434, 0.4479, 0.4606, 0.4734, 0.4861, 0.4988, 0.5127, 0.5255, 0.5394, 0.5521, 0.5648, 0.5775, 0.5891, 0.5984];
+  const X0 = 0.56;
+  let W = 0;
+  let H = 0;
+  let running = false;
+  let col = pulseColors();
+  onPalette(() => (col = pulseColors()));
+  const dpr = Math.min(devicePixelRatio || 1, 1.5);
+  const size = () => {
+    const r = c.parentElement!;
+    W = r.offsetWidth;
+    H = r.offsetHeight;
+    c.width = W * dpr;
+    c.height = H * dpr;
+  };
+  size();
+  addEventListener('resize', size);
+  const N = isMobile() ? 9 : 16;
+  const pick = () => LINES[(Math.random() * LINES.length) | 0];
+  const pulses = Array.from({ length: N }, () => ({ l: pick(), x: X0 + Math.random() * 0.45, v: 0.0009 + Math.random() * 0.0016, len: 0.02 + Math.random() * 0.05, a: 0.5 + Math.random() * 0.5 }));
+  const tick = () => {
+    if (!running) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    ctx.globalCompositeOperation = 'lighter';
+    pulses.forEach((p) => {
+      p.x += p.v;
+      if (p.x - p.len > 1) {
+        p.x = X0;
+        p.l = pick();
+        p.v = 0.0009 + Math.random() * 0.0016;
+      }
+      const y = p.l * H;
+      const x2 = p.x * W;
+      const x1 = (p.x - p.len) * W;
+      const g = ctx.createLinearGradient(x1, 0, x2, 0);
+      g.addColorStop(0, `rgba(${col.c0},0)`);
+      g.addColorStop(0.75, `rgba(${col.c1},${0.55 * p.a})`);
+      g.addColorStop(1, `rgba(${col.c2},${p.a})`);
+      ctx.strokeStyle = g;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(x1, y);
+      ctx.lineTo(x2, y);
+      ctx.stroke();
+    });
+    requestAnimationFrame(tick);
+  };
+  ScrollTrigger.create({
+    trigger: '.hero',
+    start: 'top bottom',
+    end: 'bottom top',
+    onToggle: (t) => {
+      running = t.isActive;
+      if (running) tick();
+    },
+  });
+  running = true;
+  tick();
+}
+
+/* ---------- Манифест: слова загораются по мере прокрутки ---------- */
+function initHighlight() {
+  $$('[data-highlight]').forEach((el) => {
+    const parts = el.innerHTML.split(/(\s+|&nbsp;)/);
+    el.innerHTML = parts.map((p) => (/^(\s+|&nbsp;)$/.test(p) || !p ? p : `<span class="hl">${p}</span>`)).join('');
+    const words = $$('.hl', el);
+    if (reduced) return words.forEach((w) => w.classList.add('is-on'));
+    ScrollTrigger.create({
+      trigger: el,
+      start: 'top 76%',
+      end: 'bottom 46%',
+      onUpdate: (t) => {
+        const n = Math.round(t.progress * words.length);
+        words.forEach((w, i) => w.classList.toggle('is-on', i < n));
+      },
+    });
+  });
+}
+
+/* ---------- Появления ---------- */
+function initReveals() {
+  if (reduced) return;
+  $$('[data-split]').forEach((el) => {
+    const words = splitWords(el);
+    gsap.set(words, { yPercent: 112 });
+    ScrollTrigger.create({
+      trigger: el,
+      start: 'top 86%',
+      once: true,
+      onEnter: () => gsap.to(words, { yPercent: 0, duration: 1.1, ease: 'expo.out', stagger: 0.045 }),
+    });
+  });
+  $$('[data-reveal]').forEach((el) => {
+    gsap.set(el, { opacity: 0, y: 22 });
+    ScrollTrigger.create({
+      trigger: el,
+      start: 'top 90%',
+      once: true,
+      onEnter: () => gsap.to(el, { opacity: 1, y: 0, duration: 0.9, ease: 'expo.out' }),
+    });
+  });
+  const cards = $$('.cards > *');
+  gsap.set(cards, { opacity: 0, y: 36 });
+  ScrollTrigger.batch(cards, {
+    start: 'top 90%',
+    once: true,
+    onEnter: (b) => gsap.to(b, { opacity: 1, y: 0, duration: 1, ease: 'expo.out', stagger: 0.07 }),
+  });
+}
+
+/* ---------- Карточки: задачи по плюсу ---------- */
+$$('[data-card-toggle]').forEach((b) => {
+  b.addEventListener('click', () => {
+    const on = b.closest('[data-card]')!.classList.toggle('is-open');
+    b.setAttribute('aria-label', on ? 'Скрыть задачи' : 'Показать задачи');
+    b.setAttribute('aria-expanded', String(on));
+  });
+});
+
+/* ---------- Панели решений: нативный <dialog> ---------- */
+function initDrawers() {
+  const dialogs = $$<HTMLDialogElement>('dialog.drawer');
+  let opener: HTMLElement | null = null;
+  let leaving = false;
+  document.addEventListener('click', (e) => {
+    const t = e.target as HTMLElement;
+    const btn = t.closest<HTMLElement>('[data-open-dialog]');
+    if (btn) {
+      const dlg = document.getElementById(btn.dataset.openDialog!) as HTMLDialogElement | null;
+      if (dlg && typeof dlg.showModal === 'function') {
+        opener = btn;
+        dlg.showModal();
+        dlg.scrollTop = 0;
+        lock(true);
+      }
+      return;
+    }
+    if (t.closest('[data-close-dialog]')) {
+      t.closest('dialog')?.close();
+      return;
+    }
+    /* щелчок по подложке */
+    if (t instanceof HTMLDialogElement && t.open) {
+      const r = t.getBoundingClientRect();
+      const ev = e as MouseEvent;
+      if (ev.clientX < r.left || ev.clientX > r.right || ev.clientY < r.top || ev.clientY > r.bottom) t.close();
+    }
+  });
+  dialogs.forEach((d) =>
+    d.addEventListener('close', () => {
+      lock(false);
+      if (opener && !leaving) opener.focus({ preventScroll: true });
+      opener = null;
+      leaving = false;
+    }),
+  );
+  document.addEventListener('ax:close-overlays', () =>
+    dialogs.forEach((d) => {
+      if (!d.open) return;
+      leaving = true;
+      d.close();
+    }),
+  );
+}
+
+/* ---------- Диалоги ---------- */
+type Dialog = { title: string; tone: string; result: string; msgs: ['ai' | 'me', string][] };
+function initDialogs() {
+  const chat = $('[data-chat]')!;
+  const wave = $('[data-wave]')!;
+  const tTitle = $('[data-panel-title]')!;
+  const tTone = $('[data-panel-tone]')!;
+  const tRes = $('[data-panel-result]')!;
+  const steps = $$('[data-how-steps] li');
+  const DIALOGS = JSON.parse($('[data-dialogs]')?.textContent || '[]') as Dialog[];
+  const count = Math.floor(wave.clientWidth / 5) + 8;
+  wave.innerHTML = Array.from({ length: count }, () => '<i></i>').join('');
+  const bars = $$('i', wave);
+  let talking = false;
+  let visible = false;
+  setInterval(() => {
+    if (!visible) return;
+    bars.forEach((b, i) => {
+      const h = talking ? 4 + Math.abs(Math.sin(i * 0.5 + performance.now() / 180)) * (10 + Math.random() * 26) : 3 + Math.abs(Math.sin(i * 0.25 + performance.now() / 900)) * 4;
+      b.style.setProperty('--h', h.toFixed(0) + 'px');
+    });
+  }, 130);
+  let current = -1;
+  let tl: gsap.core.Timeline | null = null;
+  const addMsg = (who: 'ai' | 'me', text: string) => {
+    const m = document.createElement('div');
+    m.className = 'msg msg--' + who;
+    const small = document.createElement('small');
+    small.textContent = who === 'ai' ? 'АИТЕХ · агент' : 'Клиент';
+    m.append(small, text);
+    chat.appendChild(m);
+    requestAnimationFrame(() => m.classList.add('is-in'));
+    return m;
+  };
+  const addTyping = () => {
+    const m = document.createElement('div');
+    m.className = 'msg msg--ai msg--typing is-in';
+    m.innerHTML = '<i></i><i></i><i></i>';
+    chat.appendChild(m);
+    return m;
+  };
+  const play = (i: number) => {
+    if (i === current || !DIALOGS[i]) return;
+    current = i;
+    steps.forEach((s, k) => s.classList.toggle('is-on', k === i));
+    const d = DIALOGS[i];
+    tTitle.textContent = d.title;
+    tTone.textContent = d.tone;
+    tRes.textContent = '…';
+    tl?.kill();
+    chat.innerHTML = '';
+    talking = false;
+    wave.classList.remove('is-talk');
+    if (reduced) {
+      d.msgs.forEach(([w, t]) => addMsg(w, t).classList.add('is-in'));
+      tRes.textContent = d.result;
+      return;
+    }
+    const line = gsap.timeline();
+    tl = line;
+    let typing: HTMLElement | null = null;
+    d.msgs.forEach(([who, text], k) => {
+      if (who === 'ai') {
+        line.call(() => {
+          typing = addTyping();
+          talking = true;
+          wave.classList.add('is-talk');
+        }, undefined, k === 0 ? 0.25 : '+=0.5');
+        line.call(() => {
+          typing?.remove();
+          addMsg('ai', text);
+          talking = false;
+          wave.classList.remove('is-talk');
+        }, undefined, `+=${Math.min(1.1, 0.5 + text.length / 200)}`);
+      } else {
+        line.call(() => addMsg('me', text), undefined, k === 0 ? 0.25 : '+=0.85');
+      }
+    });
+    line.call(() => (tRes.textContent = d.result), undefined, '+=0.35');
+  };
+  ScrollTrigger.create({ trigger: '[data-how]', start: 'top 60%', end: 'bottom top', onToggle: (t) => (visible = t.isActive), onEnter: () => play(0), onEnterBack: () => current < 0 && play(0) });
+  if (!isMobile() && !reduced) {
+    ScrollTrigger.create({
+      trigger: '[data-how]',
+      start: 'top top',
+      end: 'bottom bottom',
+      onUpdate: (t) => play(clamp(Math.floor(t.progress * 3), 0, 2)),
+    });
+  }
+  $$('[data-how-step]').forEach((b) => {
+    b.addEventListener('click', () => {
+      const i = Number(b.dataset.howStep);
+      if (isMobile() || reduced) return play(i);
+      const s = $('[data-how]')!;
+      const top = s.getBoundingClientRect().top + scrollY;
+      const span = s.offsetHeight - innerHeight;
+      scrollTo({ top: top + span * ((i + 0.3) / 3), behavior: 'smooth' });
+    });
+  });
+}
+
+/* ---------- Анатомия: слои расходятся по скроллу ---------- */
+function initExploded() {
+  const planes = $$('[data-plane]');
+  const labels = $$('[data-ex-label]');
+  const stage = $('[data-ex-stage]')!;
+  const paths = $$<SVGPathElement>('path', $('[data-ex-lines]')!);
+  const anchors = $$('[data-anchor]');
+  const mobile = isMobile();
+  const zUnit = () => Math.min(innerWidth * 0.16, innerHeight * 0.28);
+  if (mobile || reduced) {
+    const u = mobile ? 54 : zUnit() * 0.9;
+    planes.forEach((p, i) => gsap.set(p, { z: [u, 0, -u][i] }));
+    return;
+  }
+  gsap.set(planes, { z: (i: number) => [10, 0, -10][i] });
+  const lay = () => {
+    const s = stage.getBoundingClientRect();
+    anchors.forEach((a, i) => {
+      const r = a.getBoundingClientRect();
+      const l = labels[i];
+      const lr = l.getBoundingClientRect();
+      const op = getComputedStyle(l).opacity;
+      const x1 = r.left - s.left;
+      const y1 = r.top - s.top;
+      const x2 = lr.left - s.left - 10;
+      const y2 = lr.top - s.top + 13;
+      paths[i].setAttribute('d', `M${x1.toFixed(1)} ${y1.toFixed(1)} L${(x2 - 28).toFixed(1)} ${y2.toFixed(1)} L${x2.toFixed(1)} ${y2.toFixed(1)}`);
+      paths[i].style.opacity = op;
+    });
+  };
+  const posLabels = () => {
+    const H = stage.offsetHeight;
+    const ys = [0.2, 0.47, 0.73];
+    labels.forEach((l, i) => gsap.set(l, { y: H * ys[i] }));
+  };
+  posLabels();
+  addEventListener('resize', posLabels);
+  const tl = gsap.timeline({
+    onUpdate: lay,
+    scrollTrigger: { trigger: '[data-ex]', start: 'top top', end: 'bottom bottom', scrub: 0.7, onRefresh: lay },
+    defaults: { ease: 'none' },
+  });
+  const u = zUnit();
+  tl.to(planes[0], { z: u, duration: 0.5, ease: 'power2.inOut' }, 0.06);
+  tl.to(planes[2], { z: -u, duration: 0.5, ease: 'power2.inOut' }, 0.06);
+  tl.to(labels[0], { opacity: 1, duration: 0.12 }, 0.2);
+  tl.to(labels[1], { opacity: 1, duration: 0.12 }, 0.32);
+  tl.to(labels[2], { opacity: 1, duration: 0.12 }, 0.44);
+  tl.to('[data-ex-stack]', { rotationZ: -28, duration: 1, ease: 'none' }, 0);
+  tl.to({}, { duration: 0.2 }, 0.8);
+  lay();
+}
+
+/* ---------- Отрасли: вертикальный скролл в горизонталь ---------- */
+function initIndustries() {
+  const sec = $('[data-ind]')!;
+  const track = $('[data-ind-track]')!;
+  const bar = $('[data-ind-bar]')!;
+  const idx = $('[data-ind-i]')!;
+  const panels = $$('[data-ind-p]');
+  if (isMobile() || reduced) return;
+  const dist = () => track.offsetWidth - innerWidth;
+  const setH = () => (sec.style.height = dist() + innerHeight + 'px');
+  setH();
+  addEventListener('resize', () => {
+    setH();
+    ScrollTrigger.refresh();
+  });
+  gsap.to(track, {
+    x: () => -dist(),
+    ease: 'none',
+    scrollTrigger: {
+      trigger: sec,
+      start: 'top top',
+      end: 'bottom bottom',
+      scrub: 0.5,
+      invalidateOnRefresh: true,
+      onUpdate: (t) => {
+        bar.style.transform = `scaleX(${t.progress.toFixed(4)})`;
+        const vc = innerWidth / 2;
+        let best = 0;
+        let bd = 1e9;
+        panels.forEach((p, i) => {
+          const r = p.getBoundingClientRect();
+          const d = Math.abs(r.left + r.width / 2 - vc);
+          if (d < bd) {
+            bd = d;
+            best = i;
+          }
+        });
+        idx.textContent = String(best + 1).padStart(2, '0');
+      },
+    },
+  });
+}
+
+/* ---------- Линии: один приём на всю страницу. Импульсы бегут только в видимом блоке ---------- */
+const fx = (v: number) => v.toFixed(1);
+type Pulse = { i: number; c: 'sig' | 'ice'; t: number; d: number };
+function drawLn(svg: SVGSVGElement, W: number, H: number, paths: string[], pulses: Pulse[]) {
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.innerHTML =
+    paths.map((d) => `<path class="ln__l" pathLength="1" d="${d}"/>`).join('') +
+    pulses.map((p) => `<path class="ln__p ln__p--${p.c}" pathLength="100" d="${paths[p.i]}" style="animation-duration:${p.t}s;animation-delay:${p.d}s"/>`).join('');
+}
+const PULSES = (n: number, k: number): Pulse[] => Array.from({ length: k }, (_, j) => ({ i: Math.round(((j + 0.5) * n) / k) % n, c: j % 3 === 1 ? 'ice' : 'sig', t: 6 + (j % 3) * 2.2, d: -j * 1.7 }));
+/* Детерминированный разброс: картинка линий одинакова при каждой перерисовке */
+const rnd = (i: number, k: number) => {
+  const x = Math.sin(i * 12.9898 + k * 78.233) * 43758.5453;
+  return x - Math.floor(x);
+};
+const LN: Record<string, (svg: SVGSVGElement, W: number, H: number) => void> = {
+  /* Полоса прямых линий: продолжение пучка из первого экрана */
+  band(svg, W, H) {
+    const n = isMobile() ? 7 : 12;
+    const paths = Array.from({ length: n }, (_, i) => `M0 ${fx(1 + (i * (H - 2)) / (n - 1))}H${W}`);
+    drawLn(svg, W, H, paths, PULSES(n, 4));
+  },
+  /* Ассистент: сложное входит слева в голову, результат выходит из плеча направо */
+  asst(svg, W, H) {
+    const stage = svg.parentElement!;
+    const box = stage.getBoundingClientRect();
+    const b = $('[data-asst-bust]')!.getBoundingClientRect();
+    const hx = b.left - box.left + b.width * 0.56;
+    const hy = b.top - box.top + b.height * 0.32;
+    const sx = b.left - box.left + b.width * 0.6;
+    const sy = b.top - box.top + b.height * 0.76;
+    const ys = (sel: string) => $$(sel, stage).map((l) => (parseFloat(l.style.getPropertyValue('--y')) / 100) * H);
+    const inn = ys('.asst__tags--in li');
+    const out = ys('.asst__tags--out li');
+    const x0 = W * 0.27;
+    const paths = [
+      ...inn.map((y) => `M0 ${fx(y)}H${fx(x0)}C${fx(x0 + (hx - x0) * 0.55)} ${fx(y)} ${fx(x0 + (hx - x0) * 0.5)} ${fx(hy)} ${fx(hx)} ${fx(hy)}`),
+      ...out.map((y) => `M${fx(sx)} ${fx(sy)}C${fx(sx + W * 0.08)} ${fx(sy)} ${fx(sx + W * 0.05)} ${fx(y)} ${fx(sx + W * 0.16)} ${fx(y)}H${W}`),
+    ];
+    const k = inn.length;
+    drawLn(svg, W, H, paths, [
+      { i: 0, c: 'sig', t: 5.6, d: 0 }, { i: 2, c: 'sig', t: 7, d: -2 }, { i: 4, c: 'sig', t: 6.2, d: -4 },
+      { i: k, c: 'ice', t: 6, d: -1 }, { i: k + 1, c: 'ice', t: 4.8, d: -3 }, { i: k + 2, c: 'ice', t: 6.6, d: -5 },
+    ]);
+  },
+  /* Рельс через всю ленту отраслей */
+  rail(svg, W, H) {
+    const n = 9;
+    const g = 11;
+    const y0 = H / 2 - ((n - 1) * g) / 2;
+    const paths = Array.from({ length: n }, (_, i) => `M0 ${fx(y0 + i * g)}H${W}`);
+    drawLn(svg, W, H, paths, PULSES(n, 7).map((p) => ({ ...p, t: p.t * 3 })));
+  },
+  /* Блок 9: слева линии спутаны и пересекаются, к середине ложатся в ровный пучок */
+  untangle(svg, W, H) {
+    const m = isMobile();
+    const n = m ? 7 : 11;
+    const split = W * (m ? 0.62 : 0.52);
+    const top = H * 0.22;
+    const span = H * 0.56;
+    const x1 = split * 0.3;
+    const x2 = split * 0.64;
+    const paths = Array.from({ length: n }, (_, i) => {
+      const yEnd = top + (i * span) / (n - 1);
+      const y0 = H * (0.06 + 0.88 * rnd(i, 1));
+      const y1 = H * (0.04 + 0.92 * rnd(i, 2));
+      const y2 = H * (0.08 + 0.84 * rnd(i, 3));
+      return `M0 ${fx(y0)}C${fx(x1 * 0.5)} ${fx(y0)} ${fx(x1 * 0.6)} ${fx(y1)} ${fx(x1)} ${fx(y1)}S${fx(x2 * 0.85)} ${fx(y2)} ${fx(x2)} ${fx(y2)}S${fx(split * 0.9)} ${fx(yEnd)} ${fx(split)} ${fx(yEnd)}H${W}`;
+    });
+    drawLn(svg, W, H, paths, PULSES(n, 5));
+  },
+  /* Финал: все линии сходятся в одну */
+  merge(svg, W, H) {
+    const n = isMobile() ? 8 : 14;
+    const cy = H * 0.72;
+    const mx = W * 0.66;
+    const paths = Array.from({ length: n }, (_, i) => {
+      const y = 2 + (i * (H - 4)) / (n - 1);
+      return `M0 ${fx(y)}H${fx(W * 0.3)}C${fx(W * 0.48)} ${fx(y)} ${fx(W * 0.5)} ${fx(cy)} ${fx(mx)} ${fx(cy)}H${W}`;
+    });
+    drawLn(svg, W, H, paths, PULSES(n, 5));
+  },
+};
+function initLines() {
+  const items = $$<SVGSVGElement>('[data-ln]').filter((svg) => !(svg.dataset.ln === 'rail' && isMobile()));
+  const build = () =>
+    items.forEach((svg) => {
+      /* рельс длиной с ленту: ширина задаётся явно, иначе Safari берёт её из viewBox */
+      if (svg.dataset.ln === 'rail') svg.style.width = svg.parentElement!.offsetWidth + 'px';
+      const r = svg.getBoundingClientRect();
+      const draw = LN[svg.dataset.ln!];
+      if (draw && r.width && r.height) draw(svg, Math.round(r.width), Math.round(r.height));
+    });
+  build();
+  let t = 0;
+  addEventListener('resize', () => {
+    clearTimeout(t);
+    t = window.setTimeout(build, 200);
+  });
+  addEventListener('load', build);
+  const io = new IntersectionObserver(
+    (es) =>
+      es.forEach((e) => {
+        e.target.classList.toggle('is-run', e.isIntersecting);
+        if (e.isIntersecting) e.target.classList.add('is-in');
+      }),
+    { rootMargin: '5% 0px' },
+  );
+  items.forEach((s) => io.observe(s));
+}
+
+/* ---------- Кто это: роли, клавиатура как у вкладок ---------- */
+function initAssistant() {
+  const duty = $('[data-asst-duty]')!;
+  const tabs = $$<HTMLButtonElement>('[data-asst-tab]');
+  const select = (b: HTMLButtonElement, focus = false) => {
+    tabs.forEach((t) => {
+      const on = t === b;
+      t.setAttribute('aria-selected', String(on));
+      t.tabIndex = on ? 0 : -1;
+    });
+    duty.textContent = b.dataset.duty ?? '';
+    duty.setAttribute('aria-labelledby', b.id);
+    if (focus) b.focus();
+  };
+  tabs.forEach((b, i) => {
+    b.addEventListener('click', () => select(b));
+    b.addEventListener('keydown', (e) => {
+      const go = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabs.length - 1 }[e.key];
+      if (go === undefined) return;
+      e.preventDefault();
+      select(tabs[(go + tabs.length) % tabs.length], true);
+    });
+  });
+}
+
+/* ---------- Запуск ---------- */
+initHighlight();
+initDialogs();
+initDrawers();
+heroPulses();
+initAssistant();
+afterFonts(() => {
+  fitAll();
+  initReveals();
+  initExploded();
+  initIndustries();
+  initLines();
+  heroIntro();
+  ScrollTrigger.refresh();
+});

@@ -1,0 +1,198 @@
+---
+/* Панель согласования палитр в языке A: моноширинные метки, прямоугольные образцы, линии 1 px.
+   Инструмент для обсуждения с заказчиком, не часть сайта: в публичной версии не выводится.
+   Стоит там, где в A был переключатель концепций. */
+import { PALETTES, DEFAULT_PALETTE, getPalette } from '../data/palettes';
+const def = getPalette(DEFAULT_PALETTE);
+---
+<div class="studio" data-studio-root>
+  <button class="studio__fab" type="button" aria-expanded="false" aria-controls="studio-panel" data-studio-fab>
+    <span class="studio__k">Палитра</span>
+    <i class="studio__dot" aria-hidden="true"></i>
+    <span class="studio__n" data-studio-current>{def.name}</span>
+  </button>
+
+  <section class="studio__panel" id="studio-panel" role="dialog" aria-modal="false" aria-labelledby="studio-title" hidden data-studio-panel>
+    <header class="studio__head">
+      <p class="lbl lbl--t">Режим согласования</p>
+      <h2 id="studio-title">Палитры</h2>
+      <button class="studio__x" type="button" data-studio-close aria-label="Закрыть панель"><i></i></button>
+    </header>
+    <p class="studio__hint">Меняется только цвет. Тексты и расположение блоков остаются прежними.</p>
+
+    <fieldset class="studio__list">
+      <legend class="sr">Цветовая палитра</legend>
+      {PALETTES.map((p, i) => (
+        <label class="sw" style={`--sw-bg:${p.bg};--sw-paper:${p.paper};--sw-accent:${p.accent};--sw-secondary:${p.secondary}`}>
+          <input type="radio" name="ax-palette" value={p.id} />
+          <span class="sw__n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+          <span class="sw__chip" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span class="sw__name">{p.name}</span>
+          <span class="sw__state" aria-hidden="true">Выбрано</span>
+        </label>
+      ))}
+    </fieldset>
+
+    <div class="studio__actions">
+      <button class="studio__act" type="button" data-studio-copy>Ссылка на этот вариант</button>
+      <div class="studio__pair">
+        <a class="studio__act" href="?studio=0" target="_blank" rel="noopener" data-studio-clean>Чистый показ<span class="sr"> (откроется в новой вкладке)</span></a>
+        <button class="studio__act" type="button" data-studio-copy-clean>Скопировать</button>
+      </div>
+      <button class="studio__act studio__act--quiet" type="button" data-studio-reset>Сбросить к «{def.name}»</button>
+    </div>
+    <p class="studio__status" role="status" data-studio-status></p>
+    <div class="studio__manual" hidden data-studio-manual>
+      <label for="studio-url">Скопируйте ссылку вручную</label>
+      <input id="studio-url" type="text" readonly data-studio-url />
+    </div>
+  </section>
+</div>
+
+<style>
+  .studio { position: fixed; z-index: 57; right: var(--gut); bottom: 16px; font: 400 11px/1 var(--f-m); text-transform: uppercase; letter-spacing: 0.04em; }
+  :root[data-studio='0'] .studio { display: none; }
+  .studio__fab { display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 10px; margin-right: -6px; background: var(--chip); color: var(--c-bot); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c-bot) 16%, transparent); transition: color 0.25s linear, background 0.25s linear; }
+  .studio__fab:hover, .studio__fab[aria-expanded='true'] { box-shadow: inset 0 0 0 1px var(--signal); }
+  .studio__k { opacity: 0.6; }
+  .studio__dot { width: 10px; height: 10px; background: var(--signal); }
+
+  .studio__panel { position: absolute; right: -6px; bottom: calc(100% + 8px); width: min(380px, calc(100vw - 32px)); max-height: min(680px, calc(100dvh - 110px)); overflow-y: auto; overscroll-behavior: contain; padding: 16px; display: flex; flex-direction: column; gap: 14px; background: var(--ink-2); color: var(--t1); box-shadow: 0 0 0 1px var(--line-t), 0 30px 70px -20px rgba(0, 0, 0, 0.6); text-transform: none; letter-spacing: 0; font: 400 14px/1.4 var(--f-t); }
+  .studio__head { position: relative; display: grid; gap: 10px; padding-right: 48px; }
+  .studio__head h2 { font: 800 40px/0.9 var(--f-d); text-transform: uppercase; }
+  .studio__x { position: absolute; right: 0; top: 0; width: 40px; height: 40px; display: grid; place-items: center; background: var(--ink-3); }
+  .studio__x:hover { background: var(--signal); color: var(--on-signal); }
+  .studio__x i { position: relative; display: block; width: 14px; height: 14px; transform: rotate(45deg); }
+  .studio__x i::before, .studio__x i::after { content: ''; position: absolute; background: currentColor; }
+  .studio__x i::before { left: 0; right: 0; top: 6.5px; height: 1px; }
+  .studio__x i::after { top: 0; bottom: 0; left: 6.5px; width: 1px; }
+  .studio__hint { color: var(--t2); font-size: 13px; }
+
+  .studio__list { display: grid; margin: 0; padding: 0; border: 0; border-bottom: 1px solid var(--line-t); }
+  .sw { position: relative; display: grid; grid-template-columns: 22px 44px 1fr auto; align-items: center; gap: 10px; min-height: 52px; padding: 6px 8px 6px 0; border-top: 1px solid var(--line-t); cursor: pointer; transition: background 0.18s; }
+  .sw:hover { background: var(--ink-3); }
+  .sw input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+  .sw:has(input:focus-visible) { outline: 2px solid var(--signal); outline-offset: -2px; }
+  .sw__n { font: 400 11px/1 var(--f-m); color: var(--t3); padding-left: 4px; }
+  .sw__chip { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; width: 44px; height: 32px; box-shadow: 0 0 0 1px var(--line-t); }
+  .sw__chip i:nth-child(1) { background: var(--sw-bg); }
+  .sw__chip i:nth-child(2) { background: var(--sw-accent); }
+  .sw__chip i:nth-child(3) { background: var(--sw-paper); }
+  .sw__chip i:nth-child(4) { background: var(--sw-secondary); }
+  .sw__name { font-size: 14px; line-height: 1.2; }
+  .sw__state { display: none; font: 400 11px/1 var(--f-m); text-transform: uppercase; letter-spacing: 0.04em; color: var(--signal); }
+  .sw__state::before { content: '■ '; }
+  .sw:has(input:checked) .sw__n { color: var(--signal); }
+  .sw:has(input:checked) .sw__name { font-weight: 600; }
+  .sw:has(input:checked) .sw__state { display: inline; }
+  .sw:has(input:checked)::before { content: ''; position: absolute; left: 0; right: 0; top: -1px; height: 1px; background: var(--signal); }
+
+  .studio__actions { display: grid; gap: 4px; }
+  .studio__pair { display: grid; grid-template-columns: 1fr auto; gap: 4px; }
+  .studio__act { display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 14px; background: var(--ink-3); color: var(--t1); font: 500 14px/1 var(--f-t); transition: background 0.18s, color 0.18s; }
+  .studio__act:hover { background: var(--signal); color: var(--on-signal); }
+  .studio__act--quiet { background: transparent; color: var(--t2); box-shadow: inset 0 0 0 1px var(--line-t); }
+  .studio__status { min-height: 1.4em; font-size: 13px; }
+  .studio__status:empty { display: none; }
+  .studio__manual { display: grid; gap: 6px; font-size: 13px; color: var(--t2); }
+  .studio__manual input { width: 100%; min-height: 40px; padding: 0 10px; border: 0; border-radius: 0; box-shadow: inset 0 0 0 1px var(--signal); background: var(--ink); color: var(--t1); font: 13px var(--f-m); }
+
+  @media (max-width: 899px) {
+    .studio { right: var(--gut); top: 66px; bottom: auto; }
+    .studio__fab { height: 24px; padding: 0 8px; font-size: 10px; }
+    .studio__n { display: none; }
+    .studio__panel { position: fixed; left: 0; right: 0; top: auto; bottom: 0; width: 100%; max-height: 82dvh; padding: 16px 16px calc(16px + env(safe-area-inset-bottom)); z-index: 95; }
+  }
+</style>
+
+<script>
+  import { PALETTES, DEFAULT_PALETTE, getPalette, isPaletteId } from '../data/palettes';
+  import { currentId, isStudio, onPalette, setPalette, variantUrl } from '../lib/theme-controller';
+
+  const root = document.querySelector<HTMLElement>('[data-studio-root]');
+  if (root && isStudio()) {
+    const fab = root.querySelector<HTMLButtonElement>('[data-studio-fab]')!;
+    const panel = root.querySelector<HTMLElement>('[data-studio-panel]')!;
+    const current = root.querySelector<HTMLElement>('[data-studio-current]')!;
+    const status = root.querySelector<HTMLElement>('[data-studio-status]')!;
+    const manual = root.querySelector<HTMLElement>('[data-studio-manual]')!;
+    const manualInput = root.querySelector<HTMLInputElement>('[data-studio-url]')!;
+    const clean = root.querySelector<HTMLAnchorElement>('[data-studio-clean]')!;
+    const radios = [...root.querySelectorAll<HTMLInputElement>('input[name="ax-palette"]')];
+
+    const sync = () => {
+      const id = currentId();
+      radios.forEach((r) => (r.checked = r.value === id));
+      current.textContent = getPalette(id).name;
+      clean.href = variantUrl(false);
+    };
+    sync();
+    onPalette(sync);
+
+    const say = (text: string) => {
+      status.textContent = '';
+      requestAnimationFrame(() => (status.textContent = text));
+    };
+
+    const open = (on: boolean) => {
+      panel.hidden = !on;
+      fab.setAttribute('aria-expanded', String(on));
+      if (on) {
+        sync();
+        (radios.find((r) => r.checked) ?? radios[0]).focus();
+      } else {
+        status.textContent = '';
+        manual.hidden = true;
+      }
+    };
+    fab.addEventListener('click', () => open(panel.hidden));
+    root.querySelector('[data-studio-close]')!.addEventListener('click', () => {
+      open(false);
+      fab.focus();
+    });
+    addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !panel.hidden) {
+        open(false);
+        fab.focus();
+      }
+    });
+    document.addEventListener('pointerdown', (e) => {
+      if (!panel.hidden && !root.contains(e.target as Node)) open(false);
+    });
+
+    radios.forEach((r) =>
+      r.addEventListener('change', () => {
+        if (r.checked && isPaletteId(r.value)) setPalette(r.value);
+      }),
+    );
+
+    /* Копирование: при недоступном Clipboard API показываем выделенный адрес */
+    const copy = async (url: string, done: string) => {
+      manual.hidden = true;
+      try {
+        if (!navigator.clipboard || !window.isSecureContext) throw new Error('no clipboard');
+        await navigator.clipboard.writeText(url);
+        say(done);
+      } catch {
+        manualInput.value = url;
+        manual.hidden = false;
+        manualInput.focus();
+        manualInput.select();
+        say('Не удалось скопировать автоматически: ссылка выделена в поле ниже.');
+      }
+    };
+    root.querySelector('[data-studio-copy]')!.addEventListener('click', () =>
+      copy(variantUrl(true), 'Ссылка на вариант с панелью палитр скопирована.'),
+    );
+    root.querySelector('[data-studio-copy-clean]')!.addEventListener('click', () =>
+      copy(variantUrl(false), 'Ссылка на чистый показ без панели скопирована.'),
+    );
+    clean.addEventListener('click', () => (clean.href = variantUrl(false)));
+
+    root.querySelector('[data-studio-reset]')!.addEventListener('click', () => {
+      setPalette(DEFAULT_PALETTE);
+      sync();
+      say(`Возвращена палитра «${PALETTES.find((p) => p.id === DEFAULT_PALETTE)!.name}».`);
+    });
+  }
+</script>

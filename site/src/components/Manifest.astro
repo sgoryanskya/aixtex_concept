@@ -1,0 +1,13 @@
+---
+/* 2. Манифест A: слова загораются по мере прокрутки */
+import { MANIFEST } from '../data/content';
+---
+<section class="mani" id="manifest" data-ui="dark">
+  <div class="wrap mani__grid">
+    <p class="lbl">{MANIFEST.label}</p>
+    <p class="mani__text" data-highlight>{MANIFEST.text}</p>
+    <ul class="mani__list">
+      {MANIFEST.facts.map(([k, v]) => <li><span>{k}</span><b>{v}</b></li>)}
+    </ul>
+  </div>
+</section>

@@ -1,0 +1,29 @@
+---
+/* Постоянные элементы A: шапка, показание «Сложность процесса», линейка и док */
+import { NAV } from '../data/content';
+import { COMPANY } from '../data/company';
+---
+<header class="nav">
+  <a class="logo" href="#top" aria-label="АИТЕХ, наверх"><b>АИ</b>ТЕХ</a>
+  <span class="nav__desc">Агентство<br>интеллектуальных технологий</span>
+  <nav class="nav__links" aria-label="Основная навигация">
+    {NAV.map((n) => (n.href ? <a href={n.href}>{n.label}</a> : <a href="#" data-stub={n.stub}>{n.label}</a>))}
+  </nav>
+  <div class="nav__right">
+    <a class="sq" href={COMPANY.email.href} aria-label={`Написать на ${COMPANY.email.text}`}>
+      <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M1.5 3.5h13v9h-13zM1.5 4l6.5 5 6.5-5"/></svg>
+    </a>
+    <a class="sq sq--wide" href={COMPANY.phone.href}>{COMPANY.phone.text}</a>
+    <button class="sq" type="button" data-menu-open aria-label="Открыть меню" aria-expanded="false">
+      <svg viewBox="0 0 16 4" width="14" height="4" fill="currentColor" aria-hidden="true"><rect width="3" height="3" y=".5"/><rect x="6.5" width="3" height="3" y=".5"/><rect x="13" width="3" height="3" y=".5"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="readout" aria-hidden="true"><span>Сложность процесса</span><b data-cx>100</b><i>%</i></div>
+<div class="ruler" aria-hidden="true"><div class="ruler__on" data-ruler></div></div>
+
+<div class="dock">
+  <a class="dock__cta" href="#contact">Обсудить задачу</a>
+  <button class="dock__btn" type="button" data-menu-open aria-expanded="false">Меню</button>
+</div>

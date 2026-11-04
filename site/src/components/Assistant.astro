@@ -1,0 +1,33 @@
+---
+/* 3. Кто это: бюст A, сложное входит слева, результат выходит справа */
+import { ASSISTANT } from '../data/content';
+import { asset } from '../config';
+
+const inY = [56, 63, 70, 77, 84];
+const outY = [63, 72, 81];
+---
+<section class="asst" id="assistant" data-ui="dark" data-asst>
+  <div class="asst__stage">
+    <svg class="ln" data-ln="asst" aria-hidden="true"></svg>
+    <img class="asst__bust" src={asset('img/assistant.webp')} alt={ASSISTANT.alt} loading="lazy" decoding="async" data-asst-bust>
+    <div class="asst__l">
+      <p class="lbl">{ASSISTANT.label}</p>
+      <h2 class="h2 h2--t" data-split>{ASSISTANT.title}</h2>
+    </div>
+    <div class="asst__r" data-reveal>
+      <p>{ASSISTANT.text}</p>
+      <div class="asst__tabs" role="tablist" aria-label="Примеры должностей">
+        {ASSISTANT.roles.map((r, i) => (
+          <button type="button" role="tab" id={`asst-tab-${i}`} aria-selected={i === 0 ? 'true' : 'false'} aria-controls="asst-duty" tabindex={i === 0 ? 0 : -1} data-asst-tab={i} data-duty={r.duty}>{r.label}</button>
+        ))}
+      </div>
+      <p class="asst__duty" id="asst-duty" role="tabpanel" aria-labelledby="asst-tab-0" data-asst-duty>{ASSISTANT.roles[0].duty}</p>
+    </div>
+    <ul class="asst__tags asst__tags--in" aria-hidden="true">
+      {ASSISTANT.inputs.map((t, i) => <li style={`--y:${inY[i]}%`}>{t}</li>)}
+    </ul>
+    <ul class="asst__tags asst__tags--out" aria-hidden="true">
+      {ASSISTANT.outputs.map((t, i) => <li style={`--y:${outY[i]}%`}>{t}</li>)}
+    </ul>
+  </div>
+</section>

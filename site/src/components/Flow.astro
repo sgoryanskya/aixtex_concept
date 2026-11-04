@@ -1,0 +1,33 @@
+---
+/* 10. Как работаем A и паспорт продукта. Паспорт держится на неподтверждённых данных:
+   в режиме согласования виден с пометкой, в публичной версии скрыт */
+import { FLOW } from '../data/content';
+import { PRODUCT_FACTS, visibleFacts } from '../data/company';
+import { REVIEW_MODE } from '../config';
+
+const facts = visibleFacts(PRODUCT_FACTS, REVIEW_MODE);
+const pending = facts.some((f) => f.status === 'unverified');
+const showPass = facts.length > 0;
+---
+<section class="flow" id="flow" data-ui="light">
+  <div class:list={['wrap', 'flow__grid', !showPass && 'flow__grid--solo']}>
+    <div class="flow__head">
+      <p class="lbl">{FLOW.label}</p>
+      <h2 class="h2" data-split>{FLOW.title}</h2>
+    </div>
+    <ol class="flow__list">
+      {FLOW.steps.map((s) => <li data-reveal><i>{s.n}</i><h3>{s.title}</h3><p>{s.text}</p></li>)}
+    </ol>
+    {showPass && (
+      <aside class="pass" data-reveal>
+        <p class="lbl lbl--t">{FLOW.passport.label}</p>
+        <h3>{FLOW.passport.title}</h3>
+        <dl>
+          {facts.map((f) => <div><dt>{f.label}</dt><dd>{f.value}</dd></div>)}
+        </dl>
+        {pending && <p class="pass__pending">{FLOW.passport.pending}</p>}
+        <a class="more-link more-link--t" href="#" data-stub="Отдел продаж"><span>{FLOW.passport.link}</span><i></i></a>
+      </aside>
+    )}
+  </div>
+</section>

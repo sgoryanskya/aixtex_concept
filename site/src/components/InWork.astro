@@ -1,0 +1,33 @@
+---
+/* 5. В работе: диалоги в реальном времени, как в A. Сценарии демонстрационные */
+import { HOW, DIALOGS } from '../data/content';
+---
+<section class="how" id="how" data-ui="dark" data-how>
+  <div class="how__stage">
+    <div class="wrap how__grid">
+      <div class="how__side">
+        <p class="lbl">{HOW.label}</p>
+        <h2 class="h2 h2--t" data-split>{HOW.title}</h2>
+        <ol class="how__steps" data-how-steps>
+          {HOW.steps.map((s, i) => (
+            <li class={i === 0 ? 'is-on' : undefined}>
+              <button type="button" data-how-step={i}><i>{String(i + 1).padStart(2, '0')}</i><b>{s.title}</b><span>{s.text}</span></button>
+            </li>
+          ))}
+        </ol>
+        <p class="how__note">{HOW.note}</p>
+      </div>
+      <div class="panel" data-panel>
+        <div class="panel__top"><span data-panel-title>{DIALOGS[0].title}</span><span class="panel__live"><i></i>Агент в&nbsp;работе</span></div>
+        <div class="panel__wave" data-wave aria-hidden="true"></div>
+        <div class="panel__chat" data-chat aria-live="off"></div>
+        <div class="panel__meta">
+          <div><span>{HOW.meta.reaction}</span><b>{HOW.meta.reactionValue}</b></div>
+          <div><span>{HOW.meta.tone}</span><b data-panel-tone>{DIALOGS[0].tone}</b></div>
+          <div><span>{HOW.meta.result}</span><b class="is-signal" data-panel-result>…</b></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="application/json" data-dialogs set:html={JSON.stringify(DIALOGS)} />
+</section>

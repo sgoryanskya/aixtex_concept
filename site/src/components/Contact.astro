@@ -1,0 +1,64 @@
+---
+/* 12. Финал A «Сложность 0%», форма и подвал. Бэкенда нет: форма готовит письмо
+   в почтовой программе посетителя и не изображает отправку */
+import { CONTACT, NAV } from '../data/content';
+import { COMPANY, REQUISITES, NOTICE } from '../data/company';
+
+const req = Object.fromEntries(REQUISITES.map((r) => [r.label, r.value]));
+const mail = COMPANY.email.href.replace(/^mailto:/, '');
+const f = CONTACT.form;
+---
+<section class="end" id="contact" data-ui="dark">
+  <svg class="ln end__ln" data-ln="merge" aria-hidden="true"></svg>
+  <div class="wrap">
+    <p class="end__zero"><span>{CONTACT.zero[0]}</span><b>{CONTACT.zero[1]}</b></p>
+    <div class="end__grid">
+      <div class="end__text">
+        <h2 class="h2 h2--t">{CONTACT.title}</h2>
+        <p>{CONTACT.text}</p>
+        <ul>
+          <li><a href={COMPANY.phone.href}>{COMPANY.phone.text}</a></li>
+          <li><a href={COMPANY.email.href}>{COMPANY.email.text}</a></li>
+        </ul>
+      </div>
+      <form class="form" data-form data-mailto={mail} data-subject={f.subject} novalidate>
+        <div class="form__body">
+          <label class="field" data-field><span>{f.name}</span><input type="text" name="name" autocomplete="name" required placeholder={f.namePh}><em>{f.nameErr}</em></label>
+          <label class="field" data-field><span>{f.contact}</span><input type="text" name="contact" autocomplete="email" required data-contact placeholder={f.contactPh}><em>{f.contactErr}</em></label>
+          <label class="field field--full" data-field><span>{f.task}</span><textarea name="task" rows="3" placeholder={f.taskPh}></textarea></label>
+          <div class="form__foot">
+            <button class="btn" type="submit"><span>{f.submit}</span></button>
+            <p>{f.consent}&nbsp;<a href="#" data-stub={CONTACT.policy}>{f.policy}</a>.</p>
+          </div>
+        </div>
+        <div class="form__ok" aria-live="polite">
+          <p class="lbl">{f.okLabel}</p>
+          <h3 tabindex="-1" data-form-ok>{f.okTitle}</h3>
+          <p>{f.okText} <a href={COMPANY.email.href}>{COMPANY.email.text}</a></p>
+          <button class="btn btn--ghost" type="button" data-form-reset><span>{f.again}</span></button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="foot">
+    <div class="wrap">
+      <p class="foot__logo" aria-hidden="true"><b>АИ</b>ТЕХ</p>
+      <div class="foot__grid">
+        <div>
+          <p class="lbl">{CONTACT.footLabels.company}</p>
+          <p>{req['Компания']}<br>ИНН {req['ИНН']} · ОГРН {req['ОГРН']}<br>{req['Адрес']}<br>ОКВЭД {req['ОКВЭД']}</p>
+        </div>
+        <div>
+          <p class="lbl">{CONTACT.footLabels.sections}</p>
+          <ul>{NAV.map((n) => <li>{n.href ? <a href={n.href}>{n.label}</a> : <a href="#" data-stub={n.stub}>{n.label}</a>}</li>)}</ul>
+        </div>
+        <div>
+          <p class="lbl">{CONTACT.footLabels.notice}</p>
+          <p>{NOTICE.text}</p>
+          <p><a href="#" data-stub={CONTACT.policy}>{CONTACT.policy}</a></p>
+        </div>
+      </div>
+    </div>
+  </footer>
+</section>

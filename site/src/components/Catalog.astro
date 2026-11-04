@@ -1,0 +1,54 @@
+---
+/* 4. Каталог A: штат от одного сотрудника до отдела. «Подробнее» открывает панель решения */
+import { CATALOG, nb } from '../data/content';
+import { SOLUTIONS } from '../data/solutions';
+import { asset } from '../config';
+import SolutionDetails from './SolutionDetails.astro';
+
+const withDetails = SOLUTIONS.filter((s) => s.tasks.length);
+---
+<section class="staff" id="staff" data-ui="light">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="lbl">{CATALOG.label}</p>
+      <h2 class="h2" data-split>{CATALOG.title}</h2>
+      <p class="sec-head__sub" data-reveal>{CATALOG.sub}</p>
+    </div>
+    <div class="cards" data-cards>
+      {SOLUTIONS.map((s) =>
+        s.tasks.length ? (
+          <article class="card" data-card>
+            <span class="card__tag">{s.tag}</span>
+            <div class="card__img"><img src={asset(`img/${s.img}.webp`)} alt={s.alt} loading="lazy" decoding="async"></div>
+            <h3>{nb(s.title)}</h3>
+            <p>{nb(s.desc)}</p>
+            <ul class="card__tasks" id={`tasks-${s.id}`}>
+              {s.tasks.map((t) => <li>{nb(t)}</li>)}
+            </ul>
+            <div class="card__foot">
+              <button class="btn btn--card" type="button" data-open-dialog={`sol-${s.id}`} aria-haspopup="dialog"><span>{CATALOG.more}</span></button>
+              <button class="plus" type="button" data-card-toggle aria-label="Показать задачи" aria-expanded="false" aria-controls={`tasks-${s.id}`}><i></i></button>
+            </div>
+          </article>
+        ) : (
+          <article class="card card--signal">
+            <span class="card__tag">{s.tag}</span>
+            <div class="card__img"><img src={asset(`img/${s.img}.webp`)} alt={s.alt} loading="lazy" decoding="async"></div>
+            <h3>{nb(s.title)}</h3>
+            <p>{nb(s.desc)}</p>
+            <div class="card__foot"><a class="btn btn--dark" href="#contact"><span>{CATALOG.customCta}</span></a></div>
+          </article>
+        ),
+      )}
+      <article class="card card--more">
+        <p class="lbl">{CATALOG.moreLabel}</p>
+        <ul class="card__more">
+          {CATALOG.moreList.map((t) => <li>{nb(t)}</li>)}
+        </ul>
+        <a class="more-link" href="#" data-stub="Каталог решений"><span>{CATALOG.moreLink}</span><i></i></a>
+        <p class="card__note">{CATALOG.note}</p>
+      </article>
+    </div>
+  </div>
+  {withDetails.map((s) => <SolutionDetails solution={s} />)}
+</section>

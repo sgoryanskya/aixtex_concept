@@ -1,0 +1,40 @@
+---
+/* Панель подробностей решения на нативном <dialog>, оформлена светлой главой A */
+import type { Solution } from '../data/solutions';
+import { nb } from '../data/content';
+import { asset } from '../config';
+
+interface Props {
+  solution: Solution;
+}
+const { solution: s } = Astro.props;
+---
+<dialog class="drawer" id={`sol-${s.id}`} aria-labelledby={`sol-${s.id}-t`}>
+  <div class="drawer__in">
+    <div class="drawer__top">
+      <span>{s.tag}</span>
+      <button class="drawer__x" type="button" data-close-dialog aria-label="Закрыть"><i></i></button>
+    </div>
+    <div class="drawer__img"><img src={asset(`img/${s.img}.webp`)} alt="" loading="lazy" decoding="async"></div>
+    <h2 id={`sol-${s.id}-t`}>{nb(s.title)}</h2>
+    <p class="drawer__desc">{nb(s.desc)}</p>
+    <div class="drawer__b">
+      <p class="lbl">Задача</p>
+      <p>{nb(s.details.goal)}</p>
+    </div>
+    <div class="drawer__b">
+      <p class="lbl">Сценарий работы</p>
+      <ol class="drawer__flow">{s.details.flow.map((f) => <li>{nb(f)}</li>)}</ol>
+    </div>
+    <div class="drawer__b">
+      <p class="lbl">Что получает команда</p>
+      <ul class="drawer__team">{s.details.team.map((f) => <li>{nb(f)}</li>)}</ul>
+    </div>
+    <div class="drawer__b">
+      <p class="lbl">Возможные интеграции</p>
+      <ul class="drawer__int">{s.details.integrations.map((f) => <li>{nb(f)}</li>)}</ul>
+      <p class="drawer__fine">{nb('Состав функций и интеграций уточняется под задачу компании на этапе проектирования.')}</p>
+    </div>
+    <a class="btn" href="#contact"><span>Обсудить задачу</span></a>
+  </div>
+</dialog>

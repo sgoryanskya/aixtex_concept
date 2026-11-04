@@ -1,0 +1,40 @@
+---
+/* 1. Первый экран A: камера едет от клубка к ровным линиям, второе слово называет ценность */
+import { HERO, HERO_VARIANTS, HERO_VARIANT } from '../data/content';
+import { REVIEW_MODE, asset } from '../config';
+
+const v = HERO_VARIANTS[HERO_VARIANT];
+/* В режиме согласования второй вариант включается параметром ?hero=managed */
+const variants = REVIEW_MODE ? JSON.stringify(HERO_VARIANTS) : undefined;
+---
+<section class="hero" id="top" data-ui="dark">
+  <div class="hero__stage">
+    <div class="hero__media" data-hero-media>
+      <img src={asset('img/hero.webp')} alt={HERO.alt} width="2000" height="1125" fetchpriority="high">
+      <canvas class="hero__pulse" data-hero-pulse></canvas>
+      <div class="hero__glow"></div>
+    </div>
+    <div class="hero__shade"></div>
+
+    <div class="hero__tags" aria-hidden="true">
+      <p class="tag tag--in" data-hero-in set:html={HERO.inTag.join('<br>')} />
+      <p class="tag tag--out" data-hero-out set:html={HERO.outTag.join('<br>')} />
+    </div>
+
+    <div class="hero__lead" data-hero-lead>
+      <p>{HERO.lead}</p>
+      <div class="hero__btns">
+        <a class="btn" href="#contact"><span>{HERO.primary}</span></a>
+        <a class="btn btn--ghost" href="#staff"><span>{HERO.secondary}</span></a>
+      </div>
+    </div>
+
+    <p class="hero__after" data-hero-after aria-hidden="true">{HERO.after}</p>
+
+    <h1 class="hero__title" data-hero-variants={variants}>
+      <span class="sr" data-hero-h1>{v.h1}</span>
+      <span class="hero__word hero__word--a" data-word-a aria-hidden="true">{HERO.wordA}</span>
+      <span class="hero__word hero__word--b" data-word-b aria-hidden="true">{v.word}</span>
+    </h1>
+  </div>
+</section>

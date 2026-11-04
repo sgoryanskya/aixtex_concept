@@ -1,0 +1,43 @@
+---
+/* Главная АИТЕХ: двенадцать блоков концепции A «Сигнал» в её порядке (бриф v3, раздел 7) */
+import Base from '../layouts/Base.astro';
+import Chrome from '../components/Chrome.astro';
+import Hero from '../components/Hero.astro';
+import Manifest from '../components/Manifest.astro';
+import Assistant from '../components/Assistant.astro';
+import Catalog from '../components/Catalog.astro';
+import InWork from '../components/InWork.astro';
+import Inside from '../components/Inside.astro';
+import Sectors from '../components/Sectors.astro';
+import Principles from '../components/Principles.astro';
+import Changes from '../components/Changes.astro';
+import Flow from '../components/Flow.astro';
+import Faq from '../components/Faq.astro';
+import Contact from '../components/Contact.astro';
+import Overlays from '../components/Overlays.astro';
+import ThemeStudio from '../components/ThemeStudio.astro';
+import { REVIEW_MODE } from '../config';
+---
+<Base>
+  <Chrome slot="header" />
+  <Hero />
+  <Manifest />
+  <Assistant />
+  <Catalog />
+  <InWork />
+  <Inside />
+  <Sectors />
+  <Principles />
+  <Changes />
+  <Flow />
+  <Faq />
+  <Contact />
+  <Fragment slot="after">
+    <Overlays />
+    {REVIEW_MODE && <ThemeStudio />}
+  </Fragment>
+</Base>
+
+<script>
+  import '../lib/signal';
+</script>

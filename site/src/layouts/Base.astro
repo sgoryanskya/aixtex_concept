@@ -1,0 +1,68 @@
+---
+import '../styles/global.css';
+import sofiaCyr from '../fonts/sofia-cyr.woff2?url';
+import { PALETTES, PALETTE_IDS, STORAGE_KEY, getPalette, paletteVars } from '../data/palettes';
+import { SEO } from '../data/content';
+import { REVIEW_MODE, START_PALETTE, APPROVED_PALETTE, SITE_URL, BASE, asset } from '../config';
+
+const start = getPalette(START_PALETTE);
+
+/* В публичной версии на страницу попадает только утверждённая палитра */
+const shipped = REVIEW_MODE ? PALETTES : [getPalette(APPROVED_PALETTE)];
+const paletteCss = shipped.map((p) => `[data-palette="${p.id}"]{${paletteVars(p)}}`).join('\n');
+
+const canonical = !REVIEW_MODE && SITE_URL ? SITE_URL + BASE : '';
+const ogImage = SITE_URL ? SITE_URL + asset('og.jpg') : asset('og.jpg');
+---
+<!doctype html>
+<html lang="ru" data-palette={START_PALETTE} data-studio="0" data-ui-top="dark" data-ui-bot="dark" style="color-scheme:dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{SEO.title}</title>
+  <meta name="description" content={SEO.description}>
+  {REVIEW_MODE ? <meta name="robots" content="noindex, nofollow"> : canonical && <link rel="canonical" href={canonical}>}
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ru_RU">
+  <meta property="og:title" content={SEO.title}>
+  <meta property="og:description" content={SEO.description}>
+  <meta property="og:image" content={ogImage}>
+  {canonical && <meta property="og:url" content={canonical}>}
+  <meta name="theme-color" content={start.bg}>
+  <link rel="icon" href={asset('favicon.svg')} type="image/svg+xml">
+  <link rel="preload" as="image" href={asset('img/hero.webp')} fetchpriority="high">
+  <link rel="preload" as="font" type="font/woff2" href={sofiaCyr} crossorigin>
+  <style is:inline set:html={paletteCss}></style>
+  <script is:inline define:vars={{ ids: PALETTE_IDS, review: REVIEW_MODE, start: START_PALETTE, approved: APPROVED_PALETTE, key: STORAGE_KEY, bgs: Object.fromEntries(PALETTES.map((p) => [p.id, p.bg])) }}>
+    /* Палитра применяется до первой отрисовки: адрес → сохранённый выбор → стартовая */
+    var d = document.documentElement;
+    var id = approved;
+    var studio = false;
+    if (review) {
+      id = start;
+      try {
+        var saved = localStorage.getItem(key);
+        if (saved && ids.indexOf(saved) > -1) id = saved;
+      } catch (e) {}
+      var q = new URLSearchParams(location.search);
+      var fromUrl = q.get('palette');
+      if (fromUrl && ids.indexOf(fromUrl) > -1) id = fromUrl;
+      studio = q.get('studio') !== '0';
+    }
+    d.setAttribute('data-palette', id);
+    d.setAttribute('data-studio', studio ? '1' : '0');
+    var tc = document.querySelector('meta[name="theme-color"]');
+    if (tc && bgs[id]) tc.setAttribute('content', bgs[id]);
+    d.classList.add('js');
+  </script>
+  <noscript><style>.drawer{display:block!important;position:static!important;inset:auto!important;width:auto!important;max-width:none!important;height:auto!important;margin:24px 0!important;transform:none!important}.drawer::backdrop{display:none}.drawer__x{display:none!important}</style></noscript>
+</head>
+<body>
+  <a class="skip" href="#manifest">К основному содержанию</a>
+  <slot name="header" />
+  <main id="main">
+    <slot />
+  </main>
+  <slot name="after" />
+</body>
+</html>

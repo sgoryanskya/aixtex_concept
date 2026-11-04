@@ -1,0 +1,33 @@
+---
+/* Полноэкранное меню и заглушка для разделов, которых пока нет */
+import { NAV, STUB } from '../data/content';
+import { COMPANY } from '../data/company';
+---
+<div class="menu" data-menu aria-hidden="true">
+  <button class="menu__x" type="button" data-menu-close aria-label="Закрыть меню"><i></i></button>
+  <p class="lbl">Навигация</p>
+  <ul>
+    {NAV.map((n, i) => (
+      <li>
+        {n.href
+          ? <a href={n.href}><i>{String(i + 1).padStart(2, '0')}</i>{n.label}</a>
+          : <a href="#" data-stub={n.stub}><i>{String(i + 1).padStart(2, '0')}</i>{n.label}</a>}
+      </li>
+    ))}
+  </ul>
+  <div class="menu__foot"><a href={COMPANY.phone.href}>{COMPANY.phone.text}</a><a href={COMPANY.email.href}>{COMPANY.email.text}</a></div>
+</div>
+
+<div class="stub" data-stub-modal hidden>
+  <div class="stub__box" role="dialog" aria-modal="true" aria-labelledby="stub-t">
+    <div class="stub__top"><span>{STUB.top}</span><span class="stub__live"><i></i>{STUB.live}</span></div>
+    <p class="stub__name" data-stub-name>Раздел</p>
+    <h2 id="stub-t">{STUB.title}</h2>
+    <p class="stub__txt">{STUB.text}</p>
+    <div class="stub__btns">
+      <button class="btn" type="button" data-stub-close><span>{STUB.back}</span></button>
+      <a class="btn btn--ghost" href="#contact"><span>{STUB.contact}</span></a>
+    </div>
+    <div class="stub__ticks" aria-hidden="true"></div>
+  </div>
+</div>

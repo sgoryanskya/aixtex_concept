@@ -1,0 +1,16 @@
+---
+/* 8. Подход: место и раскладка блока «В цифрах» из A. Вместо непроверенных цифр — фраза заказчика и три принципа */
+import { PRINCIPLES } from '../data/content';
+---
+<section class="prin" id="approach" data-ui="light">
+  <svg class="ln ln--top" data-ln="band" aria-hidden="true"></svg>
+  <div class="wrap">
+    <p class="lbl">{PRINCIPLES.label}</p>
+    <div class="prin__grid">
+      <h2 class="prin__title" data-split>{PRINCIPLES.title}</h2>
+      <ul class="prin__side" data-reveal>
+        {PRINCIPLES.items.map((it) => <li><b>{it.title}</b><span>{it.text}</span></li>)}
+      </ul>
+    </div>
+  </div>
+</section>
