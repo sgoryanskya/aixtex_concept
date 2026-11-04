@@ -1,22 +1,23 @@
 ---
-/* 9. Что меняется: место блока «Результат» из A. Вместо графика с условными цифрами
-   линия сигнала распутывается, под ней типовые изменения словами */
+/* 9. Что меняется: место блока «Результат» из A. Вместо графика с условными цифрами — типовые изменения словами.
+   Каждая строка рассказывает переход: черта строки прочерчивается, «было» зачёркивается и гаснет,
+   сигнал-стрелка ведёт к «стало», которое проявляется по словам. Главное в строке — «стало» */
 import { CHANGES } from '../data/content';
+const num = (i: number) => String(i + 1).padStart(2, '0');
 ---
 <section class="chg" id="changes" data-ui="dark">
   <div class="wrap chg__head">
     <p class="lbl">{CHANGES.label}</p>
     <h2 class="h2 h2--t" data-split>{CHANGES.title}</h2>
   </div>
-  <div class="chg__ln"><svg class="ln" data-ln="untangle" aria-hidden="true"></svg></div>
   <div class="wrap">
     <div class="chg__row chg__row--head" aria-hidden="true"><span>{CHANGES.cols.area}</span><span>{CHANGES.cols.before}</span><span>{CHANGES.cols.after}</span></div>
     <ul class="chg__table">
-      {CHANGES.rows.map((r) => (
-        <li class="chg__row" data-reveal>
-          <h3 class="chg__area">{r.area}</h3>
-          <p class="chg__before"><span class="chg__cap">{CHANGES.cols.before}</span>{r.before}</p>
-          <p class="chg__after"><span class="chg__cap">{CHANGES.cols.after}</span><span class="chg__v">{r.after}</span></p>
+      {CHANGES.rows.map((r, i) => (
+        <li class="chg__row" data-chg>
+          <h3 class="chg__area"><span class="chg__n">{num(i)}</span>{r.area}</h3>
+          <p class="chg__before"><span class="chg__cap">{CHANGES.cols.before}</span><s class="chg__s">{r.before}</s></p>
+          <p class="chg__after"><span class="chg__cap">{CHANGES.cols.after}</span><span class="chg__line"><i class="chg__arr" aria-hidden="true"></i><span class="chg__v">{r.after}</span></span></p>
         </li>
       ))}
     </ul>

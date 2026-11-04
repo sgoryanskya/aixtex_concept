@@ -1,6 +1,6 @@
 /* Движение концепции A «Сигнал» (a-signal/main.js), перенесённое без изменения таймингов.
    Изменения: цвет импульсов берётся из палитры, блоки 8 и 9 без счётчиков и графика,
-   у блока 9 своя линия «распутывание», карточки каталога открывают панель решения. */
+   строки блока 9 проигрывают переход «было → стало», карточки каталога открывают панель решения. */
 import { gsap, ScrollTrigger, $, $$, reduced, isMobile, clamp, lock, initAnchors, initStub, initMenu, initFaq, initForm, afterFonts, splitWords } from './ax';
 import { onPalette } from './theme-controller';
 
@@ -305,13 +305,9 @@ function initReveals() {
     once: true,
     onEnter: (b) => gsap.to(b, { opacity: 1, y: 0, duration: 1, ease: 'expo.out', stagger: 0.07 }),
   });
-  /* линия масштаба «роль → отдел»: сигнал проходит по ней один раз */
-  $$('[data-scale]').forEach((el) =>
-    ScrollTrigger.create({ trigger: el, start: 'top 82%', once: true, onEnter: () => el.classList.add('is-in') }),
-  );
 }
 
-/* ---------- Карточки: задачи по плюсу ---------- */
+/* ---------- Карточки: задачи по плюсу, щелчок по карточке открывает панель решения ---------- */
 $$('[data-card-toggle]').forEach((b) => {
   b.addEventListener('click', () => {
     const on = b.closest('[data-card]')!.classList.toggle('is-open');
@@ -319,6 +315,13 @@ $$('[data-card-toggle]').forEach((b) => {
     b.setAttribute('aria-expanded', String(on));
   });
 });
+$$('[data-card]').forEach((c) =>
+  c.addEventListener('click', (e) => {
+    const t = e.target as HTMLElement;
+    if (t.closest('button, a, .card__tasks') || getSelection()?.toString()) return;
+    $<HTMLButtonElement>('[data-open-dialog]', c)?.click();
+  }),
+);
 
 /* ---------- Панели решений: нативный <dialog> ---------- */
 function initDrawers() {
@@ -597,11 +600,6 @@ function drawLn(svg: SVGSVGElement, W: number, H: number, paths: string[], pulse
     pulses.map((p) => `<path class="ln__p ln__p--${p.c}" pathLength="100" d="${paths[p.i]}" style="animation-duration:${p.t}s;animation-delay:${p.d}s"/>`).join('');
 }
 const PULSES = (n: number, k: number): Pulse[] => Array.from({ length: k }, (_, j) => ({ i: Math.round(((j + 0.5) * n) / k) % n, c: j % 3 === 1 ? 'ice' : 'sig', t: 6 + (j % 3) * 2.2, d: -j * 1.7 }));
-/* Детерминированный разброс: картинка линий одинакова при каждой перерисовке */
-const rnd = (i: number, k: number) => {
-  const x = Math.sin(i * 12.9898 + k * 78.233) * 43758.5453;
-  return x - Math.floor(x);
-};
 const LN: Record<string, (svg: SVGSVGElement, W: number, H: number) => void> = {
   /* Полоса прямых линий: продолжение пучка из первого экрана */
   band(svg, W, H) {
@@ -609,30 +607,50 @@ const LN: Record<string, (svg: SVGSVGElement, W: number, H: number) => void> = {
     const paths = Array.from({ length: n }, (_, i) => `M0 ${fx(1 + (i * (H - 2)) / (n - 1))}H${W}`);
     drawLn(svg, W, H, paths, PULSES(n, 4));
   },
-  /* Ассистент: сложное входит слева в голову, результат выходит из плеча направо */
+  /* Ассистент: сложное входит слева в механизм за ухом, результат проходит сквозь голову
+     и выходит перед лицом по направлению взгляда. Бюст лежит поверх svg и скрывает линии внутри головы */
   asst(svg, W, H) {
     const stage = svg.parentElement!;
     const box = stage.getBoundingClientRect();
     const b = $('[data-asst-bust]')!.getBoundingClientRect();
-    /* точки входа и выхода: у мраморного бюста A — голова и плечо, у стеклянной девушки — механизм за ухом и грудь */
-    const [ix, iy, ox, oy] = root.hasAttribute('data-art-orig') ? [0.56, 0.32, 0.6, 0.76] : [0.4, 0.29, 0.66, 0.8];
-    const hx = b.left - box.left + b.width * ix;
-    const hy = b.top - box.top + b.height * iy;
-    const sx = b.left - box.left + b.width * ox;
-    const sy = b.top - box.top + b.height * oy;
+    const px = (x: number) => b.left - box.left + b.width * x;
+    const py = (y: number) => b.top - box.top + b.height * y;
     const ys = (sel: string) => $$(sel, stage).map((l) => (parseFloat(l.style.getPropertyValue('--y')) / 100) * H);
     const inn = ys('.asst__tags--in li');
     const out = ys('.asst__tags--out li');
     const x0 = W * 0.27;
+    /* у мраморного бюста A выход остаётся из плеча, у стеклянной девушки — от лица между бровью и губами */
+    const orig = root.hasAttribute('data-art-orig');
+    const [hx, hy] = orig ? [px(0.56), py(0.32)] : [px(0.4), py(0.29)];
+    const outPath = (y: number, k: number) => {
+      if (orig) {
+        const [sx, sy] = [px(0.6), py(0.76)];
+        return `M${fx(sx)} ${fx(sy)}C${fx(sx + W * 0.08)} ${fx(sy)} ${fx(sx + W * 0.05)} ${fx(y)} ${fx(sx + W * 0.16)} ${fx(y)}H${W}`;
+      }
+      const sy = py(0.295 + k * 0.035);
+      const ex = px(0.74);
+      return `M${fx(px(0.5))} ${fx(sy)}H${fx(ex)}C${fx(ex + W * 0.07)} ${fx(sy)} ${fx(ex + W * 0.05)} ${fx(y)} ${fx(ex + W * 0.13)} ${fx(y)}H${W}`;
+    };
     const paths = [
       ...inn.map((y) => `M0 ${fx(y)}H${fx(x0)}C${fx(x0 + (hx - x0) * 0.55)} ${fx(y)} ${fx(x0 + (hx - x0) * 0.5)} ${fx(hy)} ${fx(hx)} ${fx(hy)}`),
-      ...out.map((y) => `M${fx(sx)} ${fx(sy)}C${fx(sx + W * 0.08)} ${fx(sy)} ${fx(sx + W * 0.05)} ${fx(y)} ${fx(sx + W * 0.16)} ${fx(y)}H${W}`),
+      ...out.map(outPath),
     ];
     const k = inn.length;
     drawLn(svg, W, H, paths, [
       { i: 0, c: 'sig', t: 5.6, d: 0 }, { i: 2, c: 'sig', t: 7, d: -2 }, { i: 4, c: 'sig', t: 6.2, d: -4 },
       { i: k, c: 'ice', t: 6, d: -1 }, { i: k + 1, c: 'ice', t: 4.8, d: -3 }, { i: k + 2, c: 'ice', t: 6.6, d: -5 },
     ]);
+    /* стекло полупрозрачное: выход проявляется только от края лица, внутри головы линий не видно */
+    if (!orig) {
+      svg.insertAdjacentHTML(
+        'afterbegin',
+        `<defs><linearGradient id="asst-fg" gradientUnits="userSpaceOnUse" x1="${fx(px(0.64))}" y1="0" x2="${fx(px(0.71))}" y2="0"><stop offset="0" stop-color="#000"/><stop offset="1" stop-color="#fff"/></linearGradient>` +
+          `<mask id="asst-fm" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}"><rect width="${W}" height="${H}" fill="url(#asst-fg)"/></mask></defs>`,
+      );
+      const outD = new Set(paths.slice(k));
+      $$('path', svg).forEach((p) => outD.has(p.getAttribute('d')!) && p.setAttribute('mask', 'url(#asst-fm)'));
+    }
+    asstHot();
   },
   /* Рельс через всю ленту отраслей */
   rail(svg, W, H) {
@@ -641,24 +659,6 @@ const LN: Record<string, (svg: SVGSVGElement, W: number, H: number) => void> = {
     const y0 = H / 2 - ((n - 1) * g) / 2;
     const paths = Array.from({ length: n }, (_, i) => `M0 ${fx(y0 + i * g)}H${W}`);
     drawLn(svg, W, H, paths, PULSES(n, 7).map((p) => ({ ...p, t: p.t * 3 })));
-  },
-  /* Блок 9: слева линии спутаны и пересекаются, к середине ложатся в ровный пучок */
-  untangle(svg, W, H) {
-    const m = isMobile();
-    const n = m ? 7 : 11;
-    const split = W * (m ? 0.62 : 0.52);
-    const top = H * 0.22;
-    const span = H * 0.56;
-    const x1 = split * 0.3;
-    const x2 = split * 0.64;
-    const paths = Array.from({ length: n }, (_, i) => {
-      const yEnd = top + (i * span) / (n - 1);
-      const y0 = H * (0.06 + 0.88 * rnd(i, 1));
-      const y1 = H * (0.04 + 0.92 * rnd(i, 2));
-      const y2 = H * (0.08 + 0.84 * rnd(i, 3));
-      return `M0 ${fx(y0)}C${fx(x1 * 0.5)} ${fx(y0)} ${fx(x1 * 0.6)} ${fx(y1)} ${fx(x1)} ${fx(y1)}S${fx(x2 * 0.85)} ${fx(y2)} ${fx(x2)} ${fx(y2)}S${fx(split * 0.9)} ${fx(yEnd)} ${fx(split)} ${fx(yEnd)}H${W}`;
-    });
-    drawLn(svg, W, H, paths, PULSES(n, 5));
   },
   /* Финал: все линии сходятся в одну */
   merge(svg, W, H) {
@@ -700,29 +700,194 @@ function initLines() {
   items.forEach((s) => io.observe(s));
 }
 
-/* ---------- Кто это: роли, клавиатура как у вкладок ---------- */
+/* Разметка «слово в маске» для смены текста; неразрывные пробелы остаются внутри слова */
+const wordsHtml = (s: string) =>
+  s
+    .split(' ')
+    .map((w) => `<span class="w"><span class="wi">${w.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</span></span>`)
+    .join(' ');
+
+/* ---------- Что меняется: каждая строка проигрывает переход «было → стало» ---------- */
+function initChanges() {
+  if (reduced) return;
+  $$('[data-chg]').forEach((row) => {
+    const s = $('.chg__s', row)!;
+    const v = $('.chg__v', row)!;
+    v.innerHTML = wordsHtml(v.textContent ?? '');
+    const tl = gsap
+      .timeline({ paused: true })
+      .fromTo(row, { '--k': 0 }, { '--k': 1, duration: 1.3, ease: 'power3.inOut' }, 0)
+      .from([$('.chg__area', row), $('.chg__before', row)], { opacity: 0, y: 14, duration: 0.9, stagger: 0.12, ease: 'expo.out' }, 0.15)
+      .fromTo(s, { backgroundSize: '0% 1px' }, { backgroundSize: '100% 1px', duration: 0.9, ease: 'power2.inOut' }, 0.75)
+      .call(() => s.classList.add('is-off'), undefined, 1.1)
+      .from($('.chg__arr', row), { scaleX: 0, duration: 0.7, ease: 'expo.out' }, 1.35)
+      .from($$('.wi', v), { yPercent: 105, opacity: 0, duration: 0.95, stagger: 0.03, ease: 'expo.out' }, 1.45);
+    s.classList.remove('is-off');
+    ScrollTrigger.create({ trigger: row, start: 'top 84%', once: true, onEnter: () => tl.play() });
+  });
+}
+
+/* ---------- Кто это: роль перенастраивает сцену ----------
+   Подсвечиваются входы и результат роли, по ним пробегает импульс, текст обязанностей
+   меняется по словам, индикатор перетекает к вкладке. Пока посетитель не выбрал роль сам,
+   роли сменяются раз в 7 секунд, а следующая вкладка заполняется тонкой линией */
+const asstSec = $('[data-asst]');
+function asstHot() {
+  if (!asstSec) return;
+  const tab = $(`[data-asst-tab="${asstSec.dataset.role}"]`, asstSec);
+  if (!tab) return;
+  const ins = (tab.dataset.ins ?? '').split(',').map(Number);
+  const out = Number(tab.dataset.out);
+  const n = $$('.asst__tags--in li', asstSec).map((li, i) => li.classList.toggle('is-hot', ins.includes(i))).length;
+  $$('.asst__tags--out li', asstSec).forEach((li, i) => li.classList.toggle('is-hot', i === out));
+  const hot = new Set<string>();
+  $$('.ln__l', asstSec).forEach((p, i) => {
+    const on = i < n ? ins.includes(i) : i - n === out;
+    p.classList.toggle('is-hot', on);
+    if (on) hot.add(p.getAttribute('d')!);
+  });
+  $$('.ln__p', asstSec).forEach((p) => p.classList.toggle('is-hot', hot.has(p.getAttribute('d')!)));
+}
+function asstBurst() {
+  const svg = $('[data-ln="asst"]', asstSec!);
+  if (!svg || !svg.classList.contains('is-run')) return;
+  const n = $$('.asst__tags--in li', asstSec!).length;
+  let k = 0;
+  $$('.ln__l', svg).forEach((l, i) => {
+    if (!l.classList.contains('is-hot')) return;
+    const b = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    b.setAttribute('class', `ln__b ln__b--${i < n ? 'sig' : 'ice'}`);
+    b.setAttribute('pathLength', '100');
+    b.setAttribute('d', l.getAttribute('d')!);
+    if (l.hasAttribute('mask')) b.setAttribute('mask', l.getAttribute('mask')!);
+    b.style.animationDelay = `${i < n ? k++ * 0.09 : 0.7}s`;
+    b.addEventListener('animationend', () => b.remove());
+    svg.appendChild(b);
+  });
+}
 function initAssistant() {
-  const duty = $('[data-asst-duty]')!;
-  const tabs = $$<HTMLButtonElement>('[data-asst-tab]');
-  const select = (b: HTMLButtonElement, focus = false) => {
-    tabs.forEach((t) => {
-      const on = t === b;
-      t.setAttribute('aria-selected', String(on));
-      t.tabIndex = on ? 0 : -1;
-    });
-    duty.textContent = b.dataset.duty ?? '';
-    duty.setAttribute('aria-labelledby', b.id);
-    if (focus) b.focus();
+  const sec = asstSec;
+  if (!sec) return;
+  const duty = $('[data-asst-duty]', sec)!;
+  const ind = $('[data-asst-ind]', sec)!;
+  const tabs = $$<HTMLButtonElement>('[data-asst-tab]', sec);
+  const HOLD = 7;
+  let cur = 0;
+
+  /* индикатор: ведущий край уходит первым, второй догоняет — полоска перетекает */
+  const edge = { l: 0, r: 0 };
+  const paint = () => (ind.style.transform = `translateX(${edge.l.toFixed(1)}px) scaleX(${Math.max(edge.r - edge.l, 0).toFixed(1)})`);
+  const place = (i: number, move: boolean) => {
+    const t = tabs[i];
+    const l = t.offsetLeft;
+    const r = l + t.offsetWidth;
+    gsap.killTweensOf(edge);
+    if (!move || reduced) {
+      Object.assign(edge, { l, r });
+      return paint();
+    }
+    const fwd = l > edge.l;
+    gsap.to(edge, { r, duration: 0.75, delay: fwd ? 0 : 0.14, ease: 'expo.out', onUpdate: paint });
+    gsap.to(edge, { l, duration: 0.75, delay: fwd ? 0.14 : 0, ease: 'expo.out', onUpdate: paint });
   };
+
+  /* текст обязанностей меняется по словам */
+  const words = wordsHtml;
+  duty.innerHTML = words(duty.textContent ?? '');
+  let outTw: gsap.core.Tween | undefined;
+  let inTw: gsap.core.Tween | undefined;
+  const swap = (text: string) => {
+    outTw?.kill();
+    inTw?.kill();
+    if (reduced) return void (duty.innerHTML = words(text));
+    outTw = gsap.to($$('.wi', duty), {
+      yPercent: -105,
+      opacity: 0,
+      duration: 0.3,
+      stagger: 0.008,
+      ease: 'power2.in',
+      onComplete: () => {
+        duty.innerHTML = words(text);
+        inTw = gsap.fromTo($$('.wi', duty), { yPercent: 105, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.9, stagger: 0.018, ease: 'expo.out' });
+      },
+    });
+  };
+
+  let auto = !reduced;
+  let visible = false;
+  const timer = gsap.delayedCall(HOLD, () => select((cur + 1) % tabs.length)).pause();
+  sec.style.setProperty('--hold', `${HOLD}s`);
+  sec.classList.toggle('is-auto', auto);
+  const mark = () => tabs.forEach((t, k) => t.classList.toggle('is-next', auto && k === (cur + 1) % tabs.length));
+  const stopAuto = () => {
+    auto = false;
+    timer.kill();
+    sec.classList.remove('is-auto');
+    mark();
+  };
+
+  function select(i: number, focus = false) {
+    if (i === cur) {
+      if (focus) tabs[i].focus();
+      return;
+    }
+    cur = i;
+    const b = tabs[i];
+    tabs.forEach((t, k) => {
+      t.setAttribute('aria-selected', String(k === i));
+      t.tabIndex = k === i ? 0 : -1;
+    });
+    duty.setAttribute('aria-labelledby', b.id);
+    sec!.dataset.role = String(i);
+    swap(b.dataset.duty ?? '');
+    place(i, true);
+    asstHot();
+    if (!reduced) asstBurst();
+    mark();
+    if (auto) {
+      timer.restart(true);
+      if (!visible) timer.pause();
+    }
+    if (focus) b.focus();
+  }
+
   tabs.forEach((b, i) => {
-    b.addEventListener('click', () => select(b));
+    b.addEventListener('click', () => {
+      stopAuto();
+      select(i);
+    });
     b.addEventListener('keydown', (e) => {
       const go = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabs.length - 1 }[e.key];
       if (go === undefined) return;
       e.preventDefault();
-      select(tabs[(go + tabs.length) % tabs.length], true);
+      stopAuto();
+      select((go + tabs.length) % tabs.length, true);
     });
   });
+  /* наведение на колонку с текстом ставит смену на паузу, чтобы можно было дочитать */
+  const col = $('.asst__r', sec)!;
+  col.addEventListener('mouseenter', () => {
+    sec.classList.add('is-hold');
+    timer.pause();
+  });
+  col.addEventListener('mouseleave', () => {
+    sec.classList.remove('is-hold');
+    if (auto && visible) timer.resume();
+  });
+  ScrollTrigger.create({
+    trigger: sec,
+    start: 'top 60%',
+    end: 'bottom 40%',
+    onToggle: (t) => {
+      visible = t.isActive;
+      sec.classList.toggle('is-vis', visible);
+      if (auto && !sec.classList.contains('is-hold')) visible ? timer.resume() : timer.pause();
+    },
+  });
+  mark();
+  place(cur, false);
+  afterFonts(() => place(cur, false));
+  addEventListener('resize', () => place(cur, false));
 }
 
 /* ---------- Запуск ---------- */
@@ -734,6 +899,7 @@ initAssistant();
 afterFonts(() => {
   fitAll();
   initReveals();
+  initChanges();
   initExploded();
   initIndustries();
   initLines();

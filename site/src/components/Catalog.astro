@@ -1,7 +1,7 @@
 ---
-/* 4. Каталог A: штат от одного сотрудника до отдела. Бриф v3, блок 4: три карточки в ряд,
-   сначала роли, линия масштаба «роль → отдел», затем отделы; сцены из фарфора и металла палитры.
-   «Подробнее» открывает панель решения, плюс показывает задачи прямо в карточке */
+/* 4. Каталог A: штат от одного сотрудника до отдела. Бриф v3, блок 4: компактные карточки
+   по четыре в ряд — сначала роли, затем отделы, без разделителей; сцены из фарфора и металла палитры.
+   Карточка целиком открывает панель решения, плюс показывает задачи прямо в карточке */
 import { CATALOG, nb } from '../data/content';
 import { SOLUTIONS, type Solution } from '../data/solutions';
 import { getPalette } from '../data/palettes';
@@ -26,33 +26,24 @@ const num = (i: number) => String(i + 1).padStart(2, '0');
     </div>
     <div class="cards" data-cards>
       {withDetails.map((s, i) => (
-        <>
-          {i === roles.length && (
-            <div class="scale" data-scale aria-hidden="true">
-              <span>{CATALOG.scale[0]}</span>
-              <i class="scale__line"></i>
-              <span>{CATALOG.scale[1]}</span>
+        <article class="card" data-card>
+          <div class="card__img">
+            <img src={asset(`img/art/scene-${scene(s)}-${art}.webp`)} data-art-tpl={asset(`img/art/scene-${scene(s)}-{p}.webp`)} data-orig={asset(`img/${s.img}.webp`)} alt={s.alt} width="1120" height="840" loading="lazy" decoding="async">
+            <script is:inline>window.__art && window.__art(document.currentScript.previousElementSibling);</script>
+          </div>
+          <p class="card__meta"><span>{num(i)}</span>{s.tag}</p>
+          <div class="card__body">
+            <h3>{nb(s.title)}</h3>
+            <p>{nb(s.desc)}</p>
+            <div class="card__foot">
+              <button class="link" type="button" data-open-dialog={`sol-${s.id}`} aria-haspopup="dialog"><span>{CATALOG.more}</span><i class="arr"></i></button>
+              <button class="plus plus--sm" type="button" data-card-toggle aria-label="Показать задачи" aria-expanded="false" aria-controls={`tasks-${s.id}`}><i></i></button>
             </div>
-          )}
-          <article class="card" data-card>
-            <div class="card__img">
-              <img src={asset(`img/art/scene-${scene(s)}-${art}.webp`)} data-art-tpl={asset(`img/art/scene-${scene(s)}-{p}.webp`)} data-orig={asset(`img/${s.img}.webp`)} alt={s.alt} width="1120" height="840" loading="lazy" decoding="async">
-              <script is:inline>window.__art && window.__art(document.currentScript.previousElementSibling);</script>
-            </div>
-            <p class="card__meta"><span>{num(i)}</span>{s.tag}</p>
-            <div class="card__body">
-              <h3>{nb(s.title)}</h3>
-              <p>{nb(s.desc)}</p>
-              <div class="card__foot">
-                <button class="btn btn--line" type="button" data-open-dialog={`sol-${s.id}`} aria-haspopup="dialog"><span>{CATALOG.more}</span><i class="arr"></i></button>
-                <button class="plus plus--line" type="button" data-card-toggle aria-label="Показать задачи" aria-expanded="false" aria-controls={`tasks-${s.id}`}><i></i></button>
-              </div>
-            </div>
-            <ul class="card__tasks" id={`tasks-${s.id}`}>
-              {s.tasks.map((t) => <li>{nb(t)}</li>)}
-            </ul>
-          </article>
-        </>
+          </div>
+          <ul class="card__tasks" id={`tasks-${s.id}`}>
+            {s.tasks.map((t) => <li>{nb(t)}</li>)}
+          </ul>
+        </article>
       ))}
       <article class="card card--custom">
         <div class="card__img">
@@ -63,7 +54,7 @@ const num = (i: number) => String(i + 1).padStart(2, '0');
         <div class="card__body">
           <h3>{nb(custom.title)}</h3>
           <p>{nb(custom.desc)}</p>
-          <div class="card__foot"><a class="btn" href="#contact"><span>{CATALOG.customCta}</span></a></div>
+          <div class="card__foot"><a class="btn btn--sm" href="#contact"><span>{CATALOG.customCta}</span><i class="arr"></i></a></div>
         </div>
       </article>
       <article class="card card--more">

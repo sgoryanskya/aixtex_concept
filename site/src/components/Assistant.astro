@@ -1,6 +1,7 @@
 ---
 /* 3. Кто это: стеклянная девушка из концепции C (по просьбе заказчика вместо мраморного бюста A),
-   сложное входит слева в механизм головы, результат выходит справа */
+   сложное входит слева в механизм головы, результат выходит перед лицом направо.
+   Роль перенастраивает сцену: подсвечиваются её входы и её результат (ASSISTANT.roles: ins, out) */
 import { ASSISTANT } from '../data/content';
 import { START_PALETTE, asset } from '../config';
 import { getPalette } from '../data/palettes';
@@ -8,9 +9,9 @@ import { getPalette } from '../data/palettes';
 const art = getPalette(START_PALETTE).art;
 
 const inY = [56, 63, 70, 77, 84];
-const outY = [63, 72, 81];
+const outY = [44, 53, 62];
 ---
-<section class="asst" id="assistant" data-ui="dark" data-asst>
+<section class="asst" id="assistant" data-ui="dark" data-asst data-role="0">
   <div class="asst__stage">
     <svg class="ln" data-ln="asst" aria-hidden="true"></svg>
     <img class="asst__bust" src={asset(`img/art/glass-${art}.webp`)} data-art-tpl={asset('img/art/glass-{p}.webp')} data-orig={asset('img/assistant.webp')} alt={ASSISTANT.alt} width="1024" height="1024" loading="lazy" decoding="async" data-asst-bust>
@@ -21,18 +22,19 @@ const outY = [63, 72, 81];
     </div>
     <div class="asst__r" data-reveal>
       <p>{ASSISTANT.text}</p>
-      <div class="asst__tabs" role="tablist" aria-label="Примеры должностей">
+      <div class="asst__tabs" role="tablist" aria-label="Примеры должностей" data-asst-tabs>
         {ASSISTANT.roles.map((r, i) => (
-          <button type="button" role="tab" id={`asst-tab-${i}`} aria-selected={i === 0 ? 'true' : 'false'} aria-controls="asst-duty" tabindex={i === 0 ? 0 : -1} data-asst-tab={i} data-duty={r.duty}>{r.label}</button>
+          <button type="button" role="tab" id={`asst-tab-${i}`} aria-selected={i === 0 ? 'true' : 'false'} aria-controls="asst-duty" tabindex={i === 0 ? 0 : -1} data-asst-tab={i} data-duty={r.duty} data-ins={r.ins.join(',')} data-out={r.out}>{r.label}</button>
         ))}
+        <i class="asst__ind" aria-hidden="true" data-asst-ind></i>
       </div>
       <p class="asst__duty" id="asst-duty" role="tabpanel" aria-labelledby="asst-tab-0" data-asst-duty>{ASSISTANT.roles[0].duty}</p>
     </div>
     <ul class="asst__tags asst__tags--in" aria-hidden="true">
-      {ASSISTANT.inputs.map((t, i) => <li style={`--y:${inY[i]}%`}>{t}</li>)}
+      {ASSISTANT.inputs.map((t, i) => <li style={`--y:${inY[i]}%`} class={ASSISTANT.roles[0].ins.includes(i) ? 'is-hot' : undefined}>{t}</li>)}
     </ul>
     <ul class="asst__tags asst__tags--out" aria-hidden="true">
-      {ASSISTANT.outputs.map((t, i) => <li style={`--y:${outY[i]}%`}>{t}</li>)}
+      {ASSISTANT.outputs.map((t, i) => <li style={`--y:${outY[i]}%`} class={ASSISTANT.roles[0].out === i ? 'is-hot' : undefined}>{t}</li>)}
     </ul>
   </div>
 </section>
