@@ -3,10 +3,14 @@
    строки блока 9 проигрывают переход «было → стало», карточки каталога открывают панель решения. */
 import { gsap, ScrollTrigger, $, $$, reduced, isMobile, clamp, lock, initAnchors, initStub, initMenu, initFaq, initForm, afterFonts, splitWords } from './ax';
 import { onPalette } from './theme-controller';
+import HERO_PATHS from '../data/hero-paths.json';
+import { mountLook, type HeroMode } from './hero-looks';
+import { mountInsideLook } from './inside-looks';
 
 const root = document.documentElement;
-const wordA = $('[data-word-a]')!;
-const wordB = $('[data-word-b]')!;
+/* Слова композиции A. В публичной версии с другой палитрой их на странице нет */
+const wordA = $('[data-word-a]');
+const wordB = $('[data-word-b]');
 
 initAnchors();
 initStub();
@@ -18,7 +22,7 @@ initForm();
 (function heroVariant() {
   const h1 = $('[data-hero-variants]');
   const want = new URLSearchParams(location.search).get('hero');
-  if (!h1?.dataset.heroVariants || !want) return;
+  if (!h1?.dataset.heroVariants || !want || !wordB) return;
   try {
     const map = JSON.parse(h1.dataset.heroVariants) as Record<string, { word: string; h1: string }>;
     const v = map[want];
@@ -32,8 +36,11 @@ initForm();
 })();
 
 /* ---------- Подгонка кегля: слова занимают ширину экрана точно ---------- */
-function fitAll() {
-  const title = $('.hero__title')!;
+function fitHero() {
+  const title = $('.hero__title');
+  /* композиция A скрыта, когда у палитры свой первый экран: мерить нечего */
+  if (!title || !wordA || !wordB || !title.clientWidth) return;
+  title.style.fontSize = '';
   const avail = title.clientWidth;
   const F = parseFloat(getComputedStyle(title).fontSize);
   if (isMobile()) {
@@ -42,11 +49,9 @@ function fitAll() {
   } else {
     title.style.fontSize = (F * (avail - avail * 0.012)) / (wordA.offsetWidth + wordB.offsetWidth) + 'px';
   }
-  const zero = $('.end__zero')!;
-  const zs = zero.children as HTMLCollectionOf<HTMLElement>;
-  const zw = zero.clientWidth;
-  const zF = parseFloat(getComputedStyle(zero).fontSize);
-  zero.style.fontSize = (zF * (zw - zw * 0.03)) / (zs[0].offsetWidth + zs[1].offsetWidth) + 'px';
+}
+function fitAll() {
+  fitHero();
   const logo = $('.foot__logo')!;
   const host = logo.parentElement!;
   const lW = host.clientWidth - parseFloat(getComputedStyle(host).paddingLeft) * 2;
@@ -57,7 +62,7 @@ let fitT = 0;
 addEventListener('resize', () => {
   clearTimeout(fitT);
   fitT = window.setTimeout(() => {
-    ['.hero__title', '.end__zero', '.foot__logo'].forEach((s) => ($(s)!.style.fontSize = ''));
+    ['.hero__title', '.foot__logo'].forEach((s) => $(s)?.style.setProperty('font-size', ''));
     fitAll();
     ScrollTrigger.refresh();
   }, 160);
@@ -82,15 +87,13 @@ $$('[data-ui]').forEach((s) => {
   ScrollTrigger.create({ trigger: s, start: 'top bottom-=30', end: 'bottom bottom-=30', onToggle: (t) => t.isActive && (root.dataset.uiBot = ui) });
 });
 
-/* ---------- Показания: сложность падает до нуля к финалу ---------- */
-const cx = $('[data-cx]')!;
+/* ---------- Линейка: заполняется к финалу ---------- */
 const rulerOn = $('[data-ruler]')!;
 ScrollTrigger.create({
   start: 0,
   endTrigger: '#contact',
   end: 'top 45%',
   onUpdate: (t) => {
-    cx.textContent = String(Math.max(0, 100 - Math.round(t.progress * 100)));
     rulerOn.style.clipPath = `inset(0 ${(100 - t.progress * 100).toFixed(2)}% 0 0)`;
   },
 });
@@ -101,29 +104,36 @@ function splitLetters(el: HTMLElement) {
   el.innerHTML = [...txt].map((c) => `<i>${c}</i>`).join('');
   return $$('i', el);
 }
-const lettersA = splitLetters(wordA);
-const lettersB = splitLetters(wordB);
+const lettersA = wordA ? splitLetters(wordA) : [];
+const lettersB = wordB ? splitLetters(wordB) : [];
 /* У «Ц», «Щ», «Д» хвост ниже строки: слово растёт от низа хвоста, чтобы не наезжать на док */
-if (/[ЦЩД]/i.test(wordB.textContent ?? '')) wordB.style.transformOrigin = '100% 116%';
+if (wordB && /[ЦЩД]/i.test(wordB.textContent ?? '')) wordB.style.transformOrigin = '100% 116%';
 
-if (!reduced) {
-  gsap.set([...lettersA, ...lettersB], { yPercent: 104 });
-  gsap.set(['[data-hero-lead]', '[data-hero-in]', '[data-hero-out]'], { opacity: 0, y: 16 });
-  gsap.set([wordA, wordB], { clipPath: 'inset(-6% -2% -10% -2%)' });
-}
-function heroIntro() {
-  if (reduced) return;
-  const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
-  tl.fromTo('[data-hero-media]', { scale: 1.16 }, { scale: 1, duration: 2.2, ease: 'expo.out' }, 0);
-  tl.to(lettersA, { yPercent: 0, duration: 1.3, stagger: 0.035 }, 0.42);
-  tl.to(lettersB, { yPercent: 0, duration: 1.3, stagger: 0.035 }, 0.6);
-  tl.to('[data-hero-lead]', { opacity: 1, y: 0, duration: 1 }, 1);
-  tl.to(['[data-hero-in]', '[data-hero-out]'], { opacity: 1, y: 0, duration: 1 }, 1.15);
-  tl.add(() => {
-    gsap.set([wordA, wordB], { clearProps: 'clipPath' });
-    initHeroScrub();
-    ScrollTrigger.refresh();
-  }, 1.9);
+/* Композиция A: появление, затем прокрутка. Всё живёт в gsap.context, чтобы при смене палитры откатиться */
+function mountA(animate: boolean): HeroMode {
+  if (!wordA || !wordB) return { kill() {} };
+  fitHero();
+  const ctx = gsap.context(() => {});
+  ctx.add(() => {
+    if (reduced) return;
+    const begin = () => ctx.add(() => initHeroScrub());
+    if (!animate) return begin();
+    gsap.set([...lettersA, ...lettersB], { yPercent: 104 });
+    gsap.set(['[data-hero-lead]', '[data-hero-in]', '[data-hero-out]'], { opacity: 0, y: 16 });
+    gsap.set([wordA, wordB], { clipPath: 'inset(-6% -2% -10% -2%)' });
+    const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
+    tl.fromTo('[data-hero-media]', { scale: 1.16 }, { scale: 1, duration: 2.2, ease: 'expo.out' }, 0);
+    tl.to(lettersA, { yPercent: 0, duration: 1.3, stagger: 0.035 }, 0.42);
+    tl.to(lettersB, { yPercent: 0, duration: 1.3, stagger: 0.035 }, 0.6);
+    tl.to('[data-hero-lead]', { opacity: 1, y: 0, duration: 1 }, 1);
+    tl.to(['[data-hero-in]', '[data-hero-out]'], { opacity: 1, y: 0, duration: 1 }, 1.15);
+    tl.add(() => {
+      gsap.set([wordA, wordB], { clearProps: 'clipPath' });
+      begin();
+      ScrollTrigger.refresh();
+    }, 1.9);
+  });
+  return { kill: () => ctx.revert() };
 }
 function initHeroScrub() {
   const m = isMobile();
@@ -131,7 +141,7 @@ function initHeroScrub() {
     scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom bottom', scrub: 0.6, invalidateOnRefresh: true },
     defaults: { ease: 'none' },
   });
-  const scaleB = () => $('.hero__title')!.clientWidth / wordB.offsetWidth;
+  const scaleB = () => $('.hero__title')!.clientWidth / wordB!.offsetWidth;
   tl.to('[data-hero-lead]', { opacity: 0, y: -24, duration: 0.16 }, 0);
   tl.to(['[data-hero-in]', '[data-hero-out]'], { opacity: 0, duration: 0.12 }, 0);
   /* камера: от клубка к ровным линиям */
@@ -142,6 +152,23 @@ function initHeroScrub() {
   else tl.to(wordB, { scale: scaleB, force3D: false, duration: 0.7, ease: 'power2.inOut' }, 0.16);
   tl.to('[data-hero-after]', { opacity: 1, duration: 0.12 }, 0.72);
   tl.to({}, { duration: 0.1 }, 0.9);
+}
+
+/* Какая композиция первого экрана сейчас: своя у палитры раунда 5 или A (у «Сигнала» и по ?art=orig) */
+let heroMode: HeroMode | null = null;
+let heroKey = '';
+function heroKeyNow() {
+  const id = root.getAttribute('data-palette') || 'signal';
+  if (root.hasAttribute('data-art-orig') || !$(`[data-hx="${id}"]`)) return 'signal';
+  return id;
+}
+function mountHero(animate: boolean) {
+  const key = heroKeyNow();
+  if (key === heroKey) return;
+  heroMode?.kill();
+  heroKey = key;
+  heroMode = (key !== 'signal' && mountLook(key, animate)) || mountA(animate);
+  ScrollTrigger.refresh();
 }
 
 /* Цвета импульсов из палитры. Для «Сигнала» совпадают с A: 255,94,26 → 255,126,60 → 255,214,170 */
@@ -202,14 +229,92 @@ function heroPulses() {
   };
   size();
   addEventListener('resize', size);
+  /* Палитры раунда 5 рисуют свой первый экран, импульсы идут по его линиям (пути сняты генератором,
+     scripts/art/heroes). У «Сигнала» и исходных кадров — волокна A, как раньше */
+  type Look = { lines: number[][]; x0: number; x1?: number; thick?: number };
+  const STYLE: Record<string, { n: number; v: [number, number]; len: [number, number]; w: number; a: number }> = {
+    olive: { n: 7, v: [0.0016, 0.0032], len: [0.06, 0.11], w: 1.8, a: 1 },
+    ultra: { n: 10, v: [0.0018, 0.0034], len: [0.05, 0.09], w: 2, a: 1 },
+    steel: { n: 6, v: [0.0005, 0.0009], len: [0.12, 0.2], w: 7, a: 0.3 },
+    mint: { n: 10, v: [0.0011, 0.0022], len: [0.04, 0.07], w: 0, a: 0.75 },
+  };
+  /* у кадра Б свои пути (ключ «id-b»); если их нет, импульсов на кадре Б у палитры нет */
+  const NONE: Look = { lines: [], x0: 1 };
+  const look = (): Look | null => {
+    const id = root.getAttribute('data-palette') || '';
+    const all = HERO_PATHS as Record<string, Look>;
+    if (root.hasAttribute('data-art-orig') || !all[id]) return null;
+    return root.getAttribute('data-hero-art') === 'b' ? (all[`${id}-b`] ?? NONE) : all[id];
+  };
+  const yAt = (pl: number[], x: number) => {
+    const n = pl.length / 2 - 1;
+    const x0 = pl[0];
+    const x1 = pl[pl.length - 2];
+    const t = clamp((x - x0) / (x1 - x0), 0, 1) * n;
+    const k = Math.min(n - 1, Math.floor(t));
+    const f = t - k;
+    return pl[k * 2 + 1] + (pl[k * 2 + 3] - pl[k * 2 + 1]) * f;
+  };
+  let lk = look();
+  let st = lk ? STYLE[root.getAttribute('data-palette') || ''] : null;
   const N = isMobile() ? 9 : 16;
   const pick = () => LINES[(Math.random() * LINES.length) | 0];
-  const pulses = Array.from({ length: N }, () => ({ l: pick(), x: X0 + Math.random() * 0.45, v: 0.0009 + Math.random() * 0.0016, len: 0.02 + Math.random() * 0.05, a: 0.5 + Math.random() * 0.5 }));
+  const make = () => {
+    if (lk && st) {
+      const s = st;
+      if (!lk.lines.length) return [];
+      return Array.from({ length: isMobile() ? Math.ceil(s.n * 0.6) : s.n }, () => ({ l: (Math.random() * lk!.lines.length) | 0, x: lk!.x0 + Math.random() * ((lk!.x1 ?? 1) - lk!.x0), v: s.v[0] + Math.random() * (s.v[1] - s.v[0]), len: s.len[0] + Math.random() * (s.len[1] - s.len[0]), a: 0.5 + Math.random() * 0.5 }));
+    }
+    return Array.from({ length: N }, () => ({ l: pick(), x: X0 + Math.random() * 0.45, v: 0.0009 + Math.random() * 0.0016, len: 0.02 + Math.random() * 0.05, a: 0.5 + Math.random() * 0.5 }));
+  };
+  let pulses = make();
+  onPalette(() => {
+    lk = look();
+    st = lk ? STYLE[root.getAttribute('data-palette') || ''] : null;
+    pulses = make();
+  });
+  const drawLook = (L: Look, s: (typeof STYLE)[string]) => {
+    ctx.lineCap = 'round';
+    const end = L.x1 ?? 1;
+    pulses.forEach((p) => {
+      p.x += p.v;
+      if (p.x - p.len > end) {
+        p.x = L.x0;
+        p.l = (Math.random() * L.lines.length) | 0;
+      }
+      const pl = L.lines[p.l];
+      const xa = Math.max(L.x0, p.x - p.len);
+      const xb = Math.min(p.x, end);
+      if (xb <= xa) return;
+      const a = p.a * s.a;
+      const g = ctx.createLinearGradient(xa * W, 0, p.x * W, 0);
+      g.addColorStop(0, `rgba(${col.c0},0)`);
+      g.addColorStop(0.75, `rgba(${col.c1},${0.55 * a})`);
+      g.addColorStop(1, `rgba(${col.c2},${a})`);
+      ctx.strokeStyle = g;
+      /* у полос мяты импульс идёт внутри полосы: толщина от самой полосы */
+      ctx.lineWidth = s.w || (L.thick ?? 0.01) * H * 0.55;
+      ctx.beginPath();
+      for (let k = 0; k <= 10; k++) {
+        const xf = xa + ((xb - xa) * k) / 10;
+        const y = yAt(pl, xf) * H;
+        if (k) ctx.lineTo(xf * W, y);
+        else ctx.moveTo(xf * W, y);
+      }
+      ctx.stroke();
+    });
+  };
   const tick = () => {
     if (!running) return;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, W, H);
     ctx.globalCompositeOperation = 'lighter';
+    if (lk && st) {
+      drawLook(lk, st);
+      requestAnimationFrame(tick);
+      return;
+    }
+    ctx.lineCap = 'butt';
     pulses.forEach((p) => {
       p.x += p.v;
       if (p.x - p.len > 1) {
@@ -494,57 +599,16 @@ function initDialogs() {
   );
 }
 
-/* ---------- Анатомия: слои расходятся по скроллу ---------- */
-function initExploded() {
-  const planes = $$('[data-plane]');
-  const labels = $$('[data-ex-label]');
-  const stage = $('[data-ex-stage]')!;
-  const paths = $$<SVGPathElement>('path', $('[data-ex-lines]')!);
-  const anchors = $$('[data-anchor]');
-  const mobile = isMobile();
-  const zUnit = () => Math.min(innerWidth * 0.16, innerHeight * 0.28);
-  if (mobile || reduced) {
-    const u = mobile ? 54 : zUnit() * 0.9;
-    planes.forEach((p, i) => gsap.set(p, { z: [u, 0, -u][i] }));
-    return;
-  }
-  gsap.set(planes, { z: (i: number) => [10, 0, -10][i] });
-  const lay = () => {
-    const s = stage.getBoundingClientRect();
-    anchors.forEach((a, i) => {
-      const r = a.getBoundingClientRect();
-      const l = labels[i];
-      const lr = l.getBoundingClientRect();
-      const op = getComputedStyle(l).opacity;
-      const x1 = r.left - s.left;
-      const y1 = r.top - s.top;
-      const x2 = lr.left - s.left - 10;
-      const y2 = lr.top - s.top + 13;
-      paths[i].setAttribute('d', `M${x1.toFixed(1)} ${y1.toFixed(1)} L${(x2 - 28).toFixed(1)} ${y2.toFixed(1)} L${x2.toFixed(1)} ${y2.toFixed(1)}`);
-      paths[i].style.opacity = op;
-    });
-  };
-  const posLabels = () => {
-    const H = stage.offsetHeight;
-    const ys = [0.2, 0.47, 0.73];
-    labels.forEach((l, i) => gsap.set(l, { y: H * ys[i] }));
-  };
-  posLabels();
-  addEventListener('resize', posLabels);
-  const tl = gsap.timeline({
-    onUpdate: lay,
-    scrollTrigger: { trigger: '[data-ex]', start: 'top top', end: 'bottom bottom', scrub: 0.7, onRefresh: lay },
-    defaults: { ease: 'none' },
-  });
-  const u = zUnit();
-  tl.to(planes[0], { z: u, duration: 0.5, ease: 'power2.inOut' }, 0.06);
-  tl.to(planes[2], { z: -u, duration: 0.5, ease: 'power2.inOut' }, 0.06);
-  tl.to(labels[0], { opacity: 1, duration: 0.12 }, 0.2);
-  tl.to(labels[1], { opacity: 1, duration: 0.12 }, 0.32);
-  tl.to(labels[2], { opacity: 1, duration: 0.12 }, 0.44);
-  tl.to('[data-ex-stack]', { rotationZ: -28, duration: 1, ease: 'none' }, 0);
-  tl.to({}, { duration: 0.2 }, 0.8);
-  lay();
+/* ---------- Анатомия: у каждой палитры своя сцена (lib/inside-looks.ts) ---------- */
+let insideMode: HeroMode | null = null;
+let insideKey = '';
+function mountInside() {
+  const id = root.getAttribute('data-palette') || 'signal';
+  const key = $(`[data-ix="${id}"]`) ? id : 'signal';
+  if (key === insideKey) return;
+  insideMode?.kill();
+  insideKey = key;
+  insideMode = mountInsideLook(key);
 }
 
 /* ---------- Отрасли: вертикальный скролл в горизонталь ---------- */
@@ -707,23 +771,32 @@ const wordsHtml = (s: string) =>
     .map((w) => `<span class="w"><span class="wi">${w.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</span></span>`)
     .join(' ');
 
-/* ---------- Что меняется: каждая строка проигрывает переход «было → стало» ---------- */
+/* ---------- Что меняется: карточки поднимаются по очереди; в каждой нить идёт от «было» через агента к «стало» ---------- */
 function initChanges() {
   if (reduced) return;
-  $$('[data-chg]').forEach((row) => {
-    const s = $('.chg__s', row)!;
-    const v = $('.chg__v', row)!;
-    v.innerHTML = wordsHtml(v.textContent ?? '');
+  $$('[data-chg]').forEach((card, n) => {
     const tl = gsap
       .timeline({ paused: true })
-      .fromTo(row, { '--k': 0 }, { '--k': 1, duration: 1.3, ease: 'power3.inOut' }, 0)
-      .from([$('.chg__area', row), $('.chg__before', row)], { opacity: 0, y: 14, duration: 0.9, stagger: 0.12, ease: 'expo.out' }, 0.15)
-      .fromTo(s, { backgroundSize: '0% 1px' }, { backgroundSize: '100% 1px', duration: 0.9, ease: 'power2.inOut' }, 0.75)
-      .call(() => s.classList.add('is-off'), undefined, 1.1)
-      .from($('.chg__arr', row), { scaleX: 0, duration: 0.7, ease: 'expo.out' }, 1.35)
-      .from($$('.wi', v), { yPercent: 105, opacity: 0, duration: 0.95, stagger: 0.03, ease: 'expo.out' }, 1.45);
-    s.classList.remove('is-off');
-    ScrollTrigger.create({ trigger: row, start: 'top 84%', once: true, onEnter: () => tl.play() });
+      .from(card, { opacity: 0, y: 40, duration: 1.1, ease: 'expo.out' }, 0)
+      .from($('.chg__area', card), { opacity: 0, y: 12, duration: 0.8, ease: 'expo.out' }, 0.15);
+    $$('.chg__step', card).forEach((s, i) => {
+      tl.fromTo(s, { '--k': 0 }, { '--k': 1, duration: 0.55, ease: 'power2.inOut' }, 0.35 + i * 0.32);
+      tl.from($$('.chg__cap, .chg__x', s), { opacity: 0, y: 10, duration: 0.8, stagger: 0.08, ease: 'expo.out' }, 0.3 + i * 0.32);
+    });
+    ScrollTrigger.create({ trigger: card, start: 'top 86%', once: true, onEnter: () => gsap.delayedCall(n * 0.12, () => tl.play()) });
+  });
+}
+
+/* ---------- Подход: нить идёт по действиям агента, бусины загораются по очереди ---------- */
+function initRelay() {
+  const list = $('.prin__steps');
+  if (!list || reduced) return;
+  const items = $$('li', list);
+  const tl = gsap.timeline({ scrollTrigger: { trigger: list, start: 'top 80%', end: 'bottom 60%', scrub: 0.6 }, defaults: { ease: 'none' } });
+  items.forEach((li, i) => {
+    const t = (i / items.length) * 0.92;
+    tl.fromTo(li, { opacity: 0.22 }, { opacity: 1, duration: 0.14 }, t);
+    tl.fromTo(li, { '--k': 0 }, { '--k': 1, duration: 0.2 }, t + 0.06);
   });
 }
 
@@ -900,9 +973,14 @@ afterFonts(() => {
   fitAll();
   initReveals();
   initChanges();
-  initExploded();
+  initRelay();
+  mountInside();
   initIndustries();
   initLines();
-  heroIntro();
+  mountHero(true);
+  onPalette(() => {
+    mountInside();
+    mountHero(false);
+  });
   ScrollTrigger.refresh();
 });

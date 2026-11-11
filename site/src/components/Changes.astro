@@ -1,9 +1,11 @@
 ---
-/* 9. Что меняется: место блока «Результат» из A. Вместо графика с условными цифрами — типовые изменения словами.
-   Каждая строка рассказывает переход: черта строки прочерчивается, «было» зачёркивается и гаснет,
-   сигнал-стрелка ведёт к «стало», которое проявляется по словам. Главное в строке — «стало» */
+/* 9. Что меняется: по каждому направлению одна история в три шага — было, что берёт агент, стало.
+   Три стеклянные карточки с общей сеткой шагов (subgrid): шаги стоят на одной высоте во всех карточках.
+   Между шагами нить из серой в оранжевую, на ней бусина агента. Внизу вывод: что забирает ИИ и что
+   остаётся человеку — одна панель на две половины */
 import { CHANGES } from '../data/content';
 const num = (i: number) => String(i + 1).padStart(2, '0');
+const S = CHANGES.stages;
 ---
 <section class="chg" id="changes" data-ui="dark">
   <div class="wrap chg__head">
@@ -11,16 +13,31 @@ const num = (i: number) => String(i + 1).padStart(2, '0');
     <h2 class="h2 h2--t" data-split>{CHANGES.title}</h2>
   </div>
   <div class="wrap">
-    <div class="chg__row chg__row--head" aria-hidden="true"><span>{CHANGES.cols.area}</span><span>{CHANGES.cols.before}</span><span>{CHANGES.cols.after}</span></div>
-    <ul class="chg__table">
+    <ul class="chg__cards">
       {CHANGES.rows.map((r, i) => (
-        <li class="chg__row" data-chg>
+        <li class="chg__card" data-chg>
           <h3 class="chg__area"><span class="chg__n">{num(i)}</span>{r.area}</h3>
-          <p class="chg__before"><span class="chg__cap">{CHANGES.cols.before}</span><s class="chg__s">{r.before}</s></p>
-          <p class="chg__after"><span class="chg__cap">{CHANGES.cols.after}</span><span class="chg__line"><i class="chg__arr" aria-hidden="true"></i><span class="chg__v">{r.after}</span></span></p>
+          <div class="chg__step chg__step--before"><p class="chg__cap">{S.before}</p><p class="chg__x">{r.before}</p></div>
+          <div class="chg__step chg__step--agent"><p class="chg__cap">{S.agent}</p><p class="chg__x">{r.agent}</p></div>
+          <div class="chg__step chg__step--after"><p class="chg__cap">{S.after}</p><p class="chg__x">{r.after}</p></div>
         </li>
       ))}
     </ul>
     <p class="chg__note">{CHANGES.note}</p>
+
+    <div class="chg__split">
+      <div class="chg__split-head" data-reveal>
+        <h3>{CHANGES.split.title}</h3>
+        <p>{CHANGES.split.text}</p>
+      </div>
+      <div class="chg__panel" data-reveal>
+        {[CHANGES.split.ai, CHANGES.split.human].map((c, i) => (
+          <div class={`chg__col ${i ? 'chg__col--human' : 'chg__col--ai'}`}>
+            <p class="chg__col-lbl">{c.label}</p>
+            <ul>{c.items.map((t) => <li>{t}</li>)}</ul>
+          </div>
+        ))}
+      </div>
+    </div>
   </div>
 </section>

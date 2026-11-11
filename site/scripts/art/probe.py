@@ -10,9 +10,10 @@ IMG = ROOT + '/site/public/img/'
 
 PAL = {
     'signal': dict(d='#4A1505', b='#E0561C', l='#FFB27A', h='#FFF1E2'),
-    'olive':  dict(d='#33331A', b='#A3A256', l='#E4E2A8', h='#FBFAE8'),
-    'bronze': dict(d='#4E3020', b='#A8734B', l='#F2D6AF', h='#FFF6E8'),
-    'gold':   dict(d='#54472C', b='#B8A063', l='#F1E3B7', h='#FFFBEF'),
+    'olive':  dict(d='#2E3016', b='#8F9146', l='#D8D69C', h='#F8F7E3'),
+    'ultra':  dict(d='#0A1250', b='#2F4BE8', l='#A9B8FF', h='#F0F3FF'),
+    'steel':  dict(d='#16242C', b='#5E8597', l='#C9DDE5', h='#F4FAFC'),
+    'mint':   dict(d='#053329', b='#19A486', l='#93EBD3', h='#EAFCF6'),
 }
 
 def hx(c):

@@ -5,9 +5,10 @@ from PIL import Image, ImageFilter
 
 SRC, OUT = sys.argv[1], sys.argv[2]
 # металл каждой палитры; оттенок стекла сдвигается от «Сигнала» к нему
-BASE = {'signal': '#E0561C', 'olive': '#A3A256', 'bronze': '#A8734B', 'gold': '#B8A063'}
-# поправки на глаз: олива и золото без ухода в зелень, насыщенность чуть выше расчётной
-TUNE = {'olive': (0.8, 0.85), 'bronze': (1.0, 1.15), 'gold': (0.72, 1.25)}
+BASE = {'signal': '#E0561C', 'olive': '#8F9146', 'ultra': '#2F4BE8', 'steel': '#5E8597', 'mint': '#19A486'}
+# поправки на глаз: доля сдвига оттенка, множитель насыщенности и добавка к оттенку в градусах
+# (ультрамарин без ухода в лаванду, олива ближе к латуни)
+TUNE = {'olive': (0.85, 0.85, 6), 'ultra': (1.0, 1.05, -14), 'steel': (1.0, 1.1, 0), 'mint': (1.0, 0.9, 0)}
 
 def hx(c):
     return np.array([int(c[i:i + 2], 16) for i in (1, 3, 5)], float) / 255
@@ -48,8 +49,8 @@ for pid, col in BASE.items():
     if pid == 'signal':
         out = rgb
     else:
-        fh, fc = TUNE[pid]
-        dh = (h1 - h0) * fh
+        fh, fc, dd = TUNE[pid]
+        dh = (h1 - h0) * fh + np.radians(dd)
         k = float(np.clip(c1 / c0 * fc, 0.3, 1.2))
         H2 = H + dh
         C2 = C * k

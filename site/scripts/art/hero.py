@@ -71,7 +71,10 @@ def compose(Lsrc, p, dim_chaos=0.75):
 
 if __name__ == '__main__':
     Lb = twist(Lc)
+    # с раунда 5 этот кадр только у оранжевой палитры; у остальных свои баннеры, их строит heroes/render.cjs
     for pid, p in PAL.items():
+        if pid != 'signal':
+            continue
         save(compose(Lc, p), f'{OUT}/hero-A-{pid}.png')
         save(compose(Lb, p), f'{OUT}/hero-B-{pid}.png')
         print('ok', pid)

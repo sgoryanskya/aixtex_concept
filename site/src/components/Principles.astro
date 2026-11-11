@@ -1,14 +1,36 @@
 ---
-/* 8. Подход: место и раскладка блока «В цифрах» из A. Вместо непроверенных цифр — фраза заказчика и три принципа */
+/* 8. Подход — по позиционированию основателя: агент — подмастерье, человек — мастер.
+   Слева тезис и пояснение, справа четыре действия агента на одной линии: бусины по очереди
+   загораются, последняя — передача мастеру — оранжевая. Внизу три принципа внедрения */
 import { PRINCIPLES } from '../data/content';
+const num = (i: number) => String(i + 1).padStart(2, '0');
 ---
 <section class="prin" id="approach" data-ui="light">
   <svg class="ln ln--top" data-ln="band" aria-hidden="true"></svg>
   <div class="wrap">
-    <p class="lbl">{PRINCIPLES.label}</p>
     <div class="prin__grid">
-      <h2 class="prin__title" data-split>{PRINCIPLES.title}</h2>
-      <ul class="prin__side" data-reveal>
+      <div class="prin__thesis">
+        <p class="lbl">{PRINCIPLES.label}</p>
+        <h2 class="prin__title" data-split>{PRINCIPLES.title[0]} <em>{PRINCIPLES.title[1]}</em></h2>
+        <p class="prin__lead" data-reveal>{PRINCIPLES.lead}</p>
+      </div>
+      <div class="prin__relay" data-relay>
+        <p class="prin__cap">{PRINCIPLES.stepsLabel}</p>
+        <ol class="prin__steps">
+          {PRINCIPLES.steps.map((s, i) => (
+            <li class={i === PRINCIPLES.steps.length - 1 ? 'is-last' : ''}>
+              <i class="prin__bead" aria-hidden="true"></i>
+              <span class="prin__n">{num(i)}</span>
+              <b>{s.title}</b>
+              <span class="prin__t">{s.text}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+    <div class="prin__how" data-reveal>
+      <p class="prin__cap">{PRINCIPLES.howLabel}</p>
+      <ul>
         {PRINCIPLES.items.map((it) => <li><b>{it.title}</b><span>{it.text}</span></li>)}
       </ul>
     </div>

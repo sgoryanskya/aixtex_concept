@@ -1,0 +1,163 @@
+---
+/* Блок «Внутри агента»: снаружи один сотрудник, внутри три слоя — у каждой палитры своя сцена.
+   Сигнал и олива — просторный веер гладких нитей с составляющими стягивается в одну линию; ультрамарин — матрица нейронов на трёх стеклянных пластинах сходится в один луч; сталь — прибор
+   раскрывается на три пластины-слоя, по связям между узлами бежит сигнал; мята — одна полоса раскрывается в три. Стили в inside-looks.css, движение
+   в lib/inside-looks.ts. Рисунки строятся здесь, кодом; сеть сигнала и матрица ультрамарина — в скрипте */
+import { INSIDE } from '../data/content';
+import { REVIEW_MODE, APPROVED_PALETTE } from '../config';
+
+const has = (id: string) => REVIEW_MODE || APPROVED_PALETTE === id;
+const L = INSIDE.layers;
+const f = (n: number) => n.toFixed(1);
+
+/* Сталь: разборка прибора. Слой — пластина-ромб в изометрии, координаты от её центра. На каждой четыре узла —
+   составляющие слоя, по одному к каждому углу. В разметке прибор уже разобран (так он стоит без скрипта и на телефоне);
+   высоту пластин по прокрутке, связи между ними и сигнал двигает скрипт (lib/inside-looks.ts, те же числа) */
+const SA = 104;
+const SB = 46;
+const ST = 12;
+const SX = 232;
+const SY = [172, 300, 428];
+const pt = (p: number[]) => `${p[0]},${p[1]}`;
+const rh = (k: number) => [[-2 * SA * k, 0], [0, -2 * SB * k], [2 * SA * k, 0], [0, 2 * SB * k]];
+const face = rh(1).map(pt).join(' ');
+const inset = rh(0.86).map(pt).join(' ');
+const sideL = [[-2 * SA, 0], [0, 2 * SB], [0, 2 * SB + ST], [-2 * SA, ST]].map(pt).join(' ');
+const sideR = [[0, 2 * SB], [2 * SA, 0], [2 * SA, ST], [0, 2 * SB + ST]].map(pt).join(' ');
+const nodes = rh(0.5);
+const corners = rh(1);
+const ry = (rx: number) => f((rx * SB) / SA);
+const pair = Array.from({ length: 16 }, (_, i) => [nodes[i >> 2], nodes[i & 3]]);
+
+/* Мята: составляющие слоя бегут по полосе, повтор нужен для бесшовной петли */
+const run = (parts: string[]) => [...parts, ...parts, ...parts, ...parts];
+---
+{(has('signal') || has('olive')) && (
+  <div class="ix ix--signal" data-ix="signal" data-iw-parts={JSON.stringify(L.map((l) => l.parts))}>
+    <svg class="iw-web" data-iw-web aria-hidden="true">
+      <defs>
+        <linearGradient id="iw-str" gradientUnits="userSpaceOnUse" data-iw-str>
+          <stop class="iw-s1" offset="0" /><stop class="iw-s1" offset="0" /><stop class="iw-s2" offset="0.12" /><stop class="iw-s3" offset="1" />
+        </linearGradient>
+        <linearGradient id="iw-lg" gradientUnits="userSpaceOnUse" data-iw-lg>
+          <stop class="iw-l0" offset="0" /><stop class="iw-l1" offset="0.5" /><stop class="iw-l2" offset="1" />
+        </linearGradient>
+        <linearGradient id="iw-sh" gradientUnits="userSpaceOnUse" x1="0" x2="0" data-iw-shg>
+          <stop class="iw-h0" offset="0" /><stop class="iw-h1" offset="0.5" /><stop class="iw-h0" offset="1" />
+        </linearGradient>
+        <radialGradient id="iw-pearl" cx="0.36" cy="0.3" r="0.8">
+          <stop class="iw-p0" offset="0" /><stop class="iw-p1" offset="0.45" /><stop class="iw-p2" offset="1" />
+        </radialGradient>
+        <radialGradient id="iw-amber" cx="0.36" cy="0.3" r="0.8">
+          <stop class="iw-a0" offset="0" /><stop class="iw-a1" offset="0.22" /><stop class="iw-a2" offset="0.62" /><stop class="iw-a3" offset="1" />
+        </radialGradient>
+        <radialGradient id="iw-drop"><stop class="iw-d0" offset="0" /><stop class="iw-d1" offset="1" /></radialGradient>
+        <filter id="iw-blur" filterUnits="userSpaceOnUse" x="-200" y="-200" width="4400" height="2400"><feGaussianBlur stdDeviation="5" /></filter>
+      </defs>
+      <path class="iw-sheet" data-iw-sheet />
+      <g class="iw-strands" data-iw-strands></g>
+      <path class="iw-line iw-line--glow" data-iw-glow />
+      <path class="iw-line" data-iw-line />
+      <g data-iw-beads></g>
+    </svg>
+    <div class="iw-tags" aria-hidden="true">{L.flatMap((l) => l.parts).map((t) => <span class="iw-tag" data-iw-tag>{t}</span>)}</div>
+    <p class="iw-face" data-iw-face><b>{INSIDE.face}</b><span>{INSIDE.status}</span></p>
+    <ol class="iw-caps">
+      {L.map((l, i) => <li data-iw-cap={i}><i>{l.n}</i><b>{l.title}</b><span>{l.text}</span></li>)}
+    </ol>
+  </div>
+)}
+
+{has('ultra') && (
+  <div class="ix ix--ultra" data-ix="ultra" data-iu-parts={JSON.stringify(L.map((l) => l.parts))}>
+    <div class="iu-bench" data-iu-bench>
+      <svg class="iu-rays" data-iu-rays aria-hidden="true"><defs><radialGradient id="iu-glow"><stop class="iu-g0" offset="0" /><stop class="iu-g1" offset="1" /></radialGradient></defs><g data-iu-in></g><g data-iu-mid></g><g data-iu-conv></g><g data-iu-out></g><g data-iu-nodes></g><g class="iu-labels" data-iu-labels></g></svg>
+      {L.map((_, i) => <div class="iu-slot" data-iu-slot={i} aria-hidden="true"><i class="iu-plate"></i></div>)}
+      <p class="iu-face" data-iu-face aria-hidden="true">{INSIDE.face}</p>
+      <ol class="iu-caps">
+        {L.map((l, i) => <li data-iu-cap={i}><i>{l.n}</i><b>{l.title}</b><span>{l.text}</span></li>)}
+      </ol>
+    </div>
+  </div>
+)}
+
+{has('steel') && (
+  <div class="ix ix--steel" data-ix="steel">
+    <figure class="is-draw">
+      <svg viewBox="0 0 680 540" data-is-svg aria-hidden="true">
+        <defs>
+          <linearGradient id="is-top" x1="0" y1="0" x2="1" y2="1"><stop class="is-t1" offset="0" /><stop class="is-t2" offset="0.55" /><stop class="is-t3" offset="1" /></linearGradient>
+          <linearGradient id="is-sl" x1="0" y1="0" x2="1" y2="0"><stop class="is-s1" offset="0" /><stop class="is-s2" offset="1" /></linearGradient>
+          <linearGradient id="is-sr" x1="0" y1="0" x2="1" y2="0"><stop class="is-s2" offset="0" /><stop class="is-s3" offset="1" /></linearGradient>
+        </defs>
+        {[2, 1, 0].map((k) => (
+          <>
+            <g class="is-plate" data-is-plate={k} transform={`translate(${SX} ${SY[k]})`}>
+              <polygon class="is-side is-side--l" points={sideL} />
+              <polygon class="is-side is-side--r" points={sideR} />
+              <polygon class="is-face" points={face} />
+              <polygon class="is-inset" points={inset} />
+              <path class="is-rim" d={`M${-2 * SA} 0L0 ${-2 * SB}L${2 * SA} 0`} />
+              <g class="is-net" data-is-net>
+                {k === 0 && corners.map((c, i) => <path d={`M${c[0]} ${c[1]}L${nodes[i][0]} ${nodes[i][1]}`} />)}
+                {k === 1 && <path d={`M${nodes.map((n) => `${n[0]} ${n[1]}`).join('L')}Z`} />}
+                {k === 2 && nodes.map((n) => <path d={`M${n[0]} ${n[1]}L0 0`} />)}
+                <ellipse class="is-via" rx="8" ry={ry(8)} />
+                {nodes.map((n) => (
+                  <g class="is-node"><ellipse cx={n[0]} cy={n[1]} rx="11" ry={ry(11)} /><ellipse class="is-node__c" cx={n[0]} cy={n[1]} rx="4" ry={ry(4)} /></g>
+                ))}
+              </g>
+            </g>
+            {k === 2 && <g data-is-p="3" />}
+            {k > 0 && (
+              <g class="is-links" data-is-links={k - 1}>
+                {pair.map(([a, b]) => <line x1={SX + a[0]} y1={SY[k - 1] + a[1]} x2={SX + b[0]} y2={SY[k] + b[1]} />)}
+              </g>
+            )}
+            {k > 0 && <path class="is-spine" data-is-spine={k - 1} d={`M${SX} ${SY[k]}V${SY[k - 1]}`} />}
+            {k > 0 && <g data-is-p={k} />}
+          </>
+        ))}
+        <path class="is-spine" data-is-spine="top" d={`M${SX} ${SY[0]}V${SY[0] - 2 * SB - 22}`} />
+        <g data-is-p="0" />
+        <g class="is-pill" data-is-pill transform={`translate(${SX} ${SY[0] - 2 * SB - 40})`}>
+          <rect class="is-pill__bg" data-is-pill-bg x="-160" y="-18" width="320" height="36" rx="18" />
+          <circle class="is-pill__led" data-is-pill-led cx="-140" cy="0" r="3.5" />
+          <text class="is-pill__t" data-is-pill-t x="-128" y="4.5">{INSIDE.face.toUpperCase()}<tspan class="is-pill__s" dx="12">{INSIDE.status}</tspan></text>
+        </g>
+        <g class="is-calls">
+          {L.map((l, k) => (
+            <g class="is-call" data-is-call={k} transform={`translate(${SX} ${SY[k]})`}>
+              <path d={`M${2 * SA + 12} 0H${2 * SA + 46}`} />
+              <circle cx={2 * SA + 12} cy="0" r="2.4" />
+              <text class="is-call__n" x={2 * SA + 56} y="4.5">{l.n}</text>
+              <text class="is-call__t" x={2 * SA + 84} y="6">{l.title}</text>
+            </g>
+          ))}
+        </g>
+      </svg>
+    </figure>
+    <table class="is-spec">
+      <thead><tr>{INSIDE.spec.head.map((h) => <th scope="col">{h}</th>)}</tr></thead>
+      <tbody>
+        {L.map((l, i) => <tr data-is-row={i}><td>{l.n}</td><th scope="row">{l.title}</th><td>{l.text}</td></tr>)}
+      </tbody>
+    </table>
+  </div>
+)}
+
+{has('mint') && (
+  <div class="ix ix--mint" data-ix="mint">
+    <div class="im-bar" data-im-bar>
+      <p class="im-face" aria-hidden="true"><i></i><b>{INSIDE.face}</b><span>{INSIDE.status}</span></p>
+      <ol class="im-lanes">
+        {L.map((l, i) => (
+          <li class={`im-lane im-lane--${i}`}>
+            <div class="im-lane__h"><i>{l.n}</i><b>{l.title}</b><span>{l.text}</span></div>
+            <div class="im-lane__run" aria-hidden="true"><ul class="im-run">{run(l.parts).map((p) => <li>{p}</li>)}</ul></div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+)}

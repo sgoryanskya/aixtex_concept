@@ -1,17 +1,20 @@
 ---
-/* 12. Финал A «Сложность 0%», форма и подвал. Бэкенда нет: форма готовит письмо
+/* 12. Финал: призыв, форма и подвал. Бэкенда нет: форма готовит письмо
    в почтовой программе посетителя и не изображает отправку */
 import { CONTACT, NAV } from '../data/content';
+import { REVIEW_MODE, APPROVED_PALETTE, asset } from '../config';
 import { COMPANY, REQUISITES, NOTICE } from '../data/company';
 
 const req = Object.fromEntries(REQUISITES.map((r) => [r.label, r.value]));
 const mail = COMPANY.email.href.replace(/^mailto:/, '');
 const f = CONTACT.form;
+/* лента ультрамарина в финале: только если палитра может быть на странице */
+const ultra = REVIEW_MODE || APPROVED_PALETTE === 'ultra';
 ---
 <section class="end" id="contact" data-ui="dark">
   <svg class="ln end__ln" data-ln="merge" aria-hidden="true"></svg>
+  {ultra && <div class="end__art" aria-hidden="true"><img src={asset('img/art/hero-a-ultra.webp')} alt="" width="2000" height="1125" loading="lazy" decoding="async"></div>}
   <div class="wrap">
-    <p class="end__zero"><span>{CONTACT.zero[0]}</span><b>{CONTACT.zero[1]}</b></p>
     <div class="end__grid">
       <div class="end__text">
         <h2 class="h2 h2--t">{CONTACT.title}</h2>

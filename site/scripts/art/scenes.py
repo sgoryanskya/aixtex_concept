@@ -10,6 +10,7 @@ import sys
 import numpy as np
 from PIL import Image
 from scipy import ndimage
+from finish import matte_scene
 
 SRC, OUT = sys.argv[1], sys.argv[2]
 NAMES = sys.argv[3:] or ['assistant', 'sales', 'support', 'office', 'callcenter', 'corp', 'custom',
@@ -17,10 +18,11 @@ NAMES = sys.argv[3:] or ['assistant', 'sales', 'support', 'office', 'callcenter'
 # размер кадра и доля, в которую вписывается сцена
 FRAME = {'scene': ((1120, 840), (0.88, 0.86)), 'ind': ((1040, 1040), (0.86, 0.86))}
 # металл палитры (metalBase в palettes.ts); у «Сигнала» медь остаётся как есть
-BASE = {'olive': '#A3A256', 'bronze': '#A8734B', 'gold': '#B8A063'}
-# поправки на глаз: доля сдвига оттенка и множитель насыщенности
-# и добавка к оттенку в градусах (бронза без розового)
-TUNE = {'olive': (0.8, 0.85, 0), 'bronze': (1.0, 0.85, 9), 'gold': (0.85, 1.0, 0)}
+BASE = {'olive': '#8F9146', 'ultra': '#2F4BE8', 'steel': '#5E8597', 'mint': '#19A486'}
+# поправки на глаз: доля сдвига оттенка, множитель насыщенности и добавка к оттенку в градусах
+TUNE = {'olive': (0.85, 0.8, 0), 'ultra': (1.0, 0.85, 0), 'steel': (1.0, 0.9, 0), 'mint': (1.0, 0.8, 0)}
+# тёплый мрамор в холодных палитрах ближе к белому гипсу: множитель насыщенности всего, что не металл
+NEUTRAL = {'olive': 1.0, 'ultra': 0.35, 'steel': 0.3, 'mint': 0.5}
 
 
 def hx(c):
@@ -86,18 +88,24 @@ def copper_mask(L, C, Hh):
 for n in NAMES:
     size, fit = FRAME['ind' if n.startswith('ind-') else 'scene']
     stem = n if n.startswith('ind-') else f'scene-{n}'
-    im = frame(np.asarray(Image.open(f'{SRC}/{n}.png').convert('RGB'), float) / 255, size, fit)
+    src = frame(np.asarray(Image.open(f'{SRC}/{n}.png').convert('RGB'), float) / 255, size, fit)
+    # «Сигнал» — исходник как есть; остальные палитры перекрашиваются из кадра с ровным металлом
+    im = matte_scene(src)
     L, C, Hh = lch(im)
     w = copper_mask(L, C, Hh)
     sel = w > 0.5
     h0, c0 = np.median(Hh[sel & (C > 0.06)]), np.median(C[sel & (C > 0.06)])
-    Image.fromarray((im * 255 + 0.5).astype(np.uint8)).save(f'{OUT}/{stem}-signal.webp', quality=84, method=6)
+    Image.fromarray((src * 255 + 0.5).astype(np.uint8)).save(f'{OUT}/{stem}-signal.webp', quality=84, method=6)
     for pid, col in BASE.items():
         _, c1, h1 = (float(v[0]) for v in lch(hx(col)[None, :]))
         fh, fc, dd = TUNE[pid]
         k = float(np.clip(c1 / c0 * fc, 0.35, 1.3))
-        H2 = Hh + ((h1 - h0) * fh + np.radians(dd)) * w
-        C2 = C * (1 + (k - 1) * w)
+        # перелив меди стягивается к одному оттенку. На краях маски оттенок не поворачивается наполовину
+        # (при большом повороте, к синему или мяте, это даёт пурпурную кайму), а цвет гасится до нейтрального
+        d = np.angle(np.exp(1j * (Hh - h0)))
+        H2 = np.where(w > 0.02, h0 + d * 0.3 + (h1 - h0) * fh + np.radians(dd), Hh)
+        C2 = np.where(w > 0.02, C * (k * w + 0.2 * (1 - w)), C)
+        C2 = C2 * (w + (1 - w) * NEUTRAL[pid])
         out = from_oklab(np.stack([L, C2 * np.cos(H2), C2 * np.sin(H2)], -1))
         Image.fromarray((np.clip(out, 0, 1) * 255 + 0.5).astype(np.uint8)).save(f'{OUT}/{stem}-{pid}.webp', quality=84, method=6)
     print(n, f'медь {sel.mean() * 100:.1f}% кадра, оттенок {np.degrees(h0):.0f}°, C {c0:.3f}')

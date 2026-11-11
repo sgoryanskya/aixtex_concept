@@ -20,8 +20,6 @@ const { solution: s, scene, art } = Astro.props;
   <div class="drawer__img">
     <img src={asset(`img/art/scene-${scene}-${art}.webp`)} data-art-tpl={asset(`img/art/scene-${scene}-{p}.webp`)} data-orig={asset(`img/${s.img}.webp`)} alt="" width="1120" height="840" loading="lazy" decoding="async">
     <script is:inline>window.__art && window.__art(document.currentScript.previousElementSibling);</script>
-    <i class="cross" style="left:16px;top:16px"></i><i class="cross" style="right:16px;top:16px"></i>
-    <i class="cross" style="left:16px;bottom:16px"></i><i class="cross" style="right:16px;bottom:16px"></i>
   </div>
   <div class="drawer__in">
     <h2 id={`sol-${s.id}-t`}>{nb(s.title)}</h2>
