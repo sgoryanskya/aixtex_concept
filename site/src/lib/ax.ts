@@ -43,9 +43,10 @@ export function splitWords(el: HTMLElement) {
     [...node.childNodes].forEach((n) => {
       if (n.nodeType === 3) {
         const frag = document.createDocumentFragment();
-        (n.textContent ?? '').split(/(\s+)/).forEach((part) => {
+        /* делится только по обычным пробелам: неразрывный пробел держит предлог со словом в одной коробке */
+        (n.textContent ?? '').split(/([ \t\n\r]+)/).forEach((part) => {
           if (!part) return;
-          if (/^\s+$/.test(part)) {
+          if (/^[ \t\n\r]+$/.test(part)) {
             frag.appendChild(document.createTextNode(' '));
             return;
           }

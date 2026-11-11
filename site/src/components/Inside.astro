@@ -2,12 +2,14 @@
 /* 6. Анатомия: снаружи один сотрудник, внутри три слоя. Сцена своя у каждой палитры (InsideLooks) */
 import { INSIDE } from '../data/content';
 import InsideLooks from './InsideLooks.astro';
+/* две фразы заголовка — две строки: вторая начинается с новой строки, а не с середины */
+const [ta, tb] = INSIDE.title.split(/(?<=\.)[  ]/);
 ---
 <section class="ex" id="inside" data-ui="light" data-ex>
   <div class="ex__stage" data-ex-stage>
     <div class="ex__head">
       <p class="lbl">{INSIDE.label}</p>
-      <h2 class="h2" data-split>{INSIDE.title}</h2>
+      <h2 class="h2" data-split>{tb ? <>{ta}<br class="ex__br" />{tb}</> : ta}</h2>
     </div>
     <InsideLooks />
     <ul class="ex__foot">

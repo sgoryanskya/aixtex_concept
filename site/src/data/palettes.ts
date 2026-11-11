@@ -26,7 +26,7 @@ export interface Palette {
   metalLight: string;
   metalHighlight: string;
   /* Набор перекрашенных иллюстраций (public/img/art): свой у каждой палитры */
-  art: 'signal' | 'olive' | 'ultra' | 'steel' | 'mint';
+  art: 'signal' | 'olive' | 'ultra' | 'steel' | 'mint' | 'grad' | 'iris';
 }
 
 export const PALETTES = [
@@ -75,13 +75,14 @@ export const PALETTES = [
     metalHighlight: '#F8F7E3',
   },
   {
-    // «вариант цвета aixtex»: ультрамарин в чёрной комнате; светлый акцент с тёмной надписью на кнопке
+    // «вариант цвета aixtex»: ультрамарин; светлый акцент с тёмной надписью на кнопке.
+    // Часть 9, референсы папки ультрамарина: фон не чёрный, а глубокий тёмно-синий, свет в нём стальной
     id: 'ultra',
     art: 'ultra',
     name: 'Ультрамарин',
-    bg: '#04050C',
-    surface: '#0B0E1C',
-    surfaceRaised: '#14182B',
+    bg: '#050A1D',
+    surface: '#0B1431',
+    surfaceRaised: '#13204A',
     text: '#EEF0FA',
     accent: '#5B78FF',
     onAccent: '#04050C',
@@ -136,6 +137,50 @@ export const PALETTES = [
     metalBase: '#19A486',
     metalLight: '#93EBD3',
     metalHighlight: '#EAFCF6',
+  },
+  /* Две новые концепции (часть 9, ноябрь 2026), по референсам заказчика из двух папок */
+  {
+    // папка AX: Nexora (градиент рассыпается на пиксели) и Signale (волны оранжевого, белого и синего на чёрном).
+    // Акцент — фирменный оранжевый, второй цвет — электрический синий; сам градиент живёт в CSS (concepts.css)
+    id: 'grad',
+    art: 'grad',
+    name: 'Градиент',
+    bg: '#050507',
+    surface: '#0D0E13',
+    surfaceRaised: '#16171E',
+    text: '#F3F4F8',
+    accent: '#FF5E1A',
+    onAccent: '#0B0503',
+    secondary: '#8FA8FF',
+    paper: '#EEEFF3',
+    paperCard: '#F8F8FB',
+    paperDeep: '#E3E4EA',
+    paperText: '#0B0C12',
+    metalDark: '#0A1678',
+    metalBase: '#3058FF',
+    metalLight: '#FFB49A',
+    metalHighlight: '#FFF3EC',
+  },
+  {
+    // папка с оранжевым: WMT AI, Nexora Biosystems, Kontour. Тёплый чёрный, оранжевый с переливом в розовый и сирень
+    id: 'iris',
+    art: 'iris',
+    name: 'Оранжевый перелив',
+    bg: '#0A0605',
+    surface: '#140D0B',
+    surfaceRaised: '#1F1512',
+    text: '#F7F0EB',
+    accent: '#FF5E1A',
+    onAccent: '#0D0503',
+    secondary: '#C2B2FF',
+    paper: '#F1EDEA',
+    paperCard: '#FAF7F5',
+    paperDeep: '#E7E1DC',
+    paperText: '#140D0A',
+    metalDark: '#5C0B02',
+    metalBase: '#FF5E1A',
+    metalLight: '#FF8FA8',
+    metalHighlight: '#FFF1E8',
   },
 ] as const satisfies readonly Palette[];
 

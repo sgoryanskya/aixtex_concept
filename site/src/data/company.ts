@@ -32,13 +32,13 @@ export const REQUISITES: Fact[] = [
 /* Паспорт продукта из концепции A: строки идут в карточку блока «Как работаем» */
 export const PRODUCT_FACTS: Fact[] = [
   { label: 'Запись', value: '№ 32900 от 31.03.2026', status: 'unverified', source: 'концепция A, нужна выписка из реестра' },
-  { label: 'Поставка', value: 'Интернет-сервис или размещение в вашей инфраструктуре', status: 'unverified', source: 'концепция A' },
-  { label: 'Стек', value: 'Python, JavaScript, TypeScript, PostgreSQL 15', status: 'unverified', source: 'концепция A' },
-  { label: 'Права', value: 'Исключительные права у ООО «АИТЕХ»', status: 'unverified', source: 'концепция A' },
+  { label: 'Поставка', value: 'Интернет-сервис или размещение в вашей инфраструктуре', status: 'unverified', source: 'концепция A' },
+  { label: 'Стек', value: 'Python, JavaScript, TypeScript, PostgreSQL 15', status: 'unverified', source: 'концепция A' },
+  { label: 'Права', value: 'Исключительные права у ООО «АИТЕХ»', status: 'unverified', source: 'концепция A' },
 ];
 
 export const NOTICE = {
-  text: 'ООО «АИТЕХ» не проводит набор сотрудников и не рассылает предложения о работе через мессенджеры. Официальные контакты указаны на этом сайте.',
+  text: 'ООО «АИТЕХ» не проводит набор сотрудников и не рассылает предложения о работе через мессенджеры. Официальные контакты указаны на этом сайте.',
   status: 'site' as Status,
 };
 

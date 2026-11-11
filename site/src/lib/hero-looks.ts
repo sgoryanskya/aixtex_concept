@@ -216,7 +216,74 @@ function mint(el: HTMLElement, animate: boolean) {
   });
 }
 
-const LOOKS: Record<string, (el: HTMLElement, animate: boolean) => HeroMode> = { ultra, steel, mint };
+/* ---------- Градиент · поток и пиксель ----------
+   Кадр сначала не в фокусе и собирается; по прокрутке камера идёт к пиксельной полосе,
+   «Размытое» буквально расплывается, «становится чётким» встаёт на его место */
+function grad(el: HTMLElement, animate: boolean) {
+  const a = $('[data-hx-a]', el)!;
+  const b = $('[data-hx-b]', el)!;
+  const bIn = $('.gr-b__in', b)!;
+  const la = letters(a);
+  const fades = $$('[data-hx-fade]', el);
+  const after = $('[data-hx-after]', el)!;
+  return run(animate, {
+    intro(tl, m) {
+      gsap.set([a, b], { clipPath: CLIP });
+      tl.fromTo(m, { opacity: 0, scale: 1.06, filter: 'blur(16px)' }, { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 2.4, ease: 'power3.out' }, 0);
+      tl.set(m, { clearProps: 'filter' }, 2.4);
+      tl.from(la, { yPercent: 108, duration: 1.2, stagger: 0.03 }, 0.5);
+      tl.from(bIn, { yPercent: 108, duration: 1.3 }, 0.72);
+      tl.from(fades, { opacity: 0, y: 14, duration: 1, stagger: 0.08 }, 1.1);
+      tl.set([a, b], { clipPath: 'none' }, 2.1);
+    },
+    scrub(tl, m) {
+      const mob = isMobile();
+      tl.to(fades, { opacity: 0, y: 16, duration: 0.16 }, 0);
+      tl.to(m, { scale: mob ? 1.35 : 1.5, duration: 1, ease: 'power1.inOut' }, 0);
+      tl.to(la, { opacity: 0, filter: 'blur(14px)', yPercent: -18, duration: 0.24, stagger: { each: 0.014 }, ease: 'power2.in' }, 0.02);
+      tl.to(b, { y: () => -a.offsetHeight, scale: mob ? 1.04 : 1.1, duration: 0.6, ease: 'power2.inOut' }, 0.16);
+      tl.to(after, { opacity: 1, duration: 0.12 }, 0.72);
+    },
+  });
+}
+
+/* ---------- Оранжевый перелив · ленты ----------
+   Ленты проявляются, за ними поднимается имя компании и вырастают столбики света; по прокрутке камера
+   подходит к ровным лентам, имя уходит вверх, столбики растут */
+function iris(el: HTMLElement, animate: boolean) {
+  const a = $('[data-hx-a]', el)!;
+  const b = $('[data-hx-b]', el)!;
+  const bIn = $('.ir-b__in', b)!;
+  const la = letters(a);
+  const fades = $$('[data-hx-fade]', el);
+  const after = $('[data-hx-after]', el)!;
+  const word = $('[data-ir-word]');
+  const bars = $('[data-ir-bars]');
+  return run(animate, {
+    intro(tl, m) {
+      gsap.set([a, b], { clipPath: CLIP });
+      tl.fromTo(m, { opacity: 0, scale: 1.08 }, { opacity: 1, scale: 1, duration: 2.6, ease: 'power3.out' }, 0);
+      if (word) tl.from(word, { yPercent: 14, opacity: 0, duration: 2.2, ease: 'power3.out' }, 0.2);
+      if (bars) tl.from(bars, { scaleY: 0, duration: 2, ease: 'expo.out' }, 0.45);
+      tl.from(la, { yPercent: 108, duration: 1.2, stagger: 0.025 }, 0.6);
+      tl.from(bIn, { yPercent: 108, duration: 1.3 }, 0.82);
+      tl.from(fades, { opacity: 0, y: 14, duration: 1, stagger: 0.08 }, 1.15);
+      tl.set([a, b], { clipPath: 'none' }, 2.2);
+    },
+    scrub(tl, m) {
+      const mob = isMobile();
+      tl.to(fades, { opacity: 0, y: 16, duration: 0.16 }, 0);
+      tl.to(m, { scale: mob ? 1.3 : 1.45, duration: 1, ease: 'power1.inOut' }, 0);
+      if (word) tl.to(word, { yPercent: -16, opacity: 0.3, duration: 0.8 }, 0);
+      if (bars) tl.to(bars, { scaleY: 1.3, duration: 0.8 }, 0);
+      tl.to(la, { yPercent: -40, opacity: 0, duration: 0.2, stagger: { each: 0.01 }, ease: 'power2.in' }, 0.02);
+      tl.to(b, { y: () => -a.offsetHeight, scale: mob ? 1.04 : 1.08, duration: 0.6, ease: 'power2.inOut' }, 0.16);
+      tl.to(after, { opacity: 1, duration: 0.12 }, 0.72);
+    },
+  });
+}
+
+const LOOKS: Record<string, (el: HTMLElement, animate: boolean) => HeroMode> = { ultra, steel, mint, grad, iris };
 
 export function mountLook(id: string, animate: boolean): HeroMode | null {
   const el = $(`[data-hx="${id}"]`);

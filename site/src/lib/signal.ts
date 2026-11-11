@@ -237,6 +237,9 @@ function heroPulses() {
     ultra: { n: 10, v: [0.0018, 0.0034], len: [0.05, 0.09], w: 2, a: 1 },
     steel: { n: 6, v: [0.0005, 0.0009], len: [0.12, 0.2], w: 7, a: 0.3 },
     mint: { n: 10, v: [0.0011, 0.0022], len: [0.04, 0.07], w: 0, a: 0.75 },
+    /* «Градиент»: мягкий свет проходит по ряду пикселей во всю высоту клетки; «Перелив»: блик идёт по ровной ленте */
+    grad: { n: 6, v: [0.0012, 0.0022], len: [0.08, 0.14], w: 0, a: 0.3 },
+    iris: { n: 6, v: [0.0014, 0.0026], len: [0.08, 0.15], w: 2, a: 0.6 },
   };
   /* у кадра Б свои пути (ключ «id-b»); если их нет, импульсов на кадре Б у палитры нет */
   const NONE: Look = { lines: [], x0: 1 };
@@ -484,7 +487,10 @@ function initDialogs() {
   const tRes = $('[data-panel-result]')!;
   const steps = $$('[data-how-steps] li');
   const DIALOGS = JSON.parse($('[data-dialogs]')?.textContent || '[]') as Dialog[];
-  const count = Math.floor(wave.clientWidth / 5) + 8;
+  /* столбиков ровно на ширину без полей: шаг 5px (2px столбик и 3px зазор), иначе правый край обрезан */
+  const ws = getComputedStyle(wave);
+  const inner = wave.clientWidth - parseFloat(ws.paddingLeft) - parseFloat(ws.paddingRight);
+  const count = Math.max(8, Math.floor((inner + 3) / 5));
   wave.innerHTML = Array.from({ length: count }, () => '<i></i>').join('');
   const bars = $$('i', wave);
   let talking = false;

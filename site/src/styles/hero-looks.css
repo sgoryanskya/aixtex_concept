@@ -8,22 +8,31 @@
                 на ней время смены, подзаголовок и кнопки. Референсы: forma.ru (матовые плашки поверх фото), плашка таймера.
    Мята       — «Рифлёное стекло»: справа матовое рифлёное стекло, под ним запутанные нити становятся
                 ровными вертикальными полосами света; по прокрутке стекло проходит весь кадр. Заголовок —
-                текст поверх. Рисуется кодом (lib/mint-glass.ts). Референсы: MarketLytics, aclitec. */
+                текст поверх. Рисуется кодом (lib/mint-glass.ts). Референсы: MarketLytics, aclitec.
+   Градиент   — «Поток и пиксель» (часть 9): синие спутанные нити сходятся в белую сердцевину и выходят
+                оранжевой полосой крупных пикселей; клетки изредка вспыхивают. Заголовок — прямые капители,
+                вторая строка наклонная и залита тем же градиентом. Референсы: Nexora, Signale.
+   Перелив    — «Ленты» (часть 9): глянцевые ленты с переливом оранжевого в розовый и сирень; за ними
+                крупное имя компании серым металлом и столбики света, которые растут вправо. Референс: WMT AI. */
 
 .hx { display: none; position: absolute; inset: 0; pointer-events: none; }
 .hx :is(a, button) { pointer-events: auto; }
 :where(.hx) h1 { margin: 0; font: inherit; }
 :root:not([data-art-orig])[data-palette='ultra'] .hx--ultra,
 :root:not([data-art-orig])[data-palette='steel'] .hx--steel,
-:root:not([data-art-orig])[data-palette='mint'] .hx--mint { display: block; }
-:root:not([data-art-orig]):is([data-palette='ultra'], [data-palette='steel'], [data-palette='mint']) :is(.hero__tags, .hero__lead, .hero__after, .hero__title) { display: none; }
+:root:not([data-art-orig])[data-palette='mint'] .hx--mint,
+:root:not([data-art-orig])[data-palette='grad'] .hx--grad,
+:root:not([data-art-orig])[data-palette='iris'] .hx--iris { display: block; }
+:root:not([data-art-orig]):is([data-palette='ultra'], [data-palette='steel'], [data-palette='mint'], [data-palette='grad'], [data-palette='iris']) :is(.hero__tags, .hero__lead, .hero__after, .hero__title) { display: none; }
 .hx__after { position: absolute; opacity: 0; margin: 0; font: 400 clamp(18px, 1.6vw, 26px)/1.22 var(--f-t); letter-spacing: -0.018em; color: var(--t1); text-wrap: pretty; }
 .hx [data-split] i { display: inline-block; font-style: normal; }
 /* у разбитых по буквам слов фон рисуется в коробке буквы: запас сверху и снизу держит точки «Ё» и хвост «Ц» */
 .hx [data-split] i { padding-block: 0.16em; margin-block: -0.16em; }
 
 /* камера наезжает в точку порядка своего кадра */
-:root:not([data-art-orig])[data-palette='ultra'] .hero__media { transform-origin: 50% 66%; }
+:root:not([data-art-orig])[data-palette='ultra'] .hero__media { transform-origin: 50% 66%; background: radial-gradient(56% 60% at 90% 100%, rgb(79 124 178 / 0.5), transparent 72%), radial-gradient(46% 50% at 6% 0%, rgb(150 175 240 / 0.2), transparent 72%), linear-gradient(180deg, #050A1D, #0A1638); }
+/* кадр ультрамарина снят на чёрном: светлее из двух слоёв — чёрное уступает синему фону, лента остаётся как есть */
+:root:not([data-art-orig])[data-palette='ultra'] .hero__media img { mix-blend-mode: lighten; }
 /* у мяты кадр целиком рисует рифлёное стекло, картинка и импульсы не нужны */
 :root:not([data-art-orig])[data-palette='mint'] .hero__media { visibility: hidden; }
 /* олива — композиция A на кадре со стеклянным чипом: мягкий свет на чипе, откуда выходят линии; у бюста (кадр Б) своего свечения нет */
@@ -31,8 +40,25 @@
 :root:not([data-art-orig])[data-palette='olive'] .hero__media { transform-origin: 55.4% 47.6%; }
 :root:not([data-art-orig])[data-palette='olive'] .hero__glow { left: 55.4%; top: 47.6%; width: 22%; aspect-ratio: 0.9; opacity: 0.32; }
 :root:not([data-art-orig])[data-palette='olive'][data-hero-art='b'] .hero__glow { display: none; }
+/* олива (часть 9, усилить первый экран): кадр снят на чёрном, под ним оливковый бархат — светлее из двух слоёв,
+   поэтому чёрное становится глубоким оливковым, а нити, чип и линии остаются как есть. Свет латуни стоит там,
+   где линии уже ровные: порядок светлее хаоса */
+:root:not([data-art-orig])[data-palette='olive'] .hero__media { background: radial-gradient(40% 46% at 74% 47%, rgb(150 146 74 / 0.4), transparent 72%), radial-gradient(60% 42% at 56% 100%, rgb(84 88 40 / 0.55), transparent 72%), radial-gradient(50% 60% at 0% 40%, rgb(8 10 5 / 0.9), transparent 70%), linear-gradient(180deg, #1D2312 0%, #141A0C 56%, #0E1208 100%); }
+:root:not([data-art-orig])[data-palette='olive'] .hero__media img { mix-blend-mode: lighten; }
+/* по стеклу чипа раз в восемь секунд проходит светлая полоса; рамка — передняя грань чипа на кадре 1600×900 */
+.ol-glint { display: none; position: absolute; left: 46.2%; top: 24.6%; width: 8.9%; height: 45.6%; overflow: hidden; pointer-events: none; mix-blend-mode: screen; border-radius: 0.4%; }
+:root:not([data-art-orig])[data-palette='olive'][data-hero-art='a'] .ol-glint { display: block; }
+.ol-glint::before { content: ''; position: absolute; top: -20%; bottom: -20%; left: -60%; width: 46%; background: linear-gradient(100deg, transparent 0%, rgb(255 250 220 / 0.05) 30%, rgb(255 250 220 / 0.42) 50%, rgb(255 250 220 / 0.05) 70%, transparent 100%); transform: skewX(-14deg); opacity: 0; }
+@media (prefers-reduced-motion: no-preference) {
+  .ol-glint::before { animation: ol-glint 8s cubic-bezier(0.45, 0, 0.3, 1) 2.6s infinite; }
+}
+@keyframes ol-glint { 0% { left: -60%; opacity: 0; } 6% { opacity: 1; } 30% { opacity: 1; } 36%, 100% { left: 130%; opacity: 0; } }
 /* ультрамарин: свет даёт сама лента, отдельного свечения нет */
 :root:not([data-art-orig])[data-palette='ultra'] .hero__glow { display: none; }
+/* градиент: камера едет к пиксельной полосе; перелив — к ровным лентам. Свет у обоих в самом кадре */
+:root:not([data-art-orig])[data-palette='grad'] .hero__media { transform-origin: 74% 46%; }
+:root:not([data-art-orig])[data-palette='iris'] .hero__media { transform-origin: 80% 47%; }
+:root:not([data-art-orig]):is([data-palette='grad'], [data-palette='iris']) .hero__glow { display: none; }
 
 /* ---------- Ультрамарин · Стеклянная лента ---------- */
 /* блик по верхней кромке ленты: широкий мягкий ореол и тонкая яркая сердцевина, раз в девять секунд */
@@ -72,7 +98,7 @@
   .ul-b__in { animation: ul-iri 14s ease-in-out infinite alternate; }
 }
 @keyframes ul-iri { from { background-position: 0% 0; } to { background-position: 100% 0; } }
-.ul-lead { max-width: 540px; margin: clamp(20px, 2.2vw, 30px) auto 0; font: 400 clamp(15px, 1.1vw, 17px)/1.45 var(--f-t); color: var(--t2); text-wrap: balance; }
+.ul-lead { max-width: 540px; margin: clamp(20px, 2.2vw, 30px) auto 0; font: 400 clamp(15px, 1.1vw, 17px)/1.45 var(--f-t); color: var(--t2); text-wrap: balance; text-shadow: 0 1px 16px rgb(4 10 32 / 0.8); }
 .ul-btns { justify-content: center; margin: clamp(20px, 2vw, 26px) 0 0; gap: 8px; }
 .hx--ultra .btn--ghost { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--metal-light) 30%, transparent); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
 .ul-after { left: var(--gut); right: var(--gut); top: 46%; max-width: 560px; margin-inline: auto; text-align: center; font-size: clamp(16px, 1.25vw, 20px); }
@@ -164,10 +190,99 @@
 .mi-lead .hero__btns { margin-top: 22px; }
 .mi-after { z-index: 2; left: var(--gut); bottom: 96px; width: min(34vw, 470px); }
 
+/* ---------- Градиент · поток и пиксель ---------- */
+/* вспышки клеток: клетка на миг светлеет и гаснет ступенькой, как пиксель экрана */
+.gr-px { display: none; position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; mix-blend-mode: screen; }
+:root:not([data-art-orig])[data-palette='grad'] .gr-px { display: block; }
+.gr-px rect { fill: #FFE9DE; opacity: 0; }
+@media (prefers-reduced-motion: no-preference) {
+  .gr-px rect { animation: gr-cell 12.8s steps(1, end) var(--d) infinite; }
+}
+@keyframes gr-cell { 0% { opacity: 0.34; } 1.6% { opacity: 0.12; } 3.2% { opacity: 0.4; } 4.8%, 100% { opacity: 0; } }
+/* градиент заголовка — тот же поток: голубой, белый, коралл, оранжевый */
+.hx--grad { --gr: linear-gradient(90deg, #AFC2FF 0%, #FFFFFF 30%, #FFD2C2 50%, #FF8E6E 72%, #FF5E1A 100%); }
+/* сверху по краям — вход и выход, как подписи на слайдах Nexora */
+.gr-tag { position: absolute; top: clamp(96px, 13vh, 124px); margin: 0; font: 400 11px/1.5 var(--f-m); letter-spacing: 0.02em; color: var(--t2); text-transform: lowercase; }
+.gr-tag b { display: block; font-weight: 400; color: var(--t1); text-transform: uppercase; letter-spacing: var(--lbl-ls); }
+.gr-tag--in { left: var(--gut); }
+.gr-tag--out { right: var(--gut); text-align: right; }
+.gr-head { position: absolute; z-index: 2; left: var(--gut); bottom: 88px; max-width: min(62vw, 1080px); }
+.gr-kicker { margin: 0 0 clamp(16px, 1.8vw, 26px); color: var(--t1); }
+.gr-title { display: block; font: 600 clamp(44px, 6vw, 116px)/0.9 var(--f-t); letter-spacing: -0.045em; text-transform: uppercase; }
+.gr-a, .gr-b { display: block; }
+/* размытое тусклее чёткого */
+.gr-a { white-space: nowrap; color: color-mix(in srgb, var(--t1) 70%, transparent); }
+.gr-b { transform-origin: 0 100%; padding-bottom: 0.06em; margin-bottom: -0.06em; }
+.gr-b__in { display: inline-block; }
+/* наклон вместо курсива: у Inter Tight на сайте курсива нет, наклон ровный и не искажает буквы */
+.gr-b__sk { display: inline-block; padding-top: 0.16em; margin-top: -0.16em; transform: skewX(-9deg); color: var(--t1); }
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .gr-b__sk { background: var(--gr); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+}
+.gr-lead { position: absolute; z-index: 2; right: var(--gut); bottom: 88px; width: min(27vw, 390px); }
+.gr-lead > p { margin: 0; font: 400 clamp(15px, 1.1vw, 17px)/1.45 var(--f-t); color: var(--t2); text-wrap: pretty; }
+.gr-lead .hero__btns { margin-top: 20px; }
+.gr-after { right: var(--gut); bottom: 88px; width: min(27vw, 390px); font-size: clamp(17px, 1.35vw, 22px); }
+
+/* ---------- Оранжевый перелив · ленты ---------- */
+/* за лентами: крупное имя компании серым металлом и столбики света; всё внутри кадра и едет с камерой */
+.ir-back { display: none; position: absolute; inset: 0; container-type: size; pointer-events: none; }
+:root:not([data-art-orig])[data-palette='iris'] .ir-back { display: block; }
+.ir-back::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 50%; background: radial-gradient(60% 90% at 80% 100%, rgb(255 94 26 / 0.3), transparent 70%); }
+/* у перелива снизу темнее только под заголовком: справа столбики света остаются яркими */
+:root:not([data-art-orig])[data-palette='iris'] .hero__shade { background: radial-gradient(46% 34% at 20% 84%, color-mix(in srgb, var(--ink) 66%, transparent), transparent), linear-gradient(180deg, color-mix(in srgb, var(--ink) 44%, transparent) 0%, transparent 18%, transparent 74%, color-mix(in srgb, var(--ink) 30%, transparent) 100%); }
+.ir-word { position: absolute; left: 0; right: 0; top: 11%; margin: 0; text-align: center; font: 700 22cqw/0.8 var(--f-t); letter-spacing: -0.065em; white-space: nowrap; color: #5A4C45; opacity: 0.56; }
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .ir-word { background: linear-gradient(180deg, #E9DED6 0%, #A39087 28%, #57473F 58%, rgb(10 6 5 / 0) 94%); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+}
+.ir-bars { position: absolute; inset: 0; display: flex; align-items: flex-end; padding: 0 0.4cqw; transform-origin: 50% 100%; }
+/* столбик: узкая яркая сердцевина и мягкий ореол той же формы; у основания горячо, вверх гаснет через розовый */
+.ir-bars i {
+  flex: 1; height: calc(var(--h) * 100%); opacity: var(--o); transform-origin: 50% 100%;
+  background:
+    linear-gradient(0deg, #FFF0DC 0%, #FFB25E 6%, #FF6A22 22%, rgb(255 94 26 / 0.8) 46%, rgb(255 110 142 / 0.32) 76%, rgb(255 94 26 / 0) 100%) 50% 100% / 36% 100% no-repeat,
+    linear-gradient(0deg, rgb(255 130 60 / 0.5) 0%, rgb(255 94 26 / 0.2) 42%, rgb(255 94 26 / 0) 92%) 50% 100% / 92% 100% no-repeat;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ir-bars i { animation: ir-bar 6s ease-in-out calc(var(--d) * -1) infinite; }
+}
+@keyframes ir-bar { 0%, 100% { scale: 1 1; } 50% { scale: 1 0.86; } }
+.hx--iris { --ir: linear-gradient(90deg, #FFB25E 0%, #FF5E1A 26%, #FF6E8E 58%, #B9A6FF 84%, #FFB25E 100%); }
+.ir-head { position: absolute; z-index: 2; left: var(--gut); bottom: 88px; }
+.ir-kicker { margin: 0 0 clamp(16px, 1.8vw, 24px); color: var(--t1); text-shadow: 0 1px 12px rgb(12 6 4 / 0.7); }
+.ir-title { display: block; font: 500 clamp(40px, 5.2vw, 100px)/1 var(--f-t); letter-spacing: -0.045em; }
+.ir-a, .ir-b { display: block; white-space: nowrap; }
+.ir-a { color: color-mix(in srgb, var(--t1) 66%, transparent); }
+.ir-b { transform-origin: 0 100%; padding-bottom: 0.08em; margin-bottom: -0.08em; }
+.ir-b__in { display: inline-block; color: var(--signal); }
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .ir-b__in { background: var(--ir) 0 0 / 220% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ir-b__in { animation: ul-iri 14s ease-in-out infinite alternate; }
+}
+/* подзаголовок на тёмном стекле: под ним самые высокие столбики */
+:is(.ir-lead, .ir-after) { position: absolute; z-index: 2; right: var(--gut); bottom: 88px; width: min(30vw, 420px); padding: 22px 22px 22px; border-radius: 22px; background: linear-gradient(160deg, rgb(255 150 100 / 0.1), rgb(16 10 8 / 0.62) 46%); -webkit-backdrop-filter: blur(18px) saturate(1.2); backdrop-filter: blur(18px) saturate(1.2); box-shadow: inset 0 1px 0 rgb(255 226 206 / 0.2), inset 0 0 0 1px rgb(255 200 180 / 0.08), 0 30px 60px -30px rgb(0 0 0 / 0.7); }
+.ir-lead > p { margin: 0; font: 400 clamp(15px, 1.1vw, 17px)/1.45 var(--f-t); color: var(--t2); text-wrap: pretty; }
+.ir-lead .hero__btns { margin-top: 18px; }
+.ir-after { font-size: clamp(17px, 1.3vw, 21px); }
+
 /* ---------- Телефон ---------- */
 /* ноутбуки и планшеты в альбомной ориентации: слово меньше и выше, чтобы не задевать текст и кнопки внизу */
 @media (min-width: 900px) and (max-width: 1279px) {
   .st-lead > p { font-size: 14px; }
+  /* градиент: заголовок меньше, колонка текста шире — между ними остаётся воздух, текст не вытягивается вверх */
+  .gr-title { font-size: 5.2vw; }
+  .gr-lead, .gr-after { width: min(34vw, 390px); }
+}
+/* сталь на узком ноутбуке: колонна шире, иначе текст в ней вытягивается вверх до шкалы */
+@media (min-width: 900px) and (max-width: 1099px) {
+  .hx--steel { --col: min(calc(31% - var(--gut) - 28px), 380px); }
+}
+/* сталь на невысоком экране: шкала часов уходит, остаётся крупная цифра — колонна не упирается в текст */
+@media (min-width: 900px) and (max-height: 760px) {
+  .st-gauge__scale, .st-gauge__marks { display: none; }
+  .st-gauge__big { margin-bottom: 4px; }
 }
 
 @media (max-width: 899px) {
@@ -197,15 +312,53 @@
   .st-lead > p { font-size: 14px; }
   .st-lead .hero__btns { display: none; }
   .st-after { left: calc(var(--gut) + 10px); right: calc(var(--gut) + 10px); bottom: 80px; width: auto; font-size: 16px; }
+  /* заголовок и стекло с текстом — столбиком от низа, как у перелива: высота стекла зависит от ширины экрана */
+  :root:not([data-art-orig])[data-palette='steel'] .hx--steel { display: flex; flex-direction: column; justify-content: flex-end; gap: 20px; padding: 0 calc(var(--gut) + 10px) 80px; }
+  :is(.st-head, .st-lead) { position: relative; left: auto; right: auto; bottom: auto; }
+
+  /* на телефоне видна только середина кадра: кадр опускается, чтобы заголовок стоял на тёмном, а не на белой сердцевине */
+  :root:not([data-art-orig])[data-palette='grad'] .hero__media { margin-top: -54vh; }
+  .gr-tag { display: none; }
+  .gr-head { left: var(--gut); right: var(--gut); top: 96px; bottom: auto; max-width: none; }
+  .gr-kicker { font-size: 10px; margin-bottom: 14px; }
+  /* межстрочный чуть больше: Ё второй строки не задевает первую */
+  .gr-title { font-size: 11.2vw; line-height: 0.98; }
+  .gr-lead { left: var(--gut); right: var(--gut); bottom: 80px; width: auto; }
+  .gr-lead > p { font-size: 14px; }
+  .gr-lead .hero__btns { display: none; }
+  .gr-after { left: var(--gut); right: var(--gut); bottom: 80px; width: auto; font-size: 16px; }
+
+  /* у перелива на телефоне видна только середина кадра: имя компании ставится по центру экрана */
+  .ir-word { top: calc(22vh + 88px); font-size: 27vw; }
+  .ir-head { left: var(--gut); right: var(--gut); bottom: 206px; }
+  .ir-kicker { font-size: 10px; margin-bottom: 12px; }
+  .ir-title { font-size: 10.4vw; }
+  .ir-b { white-space: normal; }
+  :is(.ir-lead, .ir-after) { left: var(--gut); right: var(--gut); bottom: 80px; width: auto; padding: 16px 16px 18px; border-radius: 18px; }
+  .ir-lead > p { font-size: 14px; }
+  .ir-lead .hero__btns { display: none; }
+  .ir-after { font-size: 16px; }
+  /* заголовок и стекло с текстом идут столбиком от низа: на узком экране текст длиннее, стекло выше,
+     и заголовок поднимается вместе с ним, а не уходит под стекло */
+  :root:not([data-art-orig])[data-palette='iris'] .hx--iris { display: flex; flex-direction: column; justify-content: flex-end; gap: 20px; padding: 0 var(--gut) 80px; }
+  :is(.ir-head, .ir-lead) { position: relative; left: auto; right: auto; bottom: auto; }
 
   .mi-kicker { top: 96px; }
-  .mi-edge { top: auto; bottom: 200px; transform: translateX(calc(var(--ex, 9999px) - 100% - 12px)); }
+  /* подпись едет по кромке стекла, но не уходит за левый край узкого экрана */
+  .mi-edge { top: auto; bottom: 200px; transform: translateX(max(var(--gut), calc(var(--ex, 9999px) - 100% - 12px))); }
   .mi-title { top: 33%; font-size: 21vw; }
   .hx--mint::before { background: radial-gradient(100% 26% at 45% 36%, color-mix(in srgb, var(--ink) 74%, transparent), transparent); }
   .mi-lead { left: var(--gut); right: var(--gut); bottom: 80px; width: auto; }
   .mi-lead > p { font-size: 14px; }
   .mi-lead .hero__btns { display: none; }
   .mi-after { left: var(--gut); right: var(--gut); bottom: 80px; width: auto; font-size: 16px; }
+}
+/* невысокий телефон (320×568): у стали шкала часов уходит, остаётся цифра — шкала, заголовок и текст помещаются друг под другом */
+@media (max-width: 899px) and (max-height: 620px) {
+  .st-gauge { top: 90px; padding-bottom: 10px; }
+  .st-gauge__scale, .st-gauge__marks { display: none; }
+  .st-gauge__big { margin: 8px 0 0; font-size: 52px; }
+  :root:not([data-art-orig])[data-palette='steel'] .hx--steel { gap: 16px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .hx__after { display: none; }
