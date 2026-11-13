@@ -586,23 +586,45 @@ main:focus { outline: 0; }
 .end__text ul { margin-top: 28px; display: grid; gap: 4px; font: 500 var(--fs-h3)/1.2 var(--f-t); letter-spacing: -0.022em; }
 .end__text a { position: relative; }
 .end__text a:hover { color: var(--signal); }
-.form { grid-column: 7 / 13; position: relative; background: var(--ink-2); box-shadow: 0 0 0 1px var(--line-t); padding: clamp(16px, 2vw, 28px); }
-.form__body { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.field { display: grid; gap: 6px; position: relative; }
+.form { grid-column: 7 / 13; align-self: start; position: relative; background: var(--ink-2); box-shadow: 0 0 0 1px var(--line-t); padding: clamp(20px, 2.4vw, 36px); --err: #FF7A6B; --fld: color-mix(in srgb, var(--ink) 72%, var(--ink-2)); }
+/* стандартная форма заявки: подписи над полями обычным регистром, ошибки под полем, кнопка во всю ширину */
+.form__body { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 16px; }
+.form__head { grid-column: 1 / -1; display: grid; gap: 6px; margin-bottom: 4px; }
+.form__head h3 { font: 600 clamp(22px, 1.8vw, 28px)/1.1 var(--f-t); letter-spacing: -0.025em; color: var(--t1); }
+.form__head p { font-size: 14px; line-height: 1.4; color: var(--t3); }
+.field { display: grid; gap: 8px; align-content: start; position: relative; min-width: 0; }
 .field--full { grid-column: 1 / -1; }
-.field span { font: var(--lbl); line-height: 1; color: var(--t2); text-transform: uppercase; letter-spacing: var(--lbl-ls); }
-.field input, .field textarea { width: 100%; min-height: 48px; padding: 12px 14px; color: var(--t1); background: var(--ink); border: 0; border-radius: 0; box-shadow: inset 0 0 0 1px var(--line-t); font: 400 16px/1.3 var(--f-t); resize: none; transition: box-shadow 0.18s; }
-.field textarea { min-height: 96px; }
-.field input::placeholder, .field textarea::placeholder { color: var(--t3); }
+.field > label { font: 500 14px/1.3 var(--f-t); letter-spacing: -0.005em; color: var(--t2); }
+.field > label i, .form__head i { font-style: normal; color: var(--signal); margin-left: 2px; }
+.field input, .field textarea { width: 100%; min-height: 52px; padding: 14px 16px; color: var(--t1); background: var(--fld); border: 0; border-radius: 0; box-shadow: inset 0 0 0 1px var(--line-t); font: 400 16px/1.35 var(--f-t); resize: none; transition: box-shadow 0.18s, background-color 0.18s; }
+.field textarea { min-height: 120px; }
+.field input::placeholder, .field textarea::placeholder { color: var(--t4); }
 .field input:hover, .field textarea:hover { box-shadow: inset 0 0 0 1px var(--t4); }
-.field input:focus, .field textarea:focus { outline: 0; box-shadow: inset 0 0 0 1px var(--signal); }
-.field em { display: none; font: var(--lbl); line-height: 1; letter-spacing: var(--lbl-ls); font-style: normal; color: var(--signal); }
-.field.has-error input { box-shadow: inset 0 0 0 1px var(--signal); }
-.field.has-error em { display: block; }
-.form__foot { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 14px 18px; align-items: center; margin-top: 4px; }
-.form__foot p { flex: 1 1 200px; font-size: var(--fs-fine); line-height: 1.4; color: var(--t3); }
-.form__foot a { text-decoration: underline; text-underline-offset: 2px; }
-.form__foot a:hover { color: var(--signal); }
+.field input:focus, .field textarea:focus { outline: 0; background: var(--ink); box-shadow: inset 0 0 0 1px var(--signal), 0 0 0 3px color-mix(in srgb, var(--signal) 24%, transparent); }
+.field em, .check em { display: none; font: 400 13px/1.3 var(--f-t); font-style: normal; color: var(--err); }
+.field.has-error input, .field.has-error textarea { box-shadow: inset 0 0 0 1px var(--err); }
+.field.has-error input:focus { box-shadow: inset 0 0 0 1px var(--err), 0 0 0 3px color-mix(in srgb, var(--err) 24%, transparent); }
+:is(.field, .check).has-error em { display: block; }
+/* согласие: своя галочка поверх настоящего чекбокса, он остаётся доступным с клавиатуры */
+.check { position: relative; display: grid; gap: 8px; }
+.check input { position: absolute; left: 0; top: 0; width: 22px; height: 22px; margin: 0; opacity: 0; cursor: pointer; }
+.check label { display: block; padding-left: 34px; min-height: 22px; font-size: 14px; line-height: 1.45; color: var(--t2); cursor: pointer; text-wrap: pretty; }
+.check a { color: var(--t1); text-decoration: underline; text-decoration-color: var(--t4); text-underline-offset: 2px; }
+.check a:hover { color: var(--signal); text-decoration-color: currentColor; }
+.check__box { position: absolute; left: 0; top: 0; width: 22px; height: 22px; background: var(--fld); box-shadow: inset 0 0 0 1.5px var(--t4); transition: background-color 0.18s, box-shadow 0.18s; pointer-events: none; }
+.check__box::after { content: ''; position: absolute; left: 8px; top: 4px; width: 5px; height: 10px; border: solid var(--on-signal); border-width: 0 2px 2px 0; transform: rotate(45deg) scale(0.4); opacity: 0; transition: transform 0.18s var(--ease), opacity 0.18s; }
+.check input:hover + label .check__box { box-shadow: inset 0 0 0 1.5px var(--t2); }
+.check input:checked + label .check__box { background: var(--signal); box-shadow: inset 0 0 0 1.5px var(--signal); }
+.check input:checked + label .check__box::after { opacity: 1; transform: rotate(45deg); }
+.check input:focus-visible + label .check__box { box-shadow: inset 0 0 0 1.5px var(--signal), 0 0 0 3px color-mix(in srgb, var(--signal) 30%, transparent); }
+.check.has-error .check__box { box-shadow: inset 0 0 0 1.5px var(--err); }
+.check em { padding-left: 34px; }
+.form__foot { grid-column: 1 / -1; display: grid; gap: 12px; margin-top: 2px; }
+.form__send { width: 100%; min-height: 54px; font-size: 16px; }
+.form__send:disabled { cursor: progress; opacity: 0.7; }
+.form__note, .form__fail { font-size: 13px; line-height: 1.45; color: var(--t3); text-wrap: pretty; }
+.form__fail { color: var(--err); }
+.form__fail a { color: var(--t1); text-decoration: underline; text-underline-offset: 2px; }
 .form__ok { display: none; gap: 14px; }
 .form__ok h3 { font: 800 var(--fs-h2s)/0.9 var(--f-d); text-transform: uppercase; color: var(--t1); }
 .form__ok > p:not(.lbl) { max-width: 30em; color: var(--t2); line-height: 1.36; }

@@ -6,6 +6,7 @@ import { onPalette } from './theme-controller';
 import HERO_PATHS from '../data/hero-paths.json';
 import { mountLook, type HeroMode } from './hero-looks';
 import { mountInsideLook } from './inside-looks';
+import { mountHands } from './hands';
 
 const root = document.documentElement;
 /* Слова композиции A. В публичной версии с другой палитрой их на странице нет */
@@ -236,10 +237,10 @@ function heroPulses() {
     olive: { n: 7, v: [0.0016, 0.0032], len: [0.06, 0.11], w: 1.8, a: 1 },
     ultra: { n: 10, v: [0.0018, 0.0034], len: [0.05, 0.09], w: 2, a: 1 },
     steel: { n: 6, v: [0.0005, 0.0009], len: [0.12, 0.2], w: 7, a: 0.3 },
-    mint: { n: 10, v: [0.0011, 0.0022], len: [0.04, 0.07], w: 0, a: 0.75 },
-    /* «Градиент»: мягкий свет проходит по ряду пикселей во всю высоту клетки; «Перелив»: блик идёт по ровной ленте */
-    grad: { n: 6, v: [0.0012, 0.0022], len: [0.08, 0.14], w: 0, a: 0.3 },
-    iris: { n: 6, v: [0.0014, 0.0026], len: [0.08, 0.15], w: 2, a: 0.6 },
+    /* мята: редкий свет бежит по горизонту над спокойной водой */
+    mint: { n: 3, v: [0.0007, 0.0013], len: [0.1, 0.18], w: 1.4, a: 0.5 },
+    /* перелив: блик идёт по нижней кромке ровного занавеса */
+    iris: { n: 4, v: [0.0012, 0.0022], len: [0.08, 0.14], w: 2, a: 0.6 },
   };
   /* у кадра Б свои пути (ключ «id-b»); если их нет, импульсов на кадре Б у палитры нет */
   const NONE: Look = { lines: [], x0: 1 };
@@ -617,6 +618,15 @@ function mountInside() {
   insideMode = mountInsideLook(key);
 }
 
+/* ---------- Кто это: у «Перелива» руки вместо бюста (lib/hands.ts) ---------- */
+let handsMode: { kill(): void } | null = null;
+function mountAsstLook() {
+  const on = root.getAttribute('data-palette') === 'iris' && !root.hasAttribute('data-art-orig');
+  if (on === !!handsMode) return;
+  handsMode?.kill();
+  handsMode = on && asstSec ? mountHands(asstSec) : null;
+}
+
 /* ---------- Отрасли: вертикальный скролл в горизонталь ---------- */
 function initIndustries() {
   const sec = $('[data-ind]')!;
@@ -677,8 +687,8 @@ const LN: Record<string, (svg: SVGSVGElement, W: number, H: number) => void> = {
     const paths = Array.from({ length: n }, (_, i) => `M0 ${fx(1 + (i * (H - 2)) / (n - 1))}H${W}`);
     drawLn(svg, W, H, paths, PULSES(n, 4));
   },
-  /* Ассистент: сложное входит слева в механизм за ухом, результат проходит сквозь голову
-     и выходит перед лицом по направлению взгляда. Бюст лежит поверх svg и скрывает линии внутри головы */
+  /* Ассистент: сложное входит слева в механизм за ухом, справа от фигуры выходят ровные параллельные
+     линии результата: хаос слева, порядок справа. Бюст лежит поверх svg и скрывает линии внутри головы */
   asst(svg, W, H) {
     const stage = svg.parentElement!;
     const box = stage.getBoundingClientRect();
@@ -689,17 +699,30 @@ const LN: Record<string, (svg: SVGSVGElement, W: number, H: number) => void> = {
     const inn = ys('.asst__tags--in li');
     const out = ys('.asst__tags--out li');
     const x0 = W * 0.27;
-    /* у мраморного бюста A выход остаётся из плеча, у стеклянной девушки — от лица между бровью и губами */
+    /* у мраморного бюста A выход остаётся из плеча. У стеклянной девушки выход не касается фигуры:
+       правый край её силуэта нигде не заходит дальше 0,73 ширины кадра, линии начинаются за ним */
     const orig = root.hasAttribute('data-art-orig');
+    /* «Перелив»: вместо бюста руки. Работа входит в запястье руки из точек, результат — подпись над искрой */
+    const wrist = $('[data-hands-wrist]', stage);
+    if (!orig && wrist && wrist.getClientRects().length) {
+      const w = wrist.getBoundingClientRect();
+      const [wx, wy] = [w.left - box.left, w.top - box.top];
+      const x0 = Math.min(W * 0.14, wx * 0.5);
+      const handPaths = inn.map((y) => `M0 ${fx(y)}H${fx(x0)}C${fx(x0 + (wx - x0) * 0.55)} ${fx(y)} ${fx(x0 + (wx - x0) * 0.45)} ${fx(wy)} ${fx(wx)} ${fx(wy)}`);
+      drawLn(svg, W, H, handPaths, [
+        { i: 0, c: 'sig', t: 5.6, d: 0 }, { i: 2, c: 'sig', t: 7, d: -2 }, { i: 4, c: 'sig', t: 6.2, d: -4 },
+      ]);
+      asstHot();
+      return;
+    }
     const [hx, hy] = orig ? [px(0.56), py(0.32)] : [px(0.4), py(0.29)];
-    const outPath = (y: number, k: number) => {
+    const ox = px(0.78);
+    const outPath = (y: number) => {
       if (orig) {
         const [sx, sy] = [px(0.6), py(0.76)];
         return `M${fx(sx)} ${fx(sy)}C${fx(sx + W * 0.08)} ${fx(sy)} ${fx(sx + W * 0.05)} ${fx(y)} ${fx(sx + W * 0.16)} ${fx(y)}H${W}`;
       }
-      const sy = py(0.295 + k * 0.035);
-      const ex = px(0.74);
-      return `M${fx(px(0.5))} ${fx(sy)}H${fx(ex)}C${fx(ex + W * 0.07)} ${fx(sy)} ${fx(ex + W * 0.05)} ${fx(y)} ${fx(ex + W * 0.13)} ${fx(y)}H${W}`;
+      return `M${fx(ox)} ${fx(y)}H${W}`;
     };
     const paths = [
       ...inn.map((y) => `M0 ${fx(y)}H${fx(x0)}C${fx(x0 + (hx - x0) * 0.55)} ${fx(y)} ${fx(x0 + (hx - x0) * 0.5)} ${fx(hy)} ${fx(hx)} ${fx(hy)}`),
@@ -710,11 +733,11 @@ const LN: Record<string, (svg: SVGSVGElement, W: number, H: number) => void> = {
       { i: 0, c: 'sig', t: 5.6, d: 0 }, { i: 2, c: 'sig', t: 7, d: -2 }, { i: 4, c: 'sig', t: 6.2, d: -4 },
       { i: k, c: 'ice', t: 6, d: -1 }, { i: k + 1, c: 'ice', t: 4.8, d: -3 }, { i: k + 2, c: 'ice', t: 6.6, d: -5 },
     ]);
-    /* стекло полупрозрачное: выход проявляется только от края лица, внутри головы линий не видно */
+    /* линии результата проявляются из темноты справа от фигуры */
     if (!orig) {
       svg.insertAdjacentHTML(
         'afterbegin',
-        `<defs><linearGradient id="asst-fg" gradientUnits="userSpaceOnUse" x1="${fx(px(0.64))}" y1="0" x2="${fx(px(0.71))}" y2="0"><stop offset="0" stop-color="#000"/><stop offset="1" stop-color="#fff"/></linearGradient>` +
+        `<defs><linearGradient id="asst-fg" gradientUnits="userSpaceOnUse" x1="${fx(ox)}" y1="0" x2="${fx(ox + Math.min(W * 0.1, b.width * 0.16))}" y2="0"><stop offset="0" stop-color="#000"/><stop offset="1" stop-color="#fff"/></linearGradient>` +
           `<mask id="asst-fm" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}"><rect width="${W}" height="${H}" fill="url(#asst-fg)"/></mask></defs>`,
       );
       const outD = new Set(paths.slice(k));
@@ -742,16 +765,17 @@ const LN: Record<string, (svg: SVGSVGElement, W: number, H: number) => void> = {
     drawLn(svg, W, H, paths, PULSES(n, 5));
   },
 };
+let rebuildLines = () => {};
 function initLines() {
   const items = $$<SVGSVGElement>('[data-ln]').filter((svg) => !(svg.dataset.ln === 'rail' && isMobile()));
-  const build = () =>
+  const build = (rebuildLines = () =>
     items.forEach((svg) => {
       /* рельс длиной с ленту: ширина задаётся явно, иначе Safari берёт её из viewBox */
       if (svg.dataset.ln === 'rail') svg.style.width = svg.parentElement!.offsetWidth + 'px';
       const r = svg.getBoundingClientRect();
       const draw = LN[svg.dataset.ln!];
       if (draw && r.width && r.height) draw(svg, Math.round(r.width), Math.round(r.height));
-    });
+    }));
   build();
   let t = 0;
   addEventListener('resize', () => {
@@ -828,6 +852,8 @@ function asstHot() {
   $$('.ln__p', asstSec).forEach((p) => p.classList.toggle('is-hot', hot.has(p.getAttribute('d')!)));
 }
 function asstBurst() {
+  /* руки «Перелива» слушают смену роли: по руке из точек проходит волна, искра вспыхивает */
+  asstSec!.dispatchEvent(new Event('asst-burst'));
   const svg = $('[data-ln="asst"]', asstSec!);
   if (!svg || !svg.classList.contains('is-run')) return;
   const n = $$('.asst__tags--in li', asstSec!).length;
@@ -983,10 +1009,14 @@ afterFonts(() => {
   mountInside();
   initIndustries();
   initLines();
+  mountAsstLook();
   mountHero(true);
   onPalette(() => {
     mountInside();
     mountHero(false);
+    mountAsstLook();
+    /* у «Перелива» линии ассистента идут в запястье руки, у остальных — в бюст: пересобрать после смены стилей */
+    requestAnimationFrame(() => rebuildLines());
   });
   ScrollTrigger.refresh();
 });

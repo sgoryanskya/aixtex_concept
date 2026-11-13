@@ -32,7 +32,7 @@ const pair = Array.from({ length: 16 }, (_, i) => [nodes[i >> 2], nodes[i & 3]])
 /* Мята: составляющие слоя бегут по полосе, повтор нужен для бесшовной петли */
 const run = (parts: string[]) => [...parts, ...parts, ...parts, ...parts];
 ---
-{(has('signal') || has('olive') || has('grad') || has('iris')) && (
+{(has('signal') || has('olive') || has('iris')) && (
   <div class="ix ix--signal" data-ix="signal" data-iw-parts={JSON.stringify(L.map((l) => l.parts))}>
     <svg class="iw-web" data-iw-web aria-hidden="true">
       <defs>

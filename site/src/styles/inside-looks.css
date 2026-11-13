@@ -2,7 +2,7 @@
    движение в lib/inside-looks.ts. Без уголков, крестиков, линеек и точечных сеток */
 
 .ix { display: none; position: absolute; inset: 0; pointer-events: none; }
-:root:is([data-palette='signal'], [data-palette='olive'], [data-palette='grad'], [data-palette='iris']) .ix--signal,
+:root:is([data-palette='signal'], [data-palette='olive'], [data-palette='iris']) .ix--signal,
 :root[data-palette='ultra'] .ix--ultra,
 :root[data-palette='steel'] .ix--steel,
 :root[data-palette='mint'] .ix--mint { display: block; }
@@ -11,13 +11,13 @@
 /* Заголовок и строка внизу: своя раскладка у каждой палитры (только на широком экране; телефон — общий поток) */
 @media (min-width: 900px) {
   /* left и width заданы явно: при prefers-reduced-motion общие правила A сбрасывают их в поток */
-  :root:is([data-palette='signal'], [data-palette='olive'], [data-palette='ultra'], [data-palette='steel'], [data-palette='mint'], [data-palette='grad'], [data-palette='iris']) .ex__head { position: absolute; left: var(--gut); top: clamp(76px, 10.5vh, 116px); width: min(29vw, 520px); }
-  :root:is([data-palette='signal'], [data-palette='olive'], [data-palette='ultra'], [data-palette='steel'], [data-palette='mint'], [data-palette='grad'], [data-palette='iris']) .ex__foot { position: absolute; left: var(--gut); bottom: 44px; padding: 0; }
+  :root:is([data-palette='signal'], [data-palette='olive'], [data-palette='ultra'], [data-palette='steel'], [data-palette='mint'], [data-palette='iris']) .ex__head { position: absolute; left: var(--gut); top: clamp(76px, 10.5vh, 116px); width: min(29vw, 520px); }
+  :root:is([data-palette='signal'], [data-palette='olive'], [data-palette='ultra'], [data-palette='steel'], [data-palette='mint'], [data-palette='iris']) .ex__foot { position: absolute; left: var(--gut); bottom: 44px; padding: 0; }
   :root:is([data-palette='ultra'], [data-palette='mint']) .ex__head { width: min(66vw, 1040px); }
   /* веер нитей не поднимается в верхний правый угол: две фразы заголовка встают в две строки */
-  :root:is([data-palette='signal'], [data-palette='olive'], [data-palette='grad'], [data-palette='iris']) .ex__head { width: min(44vw, 700px); }
+  :root:is([data-palette='signal'], [data-palette='olive'], [data-palette='iris']) .ex__head { width: min(44vw, 700px); }
   /* строкой и выше дока с кнопкой, чтобы средний пункт не уходил под него */
-  :root:is([data-palette='signal'], [data-palette='olive'], [data-palette='ultra'], [data-palette='mint'], [data-palette='grad'], [data-palette='iris']) .ex__foot { display: flex; gap: 30px; bottom: 96px; }
+  :root:is([data-palette='signal'], [data-palette='olive'], [data-palette='ultra'], [data-palette='mint'], [data-palette='iris']) .ex__foot { display: flex; gap: 30px; bottom: 96px; }
 }
 
 /* ---------- Сигнал · просторный веер гладких нитей стягивается в одну линию ----------

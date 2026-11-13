@@ -1,8 +1,6 @@
-"""Иллюстрации двух концепций части 9: «Градиент» (grad) и «Перелив» (iris).
+"""Иллюстрации концепции части 9 «Перелив» (iris).
 
 Источники те же, что у остальных палитр (src/scenes, src/glass-girl.png); остальные палитры этот скрипт не трогает.
-  grad — металл переливается по кадру: слева снизу синий, через сирень и розовый к оранжевому справа сверху,
-         как градиент в референсах Nexora и Signale. Мрамор холоднее, ближе к белому гипсу.
   iris — медь остаётся оранжевой, а блики уходят в розовый и сирень, как тонкая плёнка (WMT AI).
          Тени глубже, в красную лаву.
 Запуск: python3 site/scripts/art/iri.py site/scripts/art/src site/public/img/art
@@ -43,28 +41,9 @@ def from_lch(L, C, H):
     return to_srgb(((lab @ np.linalg.inv(M2).T) ** 3) @ np.linalg.inv(M1).T)
 
 
-def hue_of(hexc):
-    c = np.array([int(hexc[i:i + 2], 16) for i in (1, 3, 5)], float)[None, :] / 255
-    _, C, H = lch(c)
-    return float(H[0]), float(C[0])
-
-
 def sm(a, b, x):
     t = np.clip((x - a) / (b - a), 0, 1)
     return t * t * (3 - 2 * t)
-
-
-# оттенки шкал (OkLCh): синий 264°, сирень ~300°, розовый ~350°, оранжевый ~45° (= 405°)
-H_BLUE, C_BLUE = hue_of('#3058FF')
-H_OR, C_OR = hue_of('#FF5E1A')
-H_OR_UP = H_OR + 2 * np.pi if H_OR < H_BLUE else H_OR
-
-
-def grad_hue(xn, yn):
-    """Диагональ кадра: 0 — синий слева снизу, 1 — оранжевый справа сверху, путь через сирень и розовый."""
-    t = np.clip(0.75 * xn + 0.25 * (1 - yn), 0, 1)
-    t = sm(0.08, 0.92, t)
-    return H_BLUE + (H_OR_UP - H_BLUE) * t
 
 
 def iris_hue(h0, L, C, lo=0.58, hi=0.9):
@@ -72,12 +51,6 @@ def iris_hue(h0, L, C, lo=0.58, hi=0.9):
     up = sm(lo, hi, L)
     down = sm(0.45, 0.2, L)
     return h0 - np.radians(95) * up ** 1.2 - np.radians(10) * down
-
-
-def grad_light(L, xn):
-    """«Градиент» на металле сцены: тени синие, середина в сирень и розовый, блики оранжевые;
-    правая часть кадра чуть теплее"""
-    return np.clip(0.9 * (L - 0.3) / 0.6 + 0.25 * (xn - 0.5), 0, 1)
 
 
 def frame(im, size, fit):
@@ -118,18 +91,6 @@ for n in NAMES:
     w = copper_mask(L, C, Hh)
     sel = w > 0.5
     h0 = np.median(Hh[sel & (C > 0.06)])
-    hh, ww = L.shape
-    yn, xn = np.mgrid[0:hh, 0:ww].astype(float)
-    yn /= hh
-    xn /= ww
-
-    # grad: металл по диагонали кадра, мрамор холоднее
-    t = sm(0.0, 1.0, grad_light(L, xn))
-    H2 = np.where(w > 0.02, H_BLUE + (H_OR_UP - H_BLUE) * t, Hh)
-    C2 = np.where(w > 0.02, C * (1.05 * w + 0.2 * (1 - w)), C)
-    C2 = C2 * (w + (1 - w) * 0.35)
-    save(from_lch(L, C2, H2), f'{OUT}/{stem}-grad.webp')
-
     # iris: медь с плёночным переливом в бликах
     d = np.angle(np.exp(1j * (Hh - h0)))
     H3 = np.where(w > 0.02, iris_hue(h0 + d * 0.3, L, C), Hh)
@@ -142,21 +103,8 @@ im = np.asarray(Image.open(f'{SRC}/glass-girl.png').convert('RGB'), float) / 255
 a = np.clip((im.max(-1) - 0.025) / 0.975, 0, 1)
 rgb = np.clip(np.where(a[..., None] > 1e-3, im / np.maximum(im.max(-1, keepdims=True), 1e-3), 0), 0, 1)
 L, C, Hh = lch(rgb)
-hh, ww = L.shape
-yn, xn = np.mgrid[0:hh, 0:ww].astype(float)
-yn /= hh
-xn /= ww
 h0 = float(np.arctan2(np.median(np.sin(Hh[C > 0.08])), np.median(np.cos(Hh[C > 0.08]))))
-# grad: бюст переливается снизу слева синим к оранжевому справа сверху (по рамке самого бюста)
-ys, xs = np.nonzero(a > 0.2)
-xb = np.clip((xn - xs.min() / ww) / ((xs.max() - xs.min()) / ww), 0, 1)
-yb = np.clip((yn - ys.min() / hh) / ((ys.max() - ys.min()) / hh), 0, 1)
-tb = sm(0.12, 0.88, 0.5 * xb + 0.5 * (1 - yb))
-Hg = H_BLUE + (H_OR_UP - H_BLUE) * tb + np.angle(np.exp(1j * (Hh - h0))) * 0.3
-Cg = C * 0.95
-out = from_lch(L, Cg, Hg)
-Image.fromarray((np.clip(np.concatenate([out, a[..., None]], -1), 0, 1) * 255 + 0.5).astype(np.uint8)).save(f'{OUT}/glass-grad.webp', quality=86, method=6)
-# iris: оранжевое стекло, блики и тонкие края — розовый и сирень
+# оранжевое стекло, блики и тонкие края — розовый и сирень
 d = np.angle(np.exp(1j * (Hh - h0)))
 Hi = iris_hue(h0 + d * 0.4, L, C, 0.74, 0.98) - np.radians(40) * sm(0.5, 0.1, a)
 Ci = C * 1.02

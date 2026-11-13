@@ -13,3 +13,6 @@ export const START_PALETTE: PaletteId = REVIEW_MODE ? DEFAULT_PALETTE : APPROVED
 export const SITE_URL = String(import.meta.env.PUBLIC_SITE_URL ?? '').replace(/\/+$/, '');
 export const BASE = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : import.meta.env.BASE_URL + '/';
 export const asset = (path: string) => BASE + path.replace(/^\/+/, '');
+
+/* Адрес обработчика заявок (POST, JSON). Пусто — форма открывает письмо в почтовой программе посетителя */
+export const FORM_ENDPOINT = String(import.meta.env.PUBLIC_FORM_ENDPOINT ?? '').trim();

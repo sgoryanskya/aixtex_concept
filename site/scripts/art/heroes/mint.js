@@ -1,98 +1,166 @@
-/* «Мята и шампань» · полосы.
-   Слева разлетевшиеся пластинки света в расфокусе (хаос, как в референсе с радиальными полосами),
-   к центру они поворачиваются и выстраиваются в ровную лесенку горизонтальных полос (порядок):
-   ступенчатый переход яркости, как в знаке MarketLytics, и мягкая мятная аура, как у aclitec. */
+/* «Мята и шампань» · гладь воды (раунд 5, часть 10).
+   Тёмная вода в сумерках, камера низко над поверхностью. На горизонте — тонкая полоса света шампани,
+   над ней мягкое мятное свечение. Слева вода неспокойна: свет рассыпается на беспорядочные блики (хаос).
+   К правому краю волна стихает, вода становится зеркалом: свет ложится ровными горизонтальными линиями
+   длинной зыби и чистой дорожкой под полосой (порядок). Солнца, кругов и людей в кадре нет.
+   Рендер — один фрагментный шейдер (WebGL): плоскость воды из суммы волн, отражение неба по Френелю,
+   мелкие волны, которые не помещаются в пиксель, переходят в шероховатость отражения, а не в шум. */
 window.render = async (W, H, P) => {
-  const { FOCUS, rng, smooth, lerp, hex, mix, rgba, gauss, canvas, bloom, grain, samplePath } = HG;
-  const c = canvas(W, H);
-  const ctx = c.getContext('2d');
-  const C = { bg: hex(P.bg), dark: hex(P.dark), base: hex(P.base), light: hex(P.light), hi: hex(P.hi), accent: hex(P.accent), second: hex(P.second) };
-  const yc = FOCUS.y;
+  const { rng, hex, canvas, grain, bloom } = HG;
+  const v3 = (h) => hex(h).map((x) => (x / 255).toFixed(4)).join(',');
+  const f = (x) => x.toFixed(5);
 
-  ctx.fillStyle = P.bg;
-  ctx.fillRect(0, 0, W, H);
-  /* аура: два размытых пятна, тёмная мята и чуть шампани, только вокруг полос */
-  [[0.74, yc, 0.42, C.dark, 0.95], [0.6, yc + 0.06, 0.22, C.base, 0.28], [0.92, yc - 0.12, 0.2, C.second, 0.07]].forEach(([x, y, rr, col, a]) => {
-    const g = ctx.createRadialGradient(x * W, y * H, 0, x * W, y * H, rr * W);
-    g.addColorStop(0, rgba(col, a));
-    g.addColorStop(1, rgba(col, 0));
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, W, H);
-  });
+  /* горизонт чуть ниже середины кадра; свет — правее центра, там же точка, куда едет камера */
+  const YH = 0.535;
+  const LX = 0.685;
+  const TF = 0.36;
+  const ASP = W / H;
 
-  /* полосы порядка: 13 ступеней, яркость растёт к середине, начало каждой чуть сдвинуто — лесенка */
-  const N = 13;
-  const PITCH = 0.0215;
-  const TH = 0.0095;
-  const rows = Array.from({ length: N }, (_, i) => {
-    const m = i - (N - 1) / 2;
-    const t = 1 - Math.abs(m) / ((N - 1) / 2);
-    return {
-      y: yc + m * PITCH,
-      x0: 0.555 + Math.abs(m) * 0.008 + (i % 3) * 0.004,
-      col: t > 0.85 ? mix(C.light, C.hi, 0.3) : t > 0.55 ? C.light : t > 0.3 ? C.accent : t > 0.12 ? C.base : mix(C.base, C.dark, 0.5),
-      a: 0.45 + 0.55 * t,
-      champagne: i === 2 || i === N - 3,
-    };
-  });
-
-  /* хаос: пластинки разной длины и угла, дальние размыты, ближе к полосам поворачиваются вдоль них */
-  const r = rng(21);
-  const chips = canvas(W, H);
-  const cx = chips.getContext('2d');
-  for (let n = 0; n < 220; n++) {
-    const u = Math.pow(r(), 0.8) * 0.56;
-    const order = smooth(0.3, 0.56, u);
-    const sy = lerp(0.3, 0.13, smooth(0, 0.54, u));
-    let v = yc + gauss(r) * sy;
-    /* у самых правых пластинок место уже есть: они садятся на свою полосу */
-    const row = rows[Math.max(0, Math.min(N - 1, Math.round((v - yc) / PITCH + (N - 1) / 2)))];
-    v = lerp(v, row.y, smooth(0.42, 0.56, u));
-    if (v < 0.04 || v > 0.96) continue;
-    const ang = lerp((r() - 0.5) * Math.PI * 0.9, 0, order);
-    const L = (40 + Math.pow(r(), 1.4) * 300) * (1 + order * 0.8);
-    const T = TH * H * (0.9 + r() * 1.8) * (1 - order * 0.45);
-    /* почти всё в расфокусе: мягкие пятна света, резкие только у самых полос */
-    const depth = r() * (1 - order * 0.85);
-    const blur = depth < 0.18 ? 0 : 5 + (depth - 0.18) * 48;
-    const col = r() < 0.12 ? C.second : mix(C.base, C.light, r() * 0.8);
-    const a = (0.2 + r() * 0.45) * lerp(0.3, 1, smooth(0, 0.45, u));
-    cx.save();
-    cx.translate(u * W, v * H);
-    cx.rotate(ang);
-    cx.filter = blur ? `blur(${blur.toFixed(1)}px)` : 'none';
-    const g = cx.createLinearGradient(-L / 2, 0, L / 2, 0);
-    g.addColorStop(0, rgba(col, 0));
-    g.addColorStop(0.35, rgba(col, a * 0.7));
-    g.addColorStop(1, rgba(mix(col, C.hi, 0.3), a));
-    cx.fillStyle = g;
-    cx.globalCompositeOperation = 'lighter';
-    cx.beginPath();
-    cx.roundRect(-L / 2, -T / 2, L, T, T / 2);
-    cx.fill();
-    cx.restore();
+  /* волны: неспокойный набор (много направлений, короткие и средние) и зыбь (гребни вдоль горизонта) */
+  const r = rng(20261113);
+  const waves = [];
+  for (let i = 0; i < 30; i++) {
+    const lam = 0.11 * Math.pow(30, r());
+    const a = (r() * 2 - 1) * 1.45 + 0.25;
+    waves.push({ set: 'c', dx: Math.sin(a), dz: Math.cos(a), k: (2 * Math.PI) / lam, s: 0.075 * (0.6 + 0.8 * r()), ph: r() * 6.283 });
   }
-  bloom(ctx, chips, [[30, 0.35], [6, 0.35], [0, 1]]);
+  for (let i = 0; i < 6; i++) {
+    const lam = 1.8 + 4.2 * r();
+    const a = (r() * 2 - 1) * 0.12;
+    waves.push({ set: 's', dx: Math.sin(a), dz: Math.cos(a), k: (2 * Math.PI) / lam, s: 0.026 * (0.7 + 0.6 * r()), ph: r() * 6.283 });
+  }
+  for (let i = 0; i < 6; i++) {
+    const lam = 0.25 + 0.4 * r();
+    const a = (r() * 2 - 1) * 1.2;
+    waves.push({ set: 's', dx: Math.sin(a), dz: Math.cos(a), k: (2 * Math.PI) / lam, s: 0.007, ph: r() * 6.283 });
+  }
+  const waveCode = waves
+    .map((w) => `{ vec2 d = vec2(${f(w.dx)}, ${f(w.dz)}); float k = ${f(w.k)}; float s = ${f(w.s)}${w.set === 'c' ? ' * ch' : ''};
+    float l = k * length(d * fp); float a = exp(-0.5 * l * l);
+    g += d * (s * a * cos(k * dot(d, q) + ${f(w.ph)})); rough += s * s * (1. - a * a) * 0.5; }`)
+    .join('\n    ');
 
-  /* сами полосы: резкие края, свет нарастает слева направо */
-  const bars = canvas(W, H);
-  const bx = bars.getContext('2d');
-  rows.forEach((rw) => {
-    const col = rw.champagne ? mix(C.second, C.hi, 0.2) : rw.col;
-    const g = bx.createLinearGradient(rw.x0 * W, 0, W, 0);
-    g.addColorStop(0, rgba(col, 0));
-    g.addColorStop(0.07, rgba(col, rw.a * 0.55));
-    g.addColorStop(0.4, rgba(col, rw.a * 0.85));
-    g.addColorStop(1, rgba(col, rw.a));
-    bx.fillStyle = g;
-    bx.fillRect(rw.x0 * W, (rw.y - TH / 2) * H, (1.02 - rw.x0) * W, TH * H);
-    /* верхняя грань светлее: полоса читается как пластина, а не как линия */
-    bx.fillStyle = rgba(C.hi, rw.a * 0.35);
-    bx.fillRect((rw.x0 + 0.04) * W, (rw.y - TH / 2) * H, (1 - rw.x0) * W, 2);
-  });
-  bloom(ctx, bars, [[120, 0.42], [30, 0.36], [6, 0.3], [0, 0.92]]);
+  const fs = `
+precision highp float;
+uniform vec2 R;
+const float YH = ${f(YH)};
+const float TF = ${f(TF)};
+const float ASP = ${f(ASP)};
+const float AZ0 = ${f(Math.atan((LX - 0.5) * 2 * TF * ASP))};
+const vec3 BG = vec3(${v3(P.bg)});
+const vec3 DARK = vec3(${v3(P.dark)});
+const vec3 BASE = vec3(${v3(P.base)});
+const vec3 LIGHT = vec3(${v3(P.light)});
+const vec3 HI = vec3(${v3(P.hi)});
+const vec3 SEC = vec3(${v3(P.second)});
+float sm(float a, float b, float x){ float t = clamp((x - a) / (b - a), 0., 1.); return t * t * (3. - 2. * t); }
+float gs(float x, float w){ float t = x / w; return exp(-t * t); }
 
-  grain(ctx, W, H, 4, 13);
-  const lines = rows.filter((_, i) => i % 2 === 0).map((rw) => samplePath(() => rw.y, rw.x0 + 0.03, 1.0, 4));
-  return { canvas: c, paths: { lines, x0: 0.58, thick: TH } };
+/* небо: у горизонта чуть светлее, над светом мягкая мята, на горизонте полоса шампани с ярким ядром.
+   rough — разброс отражённых лучей: полоса расширяется и тускнеет, свет сохраняется */
+vec3 sky(vec3 r, float rough){
+  float el = r.y / max(length(r.xz), 1e-4);
+  float az = atan(r.x, r.z);
+  float e = max(el, 0.);
+  float g1 = gs(az - AZ0, 0.46);
+  float g2 = gs(az - AZ0, 0.17);
+  vec3 c = mix(BG * 0.95 + DARK * 0.16, BG * 0.38, sm(0., 0.3, e));
+  c += DARK * 0.75 * g1 * exp(-e / 0.06);
+  c += BASE * 0.2 * (0.35 * g1 + g2) * exp(-e / 0.035);
+  c += mix(SEC, LIGHT, 0.25) * 0.26 * g2 * exp(-e / 0.016);
+  c += SEC * 0.16 * g2 * exp(-e / 0.05);
+  float w1 = sqrt(0.011 * 0.011 + rough * rough);
+  c += mix(SEC, LIGHT, 0.2) * 0.75 * (0.42 + 0.58 * g1) * (0.011 / w1) * gs(el, w1);
+  float w2 = sqrt(0.0032 * 0.0032 + rough * rough);
+  c += mix(HI, SEC, 0.82) * 2.1 * (0.3 + 0.7 * g2) * (0.0032 / w2) * gs(el, w2);
+  return c;
+}
+
+void waves(vec2 q, vec2 fp, float ch, out vec2 g, out float rough){
+  g = vec2(0.);
+  rough = 0.;
+  ${waveCode}
+}
+
+vec3 shade(vec2 px){
+  float u = px.x / R.x;
+  float v = 1. - px.y / R.y;
+  vec3 d = vec3((u - 0.5) * 2. * TF * ASP, (YH - v) * 2. * TF, 1.);
+  if (d.y >= 0.) return sky(d, 0.);
+  float t = 1. / -d.y;
+  vec2 q = vec2(d.x * t, t);
+  float pix = 2. * TF / R.y;
+  vec2 fp = vec2(t * pix, t * t * pix);
+  /* хаос слева, зеркало справа */
+  float ch = 1. - sm(0.2, 0.74, u);
+  vec2 g; float rough;
+  waves(q, fp, ch, g, rough);
+  vec3 n = normalize(vec3(-g.x, 1., -g.y));
+  vec3 dn = normalize(d);
+  vec3 rr = reflect(dn, n);
+  rr.y = abs(rr.y);
+  float ci = max(dot(-dn, n), 0.);
+  float F = 0.02 + 0.98 * pow(1. - ci, 5.);
+  vec3 body = BG * 0.85 + DARK * 0.06;
+  return mix(body, sky(rr, sqrt(rough) * 2.), F);
+}
+
+void main(){
+  /* четыре луча на пиксель по повёрнутой решётке */
+  vec2 o = gl_FragCoord.xy;
+  vec3 c = shade(o + vec2(0.125, 0.375)) + shade(o + vec2(-0.375, 0.125)) + shade(o + vec2(0.375, -0.125)) + shade(o + vec2(-0.125, -0.375));
+  c *= 0.25;
+  /* виньетка и затемнение сверху под меню и заголовок */
+  vec2 p = gl_FragCoord.xy / R;
+  float vg = 1. - 0.35 * pow(length((p - vec2(0.62, 0.5)) * vec2(0.9, 1.2)), 2.2);
+  c *= clamp(vg, 0., 1.);
+  c = 1. - exp(-c * 1.35);
+  gl_FragColor = vec4(pow(c, vec3(1. / 1.05)), 1.);
+}`;
+
+  const cv = canvas(W, H);
+  const gl = cv.getContext('webgl', { preserveDrawingBuffer: true, antialias: false, alpha: false });
+  const sh = (type, src) => {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));
+    return s;
+  };
+  const pr = gl.createProgram();
+  gl.attachShader(pr, sh(gl.VERTEX_SHADER, 'attribute vec2 p; void main(){ gl_Position = vec4(p, 0., 1.); }'));
+  gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, fs));
+  gl.linkProgram(pr);
+  if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(pr));
+  gl.useProgram(pr);
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(pr, 'p');
+  gl.enableVertexAttribArray(loc);
+  gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  gl.uniform2f(gl.getUniformLocation(pr, 'R'), W, H);
+  gl.viewport(0, 0, W, H);
+  /* полосами, чтобы один вызов не держал видеокарту слишком долго */
+  gl.enable(gl.SCISSOR_TEST);
+  const STRIPS = 12;
+  for (let i = 0; i < STRIPS; i++) {
+    const y0 = Math.floor((i * H) / STRIPS);
+    const y1 = Math.floor(((i + 1) * H) / STRIPS);
+    gl.scissor(0, y0, W, y1 - y0);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    gl.finish();
+  }
+
+  const out = canvas(W, H);
+  const ctx = out.getContext('2d');
+  ctx.drawImage(cv, 0, 0);
+  /* лёгкое свечение бликов */
+  const layer = canvas(W, H);
+  layer.getContext('2d').drawImage(cv, 0, 0);
+  bloom(ctx, layer, [[W * 0.003, 0.14], [W * 0.012, 0.1]]);
+  grain(ctx, W, H, 3, 11);
+
+  /* импульсы бегут по горизонту в правой, спокойной части */
+  return { canvas: out, paths: { lines: [[0.5, YH, 1, YH]], x0: 0.52 } };
 };

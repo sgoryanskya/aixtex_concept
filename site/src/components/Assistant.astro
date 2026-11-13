@@ -1,12 +1,28 @@
 ---
 /* 3. Кто это: стеклянная девушка из концепции C (по просьбе заказчика вместо мраморного бюста A),
-   сложное входит слева в механизм головы, результат выходит перед лицом направо.
-   Роль перенастраивает сцену: подсвечиваются её входы и её результат (ASSISTANT.roles: ins, out) */
+   сложное входит слева в механизм головы, справа от фигуры выходят ровные линии результата.
+   Роль перенастраивает сцену: подсвечиваются её входы и её результат (ASSISTANT.roles: ins, out).
+   У «Оранжевого перелива» вместо девушки две руки (часть 11, референсы WMT AI и «Сотворение Адама»):
+   слева рука из точек — виртуальный сотрудник, в её запястье входят линии работы; справа живая рука
+   человека. В зазоре между пальцами — искра и результат роли: подмастерье передаёт работу мастеру.
+   Кадр живой руки и точки — scripts/art/hands.py, сборка точек и волны — lib/hands.ts */
 import { ASSISTANT } from '../data/content';
-import { START_PALETTE, asset } from '../config';
+import { START_PALETTE, REVIEW_MODE, APPROVED_PALETTE, asset } from '../config';
 import { getPalette } from '../data/palettes';
+import HANDS from '../../public/img/art/hand-dots.json';
 
 const art = getPalette(START_PALETTE).art;
+const hands = REVIEW_MODE || APPROVED_PALETTE === 'iris';
+const pct = (v: number) => `${+(v * 100).toFixed(3)}%`;
+const handsStyle = [
+  `--ah-ratio:${HANDS.ratio}`,
+  `--ah-tip-x:${pct(HANDS.tip[0])}`,
+  `--ah-tip-y:${pct(HANDS.tip[1])}`,
+  `--ah-live-x:${pct(HANDS.live[0])}`,
+  `--ah-live-w:${pct(HANDS.live[1])}`,
+  `--ah-wrist-x:${pct(HANDS.wrist[0])}`,
+  `--ah-wrist-y:${pct(HANDS.wrist[1])}`,
+].join(';');
 
 const inY = [56, 63, 70, 77, 84];
 const outY = [44, 53, 62];
@@ -16,6 +32,14 @@ const outY = [44, 53, 62];
     <svg class="ln" data-ln="asst" aria-hidden="true"></svg>
     <img class="asst__bust" src={asset(`img/art/glass-${art}.webp`)} data-art-tpl={asset('img/art/glass-{p}.webp')} data-orig={asset('img/assistant.webp')} alt={ASSISTANT.alt} width="1024" height="1024" loading="lazy" decoding="async" data-asst-bust>
     <script is:inline>window.__art && window.__art(document.currentScript.previousElementSibling);</script>
+    {hands && (
+      <div class="ah" role="img" aria-label={ASSISTANT.altHands} style={handsStyle} data-hands data-src={asset('img/art/hand-dots.json')}>
+        <img class="ah__live" src={asset('img/art/hand-live.webp')} alt="" width="1376" height="768" loading="lazy" decoding="async" data-hands-live>
+        <canvas class="ah__dots" data-hands-dots></canvas>
+        <i class="ah__spark" data-hands-spark></i>
+        <i class="ah__wrist" data-hands-wrist></i>
+      </div>
+    )}
     <div class="asst__l">
       <p class="lbl">{ASSISTANT.label}</p>
       <h2 class="h2 h2--t" data-split>{ASSISTANT.title}</h2>

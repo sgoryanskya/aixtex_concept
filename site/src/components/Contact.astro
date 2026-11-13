@@ -1,8 +1,9 @@
 ---
-/* 12. Финал: призыв, форма и подвал. Бэкенда нет: форма готовит письмо
-   в почтовой программе посетителя и не изображает отправку */
+/* 12. Финал: призыв, форма заявки и подвал. Форма стандартная: имя, компания, телефон, почта, задача
+   и согласие на обработку данных. Без обработчика (PUBLIC_FORM_ENDPOINT) заявка открывается письмом
+   в почтовой программе посетителя, и форма говорит об этом заранее, не изображая отправку */
 import { CONTACT, NAV } from '../data/content';
-import { REVIEW_MODE, APPROVED_PALETTE, asset } from '../config';
+import { REVIEW_MODE, APPROVED_PALETTE, FORM_ENDPOINT, asset } from '../config';
 import { COMPANY, REQUISITES, NOTICE } from '../data/company';
 
 const req = Object.fromEntries(REQUISITES.map((r) => [r.label, r.value]));
@@ -24,20 +25,50 @@ const ultra = REVIEW_MODE || APPROVED_PALETTE === 'ultra';
           <li><a href={COMPANY.email.href}>{COMPANY.email.text}</a></li>
         </ul>
       </div>
-      <form class="form" data-form data-mailto={mail} data-subject={f.subject} novalidate>
+      <form class="form" data-form data-mailto={mail} data-subject={f.subject} data-endpoint={FORM_ENDPOINT || undefined} novalidate>
         <div class="form__body">
-          <label class="field" data-field><span>{f.name}</span><input type="text" name="name" autocomplete="name" required placeholder={f.namePh}><em>{f.nameErr}</em></label>
-          <label class="field" data-field><span>{f.contact}</span><input type="text" name="contact" autocomplete="email" required data-contact placeholder={f.contactPh}><em>{f.contactErr}</em></label>
-          <label class="field field--full" data-field><span>{f.task}</span><textarea name="task" rows="3" placeholder={f.taskPh}></textarea></label>
+          <div class="form__head">
+            <h3>{f.title}</h3>
+            <p>{f.text}</p>
+          </div>
+          <div class="field" data-field>
+            <label for="f-name">{f.name}<i aria-hidden="true">*</i></label>
+            <input id="f-name" type="text" name="name" autocomplete="name" required aria-describedby="f-name-err" placeholder={f.namePh}>
+            <em id="f-name-err">{f.nameErr}</em>
+          </div>
+          <div class="field" data-field>
+            <label for="f-company">{f.company}</label>
+            <input id="f-company" type="text" name="company" autocomplete="organization" placeholder={f.companyPh}>
+          </div>
+          <div class="field" data-field>
+            <label for="f-phone">{f.phone}<i aria-hidden="true">*</i></label>
+            <input id="f-phone" type="tel" name="phone" autocomplete="tel" inputmode="tel" required data-phone aria-describedby="f-phone-err" placeholder={f.phonePh}>
+            <em id="f-phone-err">{f.phoneErr}</em>
+          </div>
+          <div class="field" data-field>
+            <label for="f-email">{f.email}</label>
+            <input id="f-email" type="email" name="email" autocomplete="email" inputmode="email" data-email aria-describedby="f-email-err" placeholder={f.emailPh}>
+            <em id="f-email-err">{f.emailErr}</em>
+          </div>
+          <div class="field field--full" data-field>
+            <label for="f-task">{f.task}</label>
+            <textarea id="f-task" name="task" rows="4" placeholder={f.taskPh}></textarea>
+          </div>
+          <div class="check field--full" data-field>
+            <input id="f-consent" type="checkbox" name="consent" required aria-describedby="f-consent-err">
+            <label for="f-consent"><span class="check__box" aria-hidden="true"></span>{f.consent}&nbsp;<a href="#" data-stub={CONTACT.policy}>{f.policy}</a></label>
+            <em id="f-consent-err">{f.consentErr}</em>
+          </div>
           <div class="form__foot">
-            <button class="btn" type="submit"><span>{f.submit}</span></button>
-            <p>{f.consent}&nbsp;<a href="#" data-stub={CONTACT.policy}>{f.policy}</a>.</p>
+            <button class="btn form__send" type="submit" data-form-send data-busy={f.sending}><span>{f.submit}</span></button>
+            {!FORM_ENDPOINT && <p class="form__note">{f.mailNote}</p>}
+            <p class="form__fail" role="alert" data-form-fail hidden>{f.fail} <a href={COMPANY.phone.href}>{COMPANY.phone.text}</a>, <a href={COMPANY.email.href}>{COMPANY.email.text}</a></p>
           </div>
         </div>
         <div class="form__ok" aria-live="polite">
-          <p class="lbl">{f.okLabel}</p>
-          <h3 tabindex="-1" data-form-ok>{f.okTitle}</h3>
-          <p>{f.okText} <a href={COMPANY.email.href}>{COMPANY.email.text}</a></p>
+          <p class="lbl">{FORM_ENDPOINT ? f.sentLabel : f.okLabel}</p>
+          <h3 tabindex="-1" data-form-ok>{FORM_ENDPOINT ? f.sentTitle : f.okTitle}</h3>
+          <p>{FORM_ENDPOINT ? f.sentText : f.okText} <a href={COMPANY.email.href}>{COMPANY.email.text}</a></p>
           <button class="btn btn--ghost" type="button" data-form-reset><span>{f.again}</span></button>
         </div>
       </form>

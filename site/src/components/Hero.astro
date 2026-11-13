@@ -2,9 +2,9 @@
 /* 1. Первый экран. У «Сигнала» композиция A: камера едет от клубка к ровным линиям, второе слово называет ценность.
    Олива повторяет композицию A на своём кадре: стеклянный ИИ-чип с латунной разводкой выпускает нити ровными линиями.
    У остальных палитр раунда 5 своя композиция (hero-looks.css, движение в lib/hero-looks.ts):
-   ультрамарин — стеклянная лента, сталь — прибор, мята — рифлёное стекло.
-   Часть 9: «Градиент» — синие нити через белую сердцевину становятся оранжевыми пикселями;
-   «Оранжевый перелив» — перекрученные глянцевые ленты выпрямляются, за ними имя компании и столбики света */
+   ультрамарин — стеклянная лента и короткий заголовок без кнопок (призыв остаётся в доке), сталь — прибор.
+   Часть 10: мята — гладь воды (рябь слева стихает в зеркало справа), «Оранжевый перелив» — световой занавес
+   (спутанные нити света сходятся в один ровный занавес). Оба кадра нарисованы кодом, scripts/art/heroes */
 import { HERO, HERO_VARIANTS, HERO_VARIANT, HERO_LOOKS } from '../data/content';
 import { REVIEW_MODE, START_PALETTE, APPROVED_PALETTE, asset } from '../config';
 import { getPalette } from '../data/palettes';
@@ -16,33 +16,17 @@ const variants = REVIEW_MODE ? JSON.stringify(HERO_VARIANTS) : undefined;
 const art = getPalette(START_PALETTE).art;
 /* В публичной версии на странице только композиция утверждённой палитры */
 const has = (id: string) => REVIEW_MODE || APPROVED_PALETTE === id;
-const { ultra, steel, mint, grad, iris } = HERO_LOOKS;
+const { ultra, steel, mint, iris } = HERO_LOOKS;
 const hours = Array.from({ length: 24 }, (_, i) => i);
 
 /* Ультрамарин: по верхней кромке стеклянной ленты медленно бежит белый блик. Кромка снята с кадра
    (scratchpad c13/ultra_hero.py), путь в координатах кадра 1600×900, поэтому блик едет вместе с камерой */
 const RIBBON = 'M0 358C16.7 365.0 66.7 385.5 100 400C133.3 414.5 166.7 429.8 200 445C233.3 460.2 266.7 473.3 300 491C333.3 508.7 366.7 535.7 400 551C433.3 566.3 466.7 575.2 500 583C533.3 590.8 566.7 595.7 600 598C633.3 600.3 666.7 600.2 700 597C733.3 593.8 766.7 587.3 800 579C833.3 570.7 866.7 560.3 900 547C933.3 533.7 966.7 516.8 1000 499C1033.3 481.2 1066.7 459.8 1100 440C1133.3 420.2 1166.7 399.7 1200 380C1233.3 360.3 1266.7 340.0 1300 322C1333.3 304.0 1366.7 286.2 1400 272C1433.3 257.8 1466.7 247.3 1500 237C1533.3 226.7 1583.3 214.5 1600 210';
 
-/* «Градиент»: несколько клеток пиксельной полосы изредка вспыхивают. Клетка кадра — 126 px на кадре 4000×2250
-   (scripts/art/heroes/grad.js), берутся только заведомо заполненные ряды 6–9 правее 21-й колонки */
-const GR_CELLS: [number, number, number][] = [[22, 7, 0], [27, 6, 1.3], [30, 8, 2.6], [24, 9, 3.4], [29, 7, 4.7], [21, 8, 5.5], [26, 8, 6.4], [31, 6, 7.6], [23, 6, 8.5], [28, 9, 9.3], [25, 7, 10.6], [30, 9, 11.4]];
-/* «Оранжевый перелив»: столбики света внизу кадра растут слева направо, как порядок после хаоса (референс WMT AI) */
-const IR_N = 64;
-const IR_BARS = Array.from({ length: IR_N }, (_, i) => {
-  const t = i / (IR_N - 1);
-  const h = 0.05 + 0.4 * t ** 1.6 + 0.035 * Math.sin(i * 2.37) * (0.4 + t);
-  return { h: Math.max(0.03, h).toFixed(3), o: (0.3 + 0.7 * t).toFixed(2), d: ((i * 0.61) % 5).toFixed(2) };
-});
 ---
 <section class="hero" id="top" data-ui="dark">
   <div class="hero__stage">
     <div class="hero__media" data-hero-media>
-      {has('iris') && (
-        <div class="ir-back" aria-hidden="true">
-          <p class="ir-word" data-ir-word>{iris.word}</p>
-          <div class="ir-bars" data-ir-bars>{IR_BARS.map((b) => <i style={`--h:${b.h};--o:${b.o};--d:${b.d}s`}></i>)}</div>
-        </div>
-      )}
       <img src={asset(`img/art/hero-a-${art}.webp`)} data-art-tpl={asset('img/art/hero-{v}-{p}.webp')} data-orig={asset('img/hero.webp')} alt={HERO.alts[art] ?? HERO.alt} width="2000" height="1125" fetchpriority="high">
       <script is:inline>window.__art && window.__art(document.currentScript.previousElementSibling);</script>
       {has('ultra') && (
@@ -52,11 +36,7 @@ const IR_BARS = Array.from({ length: IR_N }, (_, i) => {
         </svg>
       )}
       {has('olive') && <div class="ol-glint" aria-hidden="true"></div>}
-      {has('grad') && (
-        <svg class="gr-px" viewBox="0 0 4000 2250" preserveAspectRatio="none" aria-hidden="true">
-          {GR_CELLS.map(([i, j, d]) => <rect x={i * 126} y={j * 126} width="126" height="126" style={`--d:${d}s`} />)}
-        </svg>
-      )}
+      {has('mint') && <div class="mi-dawn" aria-hidden="true"></div>}
       <canvas class="hero__pulse" data-hero-pulse></canvas>
       <div class="hero__glow"></div>
     </div>
@@ -90,17 +70,12 @@ const IR_BARS = Array.from({ length: IR_N }, (_, i) => {
     {has('ultra') && (
       <div class="hx hx--ultra" data-hx="ultra">
         <div class="ul-center">
-          <p class="ul-kicker lbl" data-hx-fade>{ultra.kicker}</p>
           <h1 class="ul-title">
             <span class="sr">{ultra.h1}</span>
             <span class="ul-a" data-hx-a aria-hidden="true">{ultra.a}</span>
             <span class="ul-b" data-hx-b aria-hidden="true"><span class="ul-b__in">{ultra.b}</span></span>
           </h1>
           <p class="ul-lead" data-hx-fade>{ultra.lead}</p>
-          <div class="ul-btns hero__btns" data-hx-fade>
-            <a class="btn" href="#contact"><span>{HERO.primary}</span></a>
-            <a class="btn btn--ghost" href="#staff"><span>{HERO.secondary}</span></a>
-          </div>
         </div>
         <p class="hx__after ul-after" data-hx-after aria-hidden="true">{ultra.after}</p>
       </div>
@@ -136,29 +111,6 @@ const IR_BARS = Array.from({ length: IR_N }, (_, i) => {
       </div>
     )}
 
-    {has('grad') && (
-      <div class="hx hx--grad" data-hx="grad">
-        <p class="gr-tag gr-tag--in" data-hx-fade aria-hidden="true"><b>{grad.inTag[0]}</b>{grad.inTag[1]}</p>
-        <p class="gr-tag gr-tag--out" data-hx-fade aria-hidden="true"><b>{grad.outTag[0]}</b>{grad.outTag[1]}</p>
-        <div class="gr-head">
-          <p class="gr-kicker lbl" data-hx-fade>{grad.kicker}</p>
-          <h1 class="gr-title">
-            <span class="sr">{grad.h1}</span>
-            <span class="gr-a" data-hx-a aria-hidden="true">{grad.a}</span>
-            <span class="gr-b" data-hx-b aria-hidden="true"><span class="gr-b__in"><span class="gr-b__sk">{grad.b}</span></span></span>
-          </h1>
-        </div>
-        <div class="gr-lead" data-hx-fade>
-          <p>{grad.lead}</p>
-          <div class="hero__btns">
-            <a class="btn" href="#contact"><span>{HERO.primary}</span></a>
-            <a class="btn btn--ghost" href="#staff"><span>{HERO.secondary}</span></a>
-          </div>
-        </div>
-        <p class="hx__after gr-after" data-hx-after aria-hidden="true">{grad.after}</p>
-      </div>
-    )}
-
     {has('iris') && (
       <div class="hx hx--iris" data-hx="iris">
         <div class="ir-head">
@@ -182,14 +134,14 @@ const IR_BARS = Array.from({ length: IR_N }, (_, i) => {
 
     {has('mint') && (
       <div class="hx hx--mint" data-hx="mint">
-        <canvas class="mi-glass" data-mi-glass aria-hidden="true"></canvas>
-        <p class="mi-edge" data-mi-edge aria-hidden="true"><i></i><b>{mint.edge[0]}</b><span>{mint.edge[1]}</span></p>
-        <p class="mi-kicker lbl" data-hx-fade>{mint.kicker}</p>
-        <h1 class="mi-title">
-          <span class="sr">{mint.h1}</span>
-          <span class="mi-a" data-hx-a aria-hidden="true">{mint.a}</span>
-          <span class="mi-b" data-hx-b aria-hidden="true">{mint.b}</span>
-        </h1>
+        <div class="mi-head">
+          <p class="mi-kicker lbl" data-hx-fade>{mint.kicker}</p>
+          <h1 class="mi-title">
+            <span class="sr">{mint.h1}</span>
+            <span class="mi-a" data-hx-a aria-hidden="true">{mint.a}</span>
+            <span class="mi-b" data-hx-b aria-hidden="true">{mint.b}</span>
+          </h1>
+        </div>
         <div class="mi-lead" data-hx-fade>
           <p>{mint.lead}</p>
           <div class="hero__btns">

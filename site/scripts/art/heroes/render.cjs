@@ -14,8 +14,6 @@ const PAL = {
   ultra: { bg: '#04050C', dark: '#0A1250', base: '#2F4BE8', light: '#A9B8FF', hi: '#F0F3FF', accent: '#5B78FF', second: '#C9D3F5' },
   steel: { bg: '#080B0D', dark: '#16242C', base: '#5E8597', light: '#C9DDE5', hi: '#F4FAFC', accent: '#9FC3D3', second: '#E0D2C0' },
   mint: { bg: '#050A0A', dark: '#053329', base: '#19A486', light: '#93EBD3', hi: '#EAFCF6', accent: '#3FD9B4', second: '#E2D3B5' },
-  /* часть 9: градиент Nexora и Signale — оранжевый, белый, синий на чёрном */
-  grad: { bg: '#040406', deep2: '#7A1404', warm: '#FF4A14', coral: '#FF8E6E', hi: '#FFF3EC', light: '#9DB4FF', base: '#3058FF', dark: '#0A1678' },
   /* часть 9: оранжевый перелив — лава, янтарь, розовый и сирень на тёплом чёрном */
   iris: { bg: '#0A0605', deep: '#5C0B02', base: '#FF5E1A', amber: '#FFB25E', rose: '#FF6E8E', violet: '#8C6BFF', peri: '#AFC0FF', hi: '#FFF4EA' },
 };

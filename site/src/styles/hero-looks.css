@@ -2,18 +2,16 @@
    «Сигнал» и режим ?art=orig показывают композицию A, этот файл их не трогает.
 
    Ультрамарин — «Стеклянная лента»: в глубоком синем стеклянная лента переливается от красно-розового
-                через белый к синему, по её кромке бежит блик; заголовок крупно по центру, под ним текст и кнопки.
-                Референс заказчика: ролик «вариант цвета aixtex». Людей в кадре нет.
+                через белый к синему, по её кромке бежит блик; над лентой по центру короткий заголовок и одна
+                строка текста, без кнопок: призыв остаётся в доке. Референс заказчика: ролик «вариант цвета aixtex».
    Сталь      — «Прибор»: ячейки входа и выхода, справа колонна шероховатого матового стекла поверх жидкой стали:
                 на ней время смены, подзаголовок и кнопки. Референсы: forma.ru (матовые плашки поверх фото), плашка таймера.
-   Мята       — «Рифлёное стекло»: справа матовое рифлёное стекло, под ним запутанные нити становятся
-                ровными вертикальными полосами света; по прокрутке стекло проходит весь кадр. Заголовок —
-                текст поверх. Рисуется кодом (lib/mint-glass.ts). Референсы: MarketLytics, aclitec.
-   Градиент   — «Поток и пиксель» (часть 9): синие спутанные нити сходятся в белую сердцевину и выходят
-                оранжевой полосой крупных пикселей; клетки изредка вспыхивают. Заголовок — прямые капители,
-                вторая строка наклонная и залита тем же градиентом. Референсы: Nexora, Signale.
-   Перелив    — «Ленты» (часть 9): глянцевые ленты с переливом оранжевого в розовый и сирень; за ними
-                крупное имя компании серым металлом и столбики света, которые растут вправо. Референс: WMT AI. */
+   Мята       — «Гладь воды» (часть 10): тёмная вода в сумерках, на горизонте полоса света шампани. Слева рябь
+                рассыпает свет бликами, справа вода стихает в зеркало, и свет ложится ровными линиями зыби.
+                Заголовок слева над горизонтом, текст и кнопки слева внизу. Кадр — scripts/art/heroes/mint.js.
+   Перелив    — «Световой занавес» (часть 10): слева спутанные нити оранжевого, розового и сиреневого света,
+                к центру они сходятся в один ровный занавес с лучами через равный шаг. Заголовок слева внизу,
+                текст и кнопки справа внизу. Кадр — scripts/art/heroes/iris.js. Референсы: WMT AI, Nexora, Kontour. */
 
 .hx { display: none; position: absolute; inset: 0; pointer-events: none; }
 .hx :is(a, button) { pointer-events: auto; }
@@ -21,9 +19,8 @@
 :root:not([data-art-orig])[data-palette='ultra'] .hx--ultra,
 :root:not([data-art-orig])[data-palette='steel'] .hx--steel,
 :root:not([data-art-orig])[data-palette='mint'] .hx--mint,
-:root:not([data-art-orig])[data-palette='grad'] .hx--grad,
 :root:not([data-art-orig])[data-palette='iris'] .hx--iris { display: block; }
-:root:not([data-art-orig]):is([data-palette='ultra'], [data-palette='steel'], [data-palette='mint'], [data-palette='grad'], [data-palette='iris']) :is(.hero__tags, .hero__lead, .hero__after, .hero__title) { display: none; }
+:root:not([data-art-orig]):is([data-palette='ultra'], [data-palette='steel'], [data-palette='mint'], [data-palette='iris']) :is(.hero__tags, .hero__lead, .hero__after, .hero__title) { display: none; }
 .hx__after { position: absolute; opacity: 0; margin: 0; font: 400 clamp(18px, 1.6vw, 26px)/1.22 var(--f-t); letter-spacing: -0.018em; color: var(--t1); text-wrap: pretty; }
 .hx [data-split] i { display: inline-block; font-style: normal; }
 /* у разбитых по буквам слов фон рисуется в коробке буквы: запас сверху и снизу держит точки «Ё» и хвост «Ц» */
@@ -33,8 +30,9 @@
 :root:not([data-art-orig])[data-palette='ultra'] .hero__media { transform-origin: 50% 66%; background: radial-gradient(56% 60% at 90% 100%, rgb(79 124 178 / 0.5), transparent 72%), radial-gradient(46% 50% at 6% 0%, rgb(150 175 240 / 0.2), transparent 72%), linear-gradient(180deg, #050A1D, #0A1638); }
 /* кадр ультрамарина снят на чёрном: светлее из двух слоёв — чёрное уступает синему фону, лента остаётся как есть */
 :root:not([data-art-orig])[data-palette='ultra'] .hero__media img { mix-blend-mode: lighten; }
-/* у мяты кадр целиком рисует рифлёное стекло, картинка и импульсы не нужны */
-:root:not([data-art-orig])[data-palette='mint'] .hero__media { visibility: hidden; }
+/* мята: камера едет к свету на горизонте над спокойной водой; свечение A не нужно, свет в самом кадре */
+:root:not([data-art-orig])[data-palette='mint'] .hero__media { transform-origin: 68.5% 53.5%; }
+:root:not([data-art-orig])[data-palette='mint'] .hero__glow { display: none; }
 /* олива — композиция A на кадре со стеклянным чипом: мягкий свет на чипе, откуда выходят линии; у бюста (кадр Б) своего свечения нет */
 /* олива: камера едет к стеклянному чипу, свет — там, где нити выходят ровными линиями */
 :root:not([data-art-orig])[data-palette='olive'] .hero__media { transform-origin: 55.4% 47.6%; }
@@ -55,10 +53,9 @@
 @keyframes ol-glint { 0% { left: -60%; opacity: 0; } 6% { opacity: 1; } 30% { opacity: 1; } 36%, 100% { left: 130%; opacity: 0; } }
 /* ультрамарин: свет даёт сама лента, отдельного свечения нет */
 :root:not([data-art-orig])[data-palette='ultra'] .hero__glow { display: none; }
-/* градиент: камера едет к пиксельной полосе; перелив — к ровным лентам. Свет у обоих в самом кадре */
-:root:not([data-art-orig])[data-palette='grad'] .hero__media { transform-origin: 74% 46%; }
-:root:not([data-art-orig])[data-palette='iris'] .hero__media { transform-origin: 80% 47%; }
-:root:not([data-art-orig]):is([data-palette='grad'], [data-palette='iris']) .hero__glow { display: none; }
+/* перелив: камера едет к ровному занавесу, свет в самом кадре */
+:root:not([data-art-orig])[data-palette='iris'] .hero__media { transform-origin: 78% 42%; }
+:root:not([data-art-orig])[data-palette='iris'] .hero__glow { display: none; }
 
 /* ---------- Ультрамарин · Стеклянная лента ---------- */
 /* блик по верхней кромке ленты: широкий мягкий ореол и тонкая яркая сердцевина, раз в девять секунд */
@@ -78,9 +75,8 @@
 @keyframes ul-glint-core { 0% { stroke-dashoffset: 7; opacity: 0; } 8% { opacity: 1; } 62% { opacity: 1; } 70%, 100% { stroke-dashoffset: -100; opacity: 0; } }
 /* перелив заголовка: красно-розовый, белый, синий — цвета ленты */
 .hx--ultra { --iri: linear-gradient(100deg, #FF9184 0%, #FFC9BF 20%, #FFFFFF 42%, #D3DCFF 62%, #7D97FF 82%, #FF9184 100%); }
-.ul-center { position: absolute; left: var(--gut); right: var(--gut); top: 41%; translate: 0 -50%; text-align: center; }
-.ul-kicker { justify-content: center; margin: 0 0 clamp(14px, 1.6vw, 24px); color: var(--t1); }
-.ul-title { display: block; font: 800 clamp(60px, 9.8vw, 190px)/0.86 var(--f-d); letter-spacing: -0.004em; text-transform: uppercase; }
+.ul-center { position: absolute; left: var(--gut); right: var(--gut); top: 35%; translate: 0 -50%; text-align: center; }
+.ul-title { display: block; font: 800 clamp(52px, 6.6vw, 128px)/0.88 var(--f-d); letter-spacing: -0.002em; text-transform: uppercase; }
 .ul-a, .ul-b { display: block; white-space: nowrap; }
 .ul-a { color: var(--t1); }
 .ul-b { padding-bottom: 0.06em; margin-bottom: -0.06em; }
@@ -98,9 +94,7 @@
   .ul-b__in { animation: ul-iri 14s ease-in-out infinite alternate; }
 }
 @keyframes ul-iri { from { background-position: 0% 0; } to { background-position: 100% 0; } }
-.ul-lead { max-width: 540px; margin: clamp(20px, 2.2vw, 30px) auto 0; font: 400 clamp(15px, 1.1vw, 17px)/1.45 var(--f-t); color: var(--t2); text-wrap: balance; text-shadow: 0 1px 16px rgb(4 10 32 / 0.8); }
-.ul-btns { justify-content: center; margin: clamp(20px, 2vw, 26px) 0 0; gap: 8px; }
-.hx--ultra .btn--ghost { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--metal-light) 30%, transparent); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.ul-lead { max-width: 46em; margin: clamp(18px, 1.8vw, 28px) auto 0; font: 400 clamp(15px, 1.15vw, 18px)/1.45 var(--f-t); color: var(--t2); text-wrap: balance; text-shadow: 0 1px 16px rgb(4 10 32 / 0.8); }
 .ul-after { left: var(--gut); right: var(--gut); top: 46%; max-width: 560px; margin-inline: auto; text-align: center; font-size: clamp(16px, 1.25vw, 20px); }
 
 /* ---------- Сталь · Прибор ---------- */
@@ -136,9 +130,7 @@
 .st-gauge__scale i.is-now { height: 16px; width: 2px; background: var(--metal-hi); box-shadow: 0 0 8px var(--signal); }
 .st-gauge__marks { display: flex; justify-content: space-between; margin: 8px 0 0; font: 400 10px/1 var(--f-m); color: var(--t3); }
 /* при прокрутке за заголовком темнеет фон: слово читается поверх ярких складок и искр (--veil ставит прокрутка) */
-:is(.hx--steel, .hx--mint)::before { content: ''; position: absolute; inset: 0; opacity: var(--veil, 0); pointer-events: none; }
-.hx--steel::before { background: radial-gradient(46% 24% at 30% 47%, color-mix(in srgb, var(--ink) 74%, transparent), transparent); }
-.hx--mint::before { z-index: 1; background: radial-gradient(48% 30% at 26% 42%, color-mix(in srgb, var(--ink) 72%, transparent), transparent); }
+.hx--steel::before { content: ''; position: absolute; inset: 0; opacity: var(--veil, 0); pointer-events: none; background: radial-gradient(46% 24% at 30% 47%, color-mix(in srgb, var(--ink) 74%, transparent), transparent); }
 /* заголовок слева внизу: подпись, затем фраза в две строки; низ — на одной линии с кнопками стеклянной колонны */
 .st-head { position: absolute; z-index: 2; left: calc(var(--gut) + 14px); bottom: 96px; }
 .st-kicker { margin: 0 0 clamp(18px, 2vw, 28px); color: var(--t1); }
@@ -158,95 +150,42 @@
 .st-lead .btn { width: 100%; min-height: 44px; }
 .st-after { right: calc(var(--gut) + 14px); bottom: 96px; width: var(--col); padding: 18px 20px 20px; font-size: clamp(16px, 1.2vw, 19px); }
 
-/* ---------- Мята · Рифлёное стекло ---------- */
-.mi-glass { position: absolute; inset: 0; width: 100%; height: 100%; }
-/* подпись едет по кромке стекла: стекло и есть виртуальный сотрудник (--ex ставит скрипт) */
-.mi-edge { position: absolute; z-index: 2; left: 0; top: clamp(104px, 14vh, 132px); display: flex; align-items: center; gap: 10px; margin: 0; padding: 8px 13px 8px 11px; transform: translateX(calc(var(--ex, 9999px) + 16px)); font: var(--lbl); letter-spacing: var(--lbl-ls); text-transform: uppercase; color: var(--t1); white-space: nowrap; background: color-mix(in srgb, var(--ink) 52%, transparent); -webkit-backdrop-filter: blur(14px) saturate(1.3); backdrop-filter: blur(14px) saturate(1.3); box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.16), inset 0 0 0 1px rgb(255 255 255 / 0.08); }
-.mi-edge i { width: 6px; height: 6px; background: var(--signal); box-shadow: 0 0 8px var(--signal); }
-.mi-edge b { font-weight: 400; }
-.mi-edge span { color: var(--signal); }
+/* ---------- Мята · Гладь воды ---------- */
+/* свет у горизонта медленно дышит; лежит в кадре и едет вместе с камерой */
+.mi-dawn { display: none; position: absolute; left: 68.5%; top: 53.5%; width: 44%; aspect-ratio: 5; translate: -50% -50%; background: radial-gradient(closest-side, rgb(226 211 181 / 0.2), rgb(63 217 180 / 0.07) 58%, transparent); mix-blend-mode: screen; pointer-events: none; opacity: 0.7; }
+:root:not([data-art-orig])[data-palette='mint'] .mi-dawn { display: block; }
 @media (prefers-reduced-motion: no-preference) {
-  .mi-edge i { animation: st-blink 2.4s ease-in-out infinite; }
+  .mi-dawn { animation: mi-dawn 7s ease-in-out infinite alternate; }
 }
-.mi-kicker { position: absolute; z-index: 2; left: var(--gut); top: clamp(104px, 14vh, 132px); margin: 0; padding-block: 8px; color: var(--t2); }
-.mi-title { position: absolute; z-index: 2; left: var(--gut); top: 40%; translate: 0 -38%; font: 800 clamp(72px, 12.6vw, 250px)/0.82 var(--f-d); letter-spacing: -0.004em; text-transform: uppercase; }
+@keyframes mi-dawn { from { opacity: 0.4; } to { opacity: 1; } }
+/* снизу слева темнее под текстом, справа вода остаётся открытой */
+:root:not([data-art-orig])[data-palette='mint'] .hero__shade { background: radial-gradient(48% 38% at 16% 88%, color-mix(in srgb, var(--ink) 62%, transparent), transparent), linear-gradient(180deg, color-mix(in srgb, var(--ink) 42%, transparent) 0%, transparent 20%, transparent 72%, color-mix(in srgb, var(--ink) 36%, transparent) 100%); }
+/* заголовок над горизонтом: горизонт на 53,5 % высоты кадра, низ заголовка выше него */
+.mi-head { position: absolute; z-index: 2; left: var(--gut); bottom: calc(46.5% + clamp(36px, 5vh, 60px)); }
+.mi-kicker { margin: 0 0 clamp(16px, 1.8vw, 24px); color: var(--t2); }
+.mi-title { display: block; font: 800 clamp(56px, 7.2vw, 140px)/0.86 var(--f-d); letter-spacing: -0.004em; text-transform: uppercase; }
 .mi-a, .mi-b { display: block; white-space: nowrap; }
-/* заголовок — обычный текст поверх стекла: слева он на тусклых нитях, стекло идёт за ним */
 .mi-a { color: var(--t1); }
-.mi-b { margin-top: 0.1em; font-size: 0.6em; color: var(--metal-hi); transform-origin: 0 50%; text-shadow: 0 0 40px rgb(0 0 0 / 0.5); }
+/* вторая строка — цвет воды и света: мята уходит в шампань */
+.mi-b { transform-origin: 0 100%; padding-bottom: 0.06em; margin-bottom: -0.06em; color: var(--metal-light); }
 @supports ((-webkit-background-clip: text) or (background-clip: text)) {
   .mi-b, .mi-b i {
-    background: linear-gradient(180deg, var(--metal-hi) 0%, var(--metal-light) 34%, var(--signal) 62%, color-mix(in srgb, var(--signal) 60%, var(--ice)) 100%);
+    background: linear-gradient(90deg, var(--metal-light) 0%, var(--metal-hi) 46%, var(--ice) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
     -webkit-text-fill-color: transparent;
-    text-shadow: none;
   }
   .mi-b:has(i) { background: none; }
 }
-.mi-lead { position: absolute; z-index: 2; left: var(--gut); bottom: 96px; width: min(34vw, 470px); }
+.mi-lead { position: absolute; z-index: 2; left: var(--gut); bottom: 96px; width: clamp(340px, 34vw, 470px); }
 .mi-lead > p { margin: 0; font: 400 clamp(15px, 1.15vw, 18px)/1.4 var(--f-t); color: var(--t2); text-wrap: pretty; }
 .mi-lead .hero__btns { margin-top: 22px; }
-.mi-after { z-index: 2; left: var(--gut); bottom: 96px; width: min(34vw, 470px); }
+.mi-after { z-index: 2; left: var(--gut); bottom: 96px; width: clamp(340px, 34vw, 470px); }
 
-/* ---------- Градиент · поток и пиксель ---------- */
-/* вспышки клеток: клетка на миг светлеет и гаснет ступенькой, как пиксель экрана */
-.gr-px { display: none; position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; mix-blend-mode: screen; }
-:root:not([data-art-orig])[data-palette='grad'] .gr-px { display: block; }
-.gr-px rect { fill: #FFE9DE; opacity: 0; }
-@media (prefers-reduced-motion: no-preference) {
-  .gr-px rect { animation: gr-cell 12.8s steps(1, end) var(--d) infinite; }
-}
-@keyframes gr-cell { 0% { opacity: 0.34; } 1.6% { opacity: 0.12; } 3.2% { opacity: 0.4; } 4.8%, 100% { opacity: 0; } }
-/* градиент заголовка — тот же поток: голубой, белый, коралл, оранжевый */
-.hx--grad { --gr: linear-gradient(90deg, #AFC2FF 0%, #FFFFFF 30%, #FFD2C2 50%, #FF8E6E 72%, #FF5E1A 100%); }
-/* сверху по краям — вход и выход, как подписи на слайдах Nexora */
-.gr-tag { position: absolute; top: clamp(96px, 13vh, 124px); margin: 0; font: 400 11px/1.5 var(--f-m); letter-spacing: 0.02em; color: var(--t2); text-transform: lowercase; }
-.gr-tag b { display: block; font-weight: 400; color: var(--t1); text-transform: uppercase; letter-spacing: var(--lbl-ls); }
-.gr-tag--in { left: var(--gut); }
-.gr-tag--out { right: var(--gut); text-align: right; }
-.gr-head { position: absolute; z-index: 2; left: var(--gut); bottom: 88px; max-width: min(62vw, 1080px); }
-.gr-kicker { margin: 0 0 clamp(16px, 1.8vw, 26px); color: var(--t1); }
-.gr-title { display: block; font: 600 clamp(44px, 6vw, 116px)/0.9 var(--f-t); letter-spacing: -0.045em; text-transform: uppercase; }
-.gr-a, .gr-b { display: block; }
-/* размытое тусклее чёткого */
-.gr-a { white-space: nowrap; color: color-mix(in srgb, var(--t1) 70%, transparent); }
-.gr-b { transform-origin: 0 100%; padding-bottom: 0.06em; margin-bottom: -0.06em; }
-.gr-b__in { display: inline-block; }
-/* наклон вместо курсива: у Inter Tight на сайте курсива нет, наклон ровный и не искажает буквы */
-.gr-b__sk { display: inline-block; padding-top: 0.16em; margin-top: -0.16em; transform: skewX(-9deg); color: var(--t1); }
-@supports ((-webkit-background-clip: text) or (background-clip: text)) {
-  .gr-b__sk { background: var(--gr); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
-}
-.gr-lead { position: absolute; z-index: 2; right: var(--gut); bottom: 88px; width: min(27vw, 390px); }
-.gr-lead > p { margin: 0; font: 400 clamp(15px, 1.1vw, 17px)/1.45 var(--f-t); color: var(--t2); text-wrap: pretty; }
-.gr-lead .hero__btns { margin-top: 20px; }
-.gr-after { right: var(--gut); bottom: 88px; width: min(27vw, 390px); font-size: clamp(17px, 1.35vw, 22px); }
-
-/* ---------- Оранжевый перелив · ленты ---------- */
-/* за лентами: крупное имя компании серым металлом и столбики света; всё внутри кадра и едет с камерой */
-.ir-back { display: none; position: absolute; inset: 0; container-type: size; pointer-events: none; }
-:root:not([data-art-orig])[data-palette='iris'] .ir-back { display: block; }
-.ir-back::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 50%; background: radial-gradient(60% 90% at 80% 100%, rgb(255 94 26 / 0.3), transparent 70%); }
-/* у перелива снизу темнее только под заголовком: справа столбики света остаются яркими */
-:root:not([data-art-orig])[data-palette='iris'] .hero__shade { background: radial-gradient(46% 34% at 20% 84%, color-mix(in srgb, var(--ink) 66%, transparent), transparent), linear-gradient(180deg, color-mix(in srgb, var(--ink) 44%, transparent) 0%, transparent 18%, transparent 74%, color-mix(in srgb, var(--ink) 30%, transparent) 100%); }
-.ir-word { position: absolute; left: 0; right: 0; top: 11%; margin: 0; text-align: center; font: 700 22cqw/0.8 var(--f-t); letter-spacing: -0.065em; white-space: nowrap; color: #5A4C45; opacity: 0.56; }
-@supports ((-webkit-background-clip: text) or (background-clip: text)) {
-  .ir-word { background: linear-gradient(180deg, #E9DED6 0%, #A39087 28%, #57473F 58%, rgb(10 6 5 / 0) 94%); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
-}
-.ir-bars { position: absolute; inset: 0; display: flex; align-items: flex-end; padding: 0 0.4cqw; transform-origin: 50% 100%; }
-/* столбик: узкая яркая сердцевина и мягкий ореол той же формы; у основания горячо, вверх гаснет через розовый */
-.ir-bars i {
-  flex: 1; height: calc(var(--h) * 100%); opacity: var(--o); transform-origin: 50% 100%;
-  background:
-    linear-gradient(0deg, #FFF0DC 0%, #FFB25E 6%, #FF6A22 22%, rgb(255 94 26 / 0.8) 46%, rgb(255 110 142 / 0.32) 76%, rgb(255 94 26 / 0) 100%) 50% 100% / 36% 100% no-repeat,
-    linear-gradient(0deg, rgb(255 130 60 / 0.5) 0%, rgb(255 94 26 / 0.2) 42%, rgb(255 94 26 / 0) 92%) 50% 100% / 92% 100% no-repeat;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .ir-bars i { animation: ir-bar 6s ease-in-out calc(var(--d) * -1) infinite; }
-}
-@keyframes ir-bar { 0%, 100% { scale: 1 1; } 50% { scale: 1 0.86; } }
+/* ---------- Оранжевый перелив · световой занавес ---------- */
+/* снизу слева темнее под заголовком, справа под занавесом текст лежит на тёмном без стекла */
+:root:not([data-art-orig])[data-palette='iris'] .hero__shade { background: radial-gradient(46% 34% at 20% 86%, color-mix(in srgb, var(--ink) 60%, transparent), transparent), linear-gradient(180deg, color-mix(in srgb, var(--ink) 44%, transparent) 0%, transparent 18%, transparent 74%, color-mix(in srgb, var(--ink) 34%, transparent) 100%); }
 .hx--iris { --ir: linear-gradient(90deg, #FFB25E 0%, #FF5E1A 26%, #FF6E8E 58%, #B9A6FF 84%, #FFB25E 100%); }
 .ir-head { position: absolute; z-index: 2; left: var(--gut); bottom: 88px; }
 .ir-kicker { margin: 0 0 clamp(16px, 1.8vw, 24px); color: var(--t1); text-shadow: 0 1px 12px rgb(12 6 4 / 0.7); }
@@ -261,19 +200,15 @@
 @media (prefers-reduced-motion: no-preference) {
   .ir-b__in { animation: ul-iri 14s ease-in-out infinite alternate; }
 }
-/* подзаголовок на тёмном стекле: под ним самые высокие столбики */
-:is(.ir-lead, .ir-after) { position: absolute; z-index: 2; right: var(--gut); bottom: 88px; width: min(30vw, 420px); padding: 22px 22px 22px; border-radius: 22px; background: linear-gradient(160deg, rgb(255 150 100 / 0.1), rgb(16 10 8 / 0.62) 46%); -webkit-backdrop-filter: blur(18px) saturate(1.2); backdrop-filter: blur(18px) saturate(1.2); box-shadow: inset 0 1px 0 rgb(255 226 206 / 0.2), inset 0 0 0 1px rgb(255 200 180 / 0.08), 0 30px 60px -30px rgb(0 0 0 / 0.7); }
-.ir-lead > p { margin: 0; font: 400 clamp(15px, 1.1vw, 17px)/1.45 var(--f-t); color: var(--t2); text-wrap: pretty; }
-.ir-lead .hero__btns { margin-top: 18px; }
+:is(.ir-lead, .ir-after) { position: absolute; z-index: 2; right: var(--gut); bottom: 88px; width: clamp(320px, 28vw, 400px); }
+.ir-lead > p { margin: 0; font: 400 clamp(15px, 1.1vw, 17px)/1.45 var(--f-t); color: var(--t2); text-wrap: pretty; text-shadow: 0 1px 14px rgb(12 6 4 / 0.8); }
+.ir-lead .hero__btns { margin-top: 20px; }
 .ir-after { font-size: clamp(17px, 1.3vw, 21px); }
 
 /* ---------- Телефон ---------- */
 /* ноутбуки и планшеты в альбомной ориентации: слово меньше и выше, чтобы не задевать текст и кнопки внизу */
 @media (min-width: 900px) and (max-width: 1279px) {
   .st-lead > p { font-size: 14px; }
-  /* градиент: заголовок меньше, колонка текста шире — между ними остаётся воздух, текст не вытягивается вверх */
-  .gr-title { font-size: 5.2vw; }
-  .gr-lead, .gr-after { width: min(34vw, 390px); }
 }
 /* сталь на узком ноутбуке: колонна шире, иначе текст в ней вытягивается вверх до шкалы */
 @media (min-width: 900px) and (max-width: 1099px) {
@@ -290,11 +225,9 @@
   :root:not([data-art-orig])[data-palette='olive'] .hero__shade { background: linear-gradient(180deg, color-mix(in srgb, var(--ink) 80%, transparent) 0%, color-mix(in srgb, var(--ink) 58%, transparent) 21%, transparent 33%, transparent 38%, color-mix(in srgb, var(--ink) 78%, transparent) 60%, color-mix(in srgb, var(--ink) 88%, transparent) 100%); }
   /* на телефоне лента под текстом: лёгкая вуаль сверху и снизу, середина открыта */
   .hx--ultra::before { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgb(4 5 12 / 0.35), rgb(4 5 12 / 0.1) 30%, rgb(4 5 12 / 0.1) 60%, rgb(4 5 12 / 0.55) 92%); pointer-events: none; }
-  .ul-center { top: 38%; }
-  .ul-kicker { font-size: 10px; }
-  .ul-title { font-size: 15.6vw; }
-  .ul-lead { font-size: 14px; }
-  .ul-btns { display: none; }
+  .ul-center { top: 34%; }
+  .ul-title { font-size: 12.4vw; }
+  .ul-lead { font-size: 14px; max-width: 300px; }
   .ul-after { top: 46%; font-size: 16px; }
 
   .st-cell--out { display: none; }
@@ -316,38 +249,26 @@
   :root:not([data-art-orig])[data-palette='steel'] .hx--steel { display: flex; flex-direction: column; justify-content: flex-end; gap: 20px; padding: 0 calc(var(--gut) + 10px) 80px; }
   :is(.st-head, .st-lead) { position: relative; left: auto; right: auto; bottom: auto; }
 
-  /* на телефоне видна только середина кадра: кадр опускается, чтобы заголовок стоял на тёмном, а не на белой сердцевине */
-  :root:not([data-art-orig])[data-palette='grad'] .hero__media { margin-top: -54vh; }
-  .gr-tag { display: none; }
-  .gr-head { left: var(--gut); right: var(--gut); top: 96px; bottom: auto; max-width: none; }
-  .gr-kicker { font-size: 10px; margin-bottom: 14px; }
-  /* межстрочный чуть больше: Ё второй строки не задевает первую */
-  .gr-title { font-size: 11.2vw; line-height: 0.98; }
-  .gr-lead { left: var(--gut); right: var(--gut); bottom: 80px; width: auto; }
-  .gr-lead > p { font-size: 14px; }
-  .gr-lead .hero__btns { display: none; }
-  .gr-after { left: var(--gut); right: var(--gut); bottom: 80px; width: auto; font-size: 16px; }
-
-  /* у перелива на телефоне видна только середина кадра: имя компании ставится по центру экрана */
-  .ir-word { top: calc(22vh + 88px); font-size: 27vw; }
+  /* у перелива на телефоне видна середина кадра, где нити сходятся в занавес */
   .ir-head { left: var(--gut); right: var(--gut); bottom: 206px; }
   .ir-kicker { font-size: 10px; margin-bottom: 12px; }
   .ir-title { font-size: 10.4vw; }
   .ir-b { white-space: normal; }
-  :is(.ir-lead, .ir-after) { left: var(--gut); right: var(--gut); bottom: 80px; width: auto; padding: 16px 16px 18px; border-radius: 18px; }
+  :is(.ir-lead, .ir-after) { left: var(--gut); right: var(--gut); bottom: 80px; width: auto; }
   .ir-lead > p { font-size: 14px; }
   .ir-lead .hero__btns { display: none; }
   .ir-after { font-size: 16px; }
-  /* заголовок и стекло с текстом идут столбиком от низа: на узком экране текст длиннее, стекло выше,
-     и заголовок поднимается вместе с ним, а не уходит под стекло */
+  /* заголовок и текст идут столбиком от низа: на узком экране текст длиннее, и заголовок поднимается вместе с ним */
   :root:not([data-art-orig])[data-palette='iris'] .hx--iris { display: flex; flex-direction: column; justify-content: flex-end; gap: 20px; padding: 0 var(--gut) 80px; }
   :is(.ir-head, .ir-lead) { position: relative; left: auto; right: auto; bottom: auto; }
 
-  .mi-kicker { top: 96px; }
-  /* подпись едет по кромке стекла, но не уходит за левый край узкого экрана */
-  .mi-edge { top: auto; bottom: 200px; transform: translateX(max(var(--gut), calc(var(--ex, 9999px) - 100% - 12px))); }
-  .mi-title { top: 33%; font-size: 21vw; }
-  .hx--mint::before { background: radial-gradient(100% 26% at 45% 36%, color-mix(in srgb, var(--ink) 74%, transparent), transparent); }
+  /* у мяты на телефоне кадр сдвинут вправо: в экране свет у горизонта и спокойная вода под ним */
+  :root:not([data-art-orig])[data-palette='mint'] .hero__media { margin-left: -149vh; }
+  /* текст внизу стоит на ряби: низ кадра темнее, свет у горизонта открыт */
+  :root:not([data-art-orig])[data-palette='mint'] .hero__shade { background: linear-gradient(180deg, color-mix(in srgb, var(--ink) 42%, transparent) 0%, transparent 18%, transparent 56%, color-mix(in srgb, var(--ink) 70%, transparent) 76%, color-mix(in srgb, var(--ink) 86%, transparent) 100%); }
+  .mi-head { right: var(--gut); bottom: calc(50% + 28px); }
+  .mi-kicker { font-size: 10px; margin-bottom: 12px; }
+  .mi-title { font-size: 11.2vw; }
   .mi-lead { left: var(--gut); right: var(--gut); bottom: 80px; width: auto; }
   .mi-lead > p { font-size: 14px; }
   .mi-lead .hero__btns { display: none; }

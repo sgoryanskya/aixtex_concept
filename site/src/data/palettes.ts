@@ -26,7 +26,7 @@ export interface Palette {
   metalLight: string;
   metalHighlight: string;
   /* Набор перекрашенных иллюстраций (public/img/art): свой у каждой палитры */
-  art: 'signal' | 'olive' | 'ultra' | 'steel' | 'mint' | 'grad' | 'iris';
+  art: 'signal' | 'olive' | 'ultra' | 'steel' | 'mint' | 'iris';
 }
 
 export const PALETTES = [
@@ -138,29 +138,7 @@ export const PALETTES = [
     metalLight: '#93EBD3',
     metalHighlight: '#EAFCF6',
   },
-  /* Две новые концепции (часть 9, ноябрь 2026), по референсам заказчика из двух папок */
-  {
-    // папка AX: Nexora (градиент рассыпается на пиксели) и Signale (волны оранжевого, белого и синего на чёрном).
-    // Акцент — фирменный оранжевый, второй цвет — электрический синий; сам градиент живёт в CSS (concepts.css)
-    id: 'grad',
-    art: 'grad',
-    name: 'Градиент',
-    bg: '#050507',
-    surface: '#0D0E13',
-    surfaceRaised: '#16171E',
-    text: '#F3F4F8',
-    accent: '#FF5E1A',
-    onAccent: '#0B0503',
-    secondary: '#8FA8FF',
-    paper: '#EEEFF3',
-    paperCard: '#F8F8FB',
-    paperDeep: '#E3E4EA',
-    paperText: '#0B0C12',
-    metalDark: '#0A1678',
-    metalBase: '#3058FF',
-    metalLight: '#FFB49A',
-    metalHighlight: '#FFF3EC',
-  },
+  /* Концепция части 9 (ноябрь 2026) по референсам заказчика из папки с оранжевым */
   {
     // папка с оранжевым: WMT AI, Nexora Biosystems, Kontour. Тёплый чёрный, оранжевый с переливом в розовый и сирень
     id: 'iris',
